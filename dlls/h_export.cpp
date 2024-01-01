@@ -72,7 +72,12 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
 #endif
 
 
-extern "C" void WINAPI DLLEXPORT GiveFnptrsToDll( enginefuncs_t* pengfuncsFromEngine, globalvars_t *pGlobals )
+#if defined(_WIN32) && defined(_MSC_VER)
+#pragma comment(lib, "user32.lib")
+#pragma comment(linker, "/EXPORT:GiveFnptrsToDll=_GiveFnptrsToDll@8,@1")
+#endif
+
+extern "C" DLLEXPORT void WINAPI GiveFnptrsToDll( enginefuncs_t* pengfuncsFromEngine, globalvars_t *pGlobals )
 {
 	char game_dir[256], filePath[100];
 	int pos = 0;
@@ -168,22 +173,22 @@ extern "C" void WINAPI DLLEXPORT GiveFnptrsToDll( enginefuncs_t* pengfuncsFromEn
 		switch( mod_id )
 		{
 			case AG_DLL:
-				strcat( filePath, "/dlls/ag"ARCH_SUFFIX"."OS_LIB_EXT );
+				strcat( filePath, "/dlls/ag" ARCH_SUFFIX "." OS_LIB_EXT );
 				break;
 			case VALVE_DLL:
-				strcat( filePath, "/dlls/hl."OS_LIB_EXT );
+				strcat( filePath, "/dlls/hl." OS_LIB_EXT );
 				break;
 			case DMC_DLL:
-				strcat( filePath, "/dlls/dmc."OS_LIB_EXT );
+				strcat( filePath, "/dlls/dmc." OS_LIB_EXT );
 				break;
 			case GEARBOX_DLL:
-				strcat( filePath, "/dlls/opfor."OS_LIB_EXT );
+				strcat( filePath, "/dlls/opfor." OS_LIB_EXT );
 				break;
 			case HOLYWARS_DLL:
-				strcat( filePath, "/dlls/holywars"ARCH_SUFFIX"."OS_LIB_EXT );
+				strcat( filePath, "/dlls/holywars" ARCH_SUFFIX "." OS_LIB_EXT );
 				break;
 			case HUNGER_DLL:
-                                strcat( filePath, "/dlls/einar"ARCH_SUFFIX"."OS_LIB_EXT );
+                                strcat( filePath, "/dlls/einar" ARCH_SUFFIX "." OS_LIB_EXT );
                                 break;
 			default:
 				break;
