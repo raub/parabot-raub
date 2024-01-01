@@ -1,4 +1,4 @@
-#if !defined( PB_FOCUS_H )
+#if !defined(PB_FOCUS_H)
 #define PB_FOCUS_H
 
 
@@ -13,12 +13,12 @@ public:
 
 	PB_Focus();
 
-	void addDir( Vector dir );
-	float forDir( Vector dir );
-	int cellsForDir( Vector dir );
+	void addDir(Vector dir);
+	float forDir(Vector dir);
+	int cellsForDir(Vector dir);
 
-	bool load( FILE *fp );
-	bool save( FILE *fp );
+	bool load(FILE *fp);
+	bool save(FILE *fp);
 
 
 private:

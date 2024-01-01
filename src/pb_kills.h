@@ -1,4 +1,4 @@
-#if !defined( PB_KILLS_H )
+#if !defined(PB_KILLS_H)
 #define PB_KILLS_H
 
 
@@ -13,11 +13,11 @@ public:
 
 	PB_Kills();
 
-	void addDir( Vector dir );
-	short forDir( Vector dir );
+	void addDir(Vector dir);
+	short forDir(Vector dir);
 
-	bool load( FILE *fp );
-	bool save( FILE *fp );
+	bool load(FILE *fp);
+	bool save(FILE *fp);
 
 
 private:

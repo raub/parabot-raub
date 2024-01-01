@@ -1,4 +1,4 @@
-#if !defined( PB_SECTORS_H )
+#if !defined(PB_SECTORS_H)
 #define PB_SECTORS_H
 
 
@@ -14,7 +14,7 @@ class PB_Sectors
 
 protected:
 
-	int getSector( Vector dir );
+	int getSector(Vector dir);
 
 };
 

@@ -1,7 +1,7 @@
-#if !defined( MARKER_H )
+#if !defined(MARKER_H)
 #define MARKER_H
 
-#pragma warning( disable : 4786 )	// disable warnings
+#pragma warning(disable : 4786) // disable warnings
 
 #define MAX_MARKER 128
 
@@ -11,8 +11,8 @@
 
 
 typedef struct {
-	Vector	pos;
-	int		type;
+	Vector pos;
+	int type;
 } tWPMark;
 
 class CMarker
@@ -22,16 +22,16 @@ public:
 
 	CMarker();
 
-	int newMarker( Vector pos, int type );
+	int newMarker(Vector pos, int type);
 	// adds a new marker at pos, returns id
 
-	bool setPos( int id, Vector pos );
+	bool setPos(int id, Vector pos);
 	// sets position of marker id
 
-	bool setType( int id, int type );
+	bool setType(int id, int type);
 	// sets type of marker id
 
-	bool deleteMarker( int id );
+	bool deleteMarker(int id);
 	// deletes marker id
 
 	void deleteAll();
@@ -46,7 +46,7 @@ private:
 	typedef std::map<int, tWPMark> tMarker;
 	typedef tMarker::value_type mPair;
 	
-	int markerId;		// idNumber
+	int markerId; // idNumber
 	tMarker marker;
 
 };

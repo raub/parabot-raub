@@ -13,10 +13,10 @@
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *	 notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ *	 notice, this list of conditions and the following disclaimer in the
+ *	 documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -394,8 +394,7 @@ static struct utf8_tm mapupper[] =
 	{0xFF41, 0xFF5A, 0x0060}  // Fullwidth latin letters
 };
 
-static size_t UTF8_mbtowc( int *pwc, const char *s )
-{
+static size_t UTF8_mbtowc(int *pwc, const char *s) {
 	int ch, i, mask, want, lbound, wch;
 
 	if (s == NULL) {
@@ -440,7 +439,7 @@ static size_t UTF8_mbtowc( int *pwc, const char *s )
 		 * Malformed input; input is not UTF-8.
 		 */
 		if (pwc != NULL)
-			*pwc = '?';		
+			*pwc = '?';
 		return 1;
 	}
 
@@ -459,7 +458,7 @@ static size_t UTF8_mbtowc( int *pwc, const char *s )
 			if (pwc != NULL)
 				*pwc = '?';
 			return 1;
-		}
+	}
 		wch <<= 6;
 		wch |= *s++ & 0x3f;
 	}
@@ -484,8 +483,7 @@ static size_t UTF8_mbtowc( int *pwc, const char *s )
 	return (wch == L'\0' ? 0 : want);
 }
 
-static size_t UTF8_wctomb( char *s, int wc )
-{
+static size_t UTF8_wctomb(char *s, int wc) {
 	unsigned char lead;
 	int i, len;
 
@@ -510,7 +508,7 @@ static size_t UTF8_wctomb( char *s, int wc )
 		if (wc >= 0xd800 && wc <= 0xdfff) {
 			*s = '?';
 			return 1;
-		}
+	}
 		lead = 0xe0;
 		len = 3;
 	} else if (wc >= 0 && wc <= 0x10ffff) {
@@ -527,34 +525,32 @@ static size_t UTF8_wctomb( char *s, int wc )
 	 * a special case because it contains the sequence length
 	 * information.
 	 */
-	for( i = len - 1; i > 0; i-- )
+	for(i = len - 1; i > 0; i--)
 	{
 		s[i] = (wc & 0x3f) | 0x80;
 		wc >>= 6;
 	}
-	*s = ( wc & 0xff ) | lead;
+	*s = (wc & 0xff) | lead;
 
 	return len;
 }
 
-static int UTF8_toupper( int wc )
-{
-	for( int i = 0; i < sizeof(mapupper)/sizeof(struct utf8_tm); i++)
-		if( mapupper[i].ra <= wc && wc <= mapupper[i].rz )
+static int UTF8_toupper(int wc) {
+	for(int i = 0; i < sizeof(mapupper)/sizeof(struct utf8_tm); i++)
+		if(mapupper[i].ra <= wc && wc <= mapupper[i].rz)
 			return wc ^ mapupper[i].rdiff;
 	return wc;
 }
 
-static void UTF8_strupr( char *s )
-{
+static void UTF8_strupr(char *s) {
 	int wc;
 	size_t len;
 
-	while( *s )
+	while(*s)
 	{
-		UTF8_mbtowc( &wc, s );
-		wc = UTF8_toupper( wc );
-		len = UTF8_wctomb( s, wc );
+		UTF8_mbtowc(&wc, s);
+		wc = UTF8_toupper(wc);
+		len = UTF8_wctomb(s, wc);
 		s += len;
-        }
+		  }
 }

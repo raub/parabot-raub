@@ -6,31 +6,31 @@
 /*
  * Copyright (c) 2001-2006 Will Day <willday@hpgx.net>
  *
- *    This file is part of Metamod.
+ *	 This file is part of Metamod.
  *
- *    Metamod is free software; you can redistribute it and/or modify it
- *    under the terms of the GNU General Public License as published by the
- *    Free Software Foundation; either version 2 of the License, or (at
- *    your option) any later version.
+ *	 Metamod is free software; you can redistribute it and/or modify it
+ *	 under the terms of the GNU General Public License as published by the
+ *	 Free Software Foundation; either version 2 of the License, or (at
+ *	 your option) any later version.
  *
- *    Metamod is distributed in the hope that it will be useful, but
- *    WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    General Public License for more details.
+ *	 Metamod is distributed in the hope that it will be useful, but
+ *	 WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *	 General Public License for more details.
  *
- *    You should have received a copy of the GNU General Public License
- *    along with Metamod; if not, write to the Free Software Foundation,
- *    Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *	 You should have received a copy of the GNU General Public License
+ *	 along with Metamod; if not, write to the Free Software Foundation,
+ *	 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- *    In addition, as a special exception, the author gives permission to
- *    link the code of this program with the Half-Life Game Engine ("HL
- *    Engine") and Modified Game Libraries ("MODs") developed by Valve,
- *    L.L.C ("Valve").  You must obey the GNU General Public License in all
- *    respects for all of the code used other than the HL Engine and MODs
- *    from Valve.  If you modify this file, you may extend this exception
- *    to your version of the file, but you are not obligated to do so.  If
- *    you do not wish to do so, delete this exception statement from your
- *    version.
+ *	 In addition, as a special exception, the author gives permission to
+ *	 link the code of this program with the Half-Life Game Engine ("HL
+ *	 Engine") and Modified Game Libraries ("MODs") developed by Valve,
+ *	 L.L.C ("Valve").  You must obey the GNU General Public License in all
+ *	 respects for all of the code used other than the HL Engine and MODs
+ *	 from Valve.  If you modify this file, you may extend this exception
+ *	 to your version of the file, but you are not obligated to do so.  If
+ *	 you do not wish to do so, delete this exception statement from your
+ *	 version.
  *
  */
 
@@ -48,7 +48,7 @@ typedef int (*GET_ENGINE_FUNCTIONS_FN) (enginefuncs_t *pengfuncsFromEngine, int 
 // Protect against other projects which use this include file but use the
 // normal enginefuncs_t type for their meta_engfuncs.
 #ifdef __METAMOD_BUILD__
-#  include "meta_eiface.h"    // meta_enginefuncs_t
+#  include "meta_eiface.h"	 // meta_enginefuncs_t
 extern meta_enginefuncs_t meta_engfuncs;
 #else
 extern enginefuncs_t meta_engfuncs;
@@ -92,7 +92,7 @@ typedef void (*FN_TRACETOSS) (edict_t *pent, edict_t *pentToIgnore, TraceResult 
 typedef int (*FN_TRACEMONSTERHULL) (edict_t *pEdict, const float *v1, const float *v2, int fNoMonsters, edict_t *pentToSkip, TraceResult *ptr);
 typedef void (*FN_TRACEHULL) (const float *v1, const float *v2, int fNoMonsters, int hullNumber, edict_t *pentToSkip, TraceResult *ptr);
 typedef void (*FN_TRACEMODEL) (const float *v1, const float *v2, int hullNumber, edict_t *pent, TraceResult *ptr);
-typedef const char * (*FN_TRACETEXTURE) (edict_t *pTextureEntity, const float *v1, const float *v2 );
+typedef const char * (*FN_TRACETEXTURE) (edict_t *pTextureEntity, const float *v1, const float *v2);
 typedef void (*FN_TRACESPHERE) (const float *v1, const float *v2, int fNoMonsters, float radius, edict_t *pentToSkip, TraceResult *ptr);
 typedef void (*FN_GETAIMVECTOR) (edict_t *ent, float speed, float *rgflReturn);
 typedef void (*FN_SERVERCOMMAND) (char *str);
@@ -138,20 +138,20 @@ typedef edict_t * (*FN_FINDENTITYBYVARS) (struct entvars_s *pvars);
 typedef void * (*FN_GETMODELPTR) (edict_t *pEdict);
 typedef int (*FN_REGUSERMSG) (const char *pszName, int iSize);
 typedef void (*FN_ANIMATIONAUTOMOVE) (const edict_t *pEdict, float flTime);
-typedef void (*FN_GETBONEPOSITION) (const edict_t *pEdict, int iBone, float *rgflOrigin, float *rgflAngles );
+typedef void (*FN_GETBONEPOSITION) (const edict_t *pEdict, int iBone, float *rgflOrigin, float *rgflAngles);
 #ifdef HLSDK_3_2_OLD_EIFACE
-typedef unsigned long (*FN_FUNCTIONFROMNAME) ( const char *pName );
-typedef const char * (*FN_NAMEFORFUNCTION) ( unsigned long function );
+typedef unsigned long (*FN_FUNCTIONFROMNAME) (const char *pName);
+typedef const char * (*FN_NAMEFORFUNCTION) (unsigned long function);
 #else
-typedef unsigned int (*FN_FUNCTIONFROMNAME) ( const char *pName );
-typedef const char * (*FN_NAMEFORFUNCTION) ( unsigned int function );
+typedef unsigned int (*FN_FUNCTIONFROMNAME) (const char *pName);
+typedef const char * (*FN_NAMEFORFUNCTION) (unsigned int function);
 #endif
-typedef void (*FN_CLIENTPRINTF) ( edict_t *pEdict, PRINT_TYPE ptype, const char *szMsg );
-typedef void (*FN_SERVERPRINT) ( const char *szMsg );
-typedef const char * (*FN_CMD_ARGS) ( void );
-typedef const char * (*FN_CMD_ARGV) ( int argc );
-typedef int (*FN_CMD_ARGC) ( void );
-typedef void (*FN_GETATTACHMENT) (const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles );
+typedef void (*FN_CLIENTPRINTF) (edict_t *pEdict, PRINT_TYPE ptype, const char *szMsg);
+typedef void (*FN_SERVERPRINT) (const char *szMsg);
+typedef const char * (*FN_CMD_ARGS) (void);
+typedef const char * (*FN_CMD_ARGV) (int argc);
+typedef int (*FN_CMD_ARGC) (void);
+typedef void (*FN_GETATTACHMENT) (const edict_t *pEdict, int iAttachment, float *rgflOrigin, float *rgflAngles);
 typedef void (*FN_CRC32_INIT) (CRC32_t *pulCRC);
 typedef void (*FN_CRC32_PROCESSBUFFER) (CRC32_t *pulCRC, void *p, int len);
 typedef void (*FN_CRC32_PROCESSBYTE) (CRC32_t *pulCRC, unsigned char ch);
@@ -162,8 +162,8 @@ typedef long (*FN_RANDOMLONG) (long lLow, long lHigh);
 typedef int (*FN_RANDOMLONG) (int lLow, int lHigh);
 #endif
 typedef float (*FN_RANDOMFLOAT) (float flLow, float flHigh);
-typedef void (*FN_SETVIEW) (const edict_t *pClient, const edict_t *pViewent );
-typedef float (*FN_TIME) ( void );
+typedef void (*FN_SETVIEW) (const edict_t *pClient, const edict_t *pViewent);
+typedef float (*FN_TIME) (void);
 typedef void (*FN_CROSSHAIRANGLE) (const edict_t *pClient, float pitch, float yaw);
 typedef byte * (*FN_LOADFILEFORME) (char *filename, int *pLength);
 typedef void (*FN_FREEFILE) (void *buffer);
@@ -174,43 +174,43 @@ typedef void (*FN_CVAR_REGISTERVARIABLE) (cvar_t *variable);
 typedef void (*FN_FADECLIENTVOLUME) (const edict_t *pEdict, int fadePercent, int fadeOutSeconds, int holdTime, int fadeInSeconds);
 typedef void (*FN_SETCLIENTMAXSPEED) (const edict_t *pEdict, float fNewMaxspeed);
 typedef edict_t * (*FN_CREATEFAKECLIENT) (const char *netname);
-typedef void (*FN_RUNPLAYERMOVE) (edict_t *fakeclient, const float *viewangles, float forwardmove, float sidemove, float upmove, unsigned short buttons, byte impulse, byte msec );
+typedef void (*FN_RUNPLAYERMOVE) (edict_t *fakeclient, const float *viewangles, float forwardmove, float sidemove, float upmove, unsigned short buttons, byte impulse, byte msec);
 typedef int (*FN_NUMBEROFENTITIES) (void);
 typedef char * (*FN_GETINFOKEYBUFFER) (edict_t *e);
 typedef char * (*FN_INFOKEYVALUE) (char *infobuffer, char *key);
 typedef void (*FN_SETKEYVALUE) (char *infobuffer, char *key, char *value);
 typedef void (*FN_SETCLIENTKEYVALUE) (int clientIndex, char *infobuffer, char *key, char *value);
 typedef int (*FN_ISMAPVALID) (char *filename);
-typedef void (*FN_STATICDECAL) ( const float *origin, int decalIndex, int entityIndex, int modelIndex );
+typedef void (*FN_STATICDECAL) (const float *origin, int decalIndex, int entityIndex, int modelIndex);
 typedef int (*FN_PRECACHEGENERIC) (char *s);
-typedef int (*FN_GETPLAYERUSERID) (edict_t *e );
+typedef int (*FN_GETPLAYERUSERID) (edict_t *e);
 typedef void (*FN_BUILDSOUNDMSG) (edict_t *entity, int channel, const char *sample, /*int*/float volume, float attenuation, int fFlags, int pitch, int msg_dest, int msg_type, const float *pOrigin, edict_t *ed);
 typedef int (*FN_ISDEDICATEDSERVER) (void);
 typedef cvar_t * (*FN_CVARGETPOINTER) (const char *szVarName);
 typedef unsigned int (*FN_GETPLAYERWONID) (edict_t *e);
-typedef void (*FN_INFO_REMOVEKEY) ( char *s, const char *key );
-typedef const char * (*FN_GETPHYSICSKEYVALUE) ( const edict_t *pClient, const char *key );
-typedef void (*FN_SETPHYSICSKEYVALUE) ( const edict_t *pClient, const char *key, const char *value );
-typedef const char * (*FN_GETPHYSICSINFOSTRING) ( const edict_t *pClient );
-typedef unsigned short (*FN_PRECACHEEVENT) ( int type, const char *psz );
-typedef void (*FN_PLAYBACKEVENT) ( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
-typedef unsigned char * (*FN_SETFATPVS) ( float *org );
-typedef unsigned char * (*FN_SETFATPAS) ( float *org );
-typedef int (*FN_CHECKVISIBILITY) ( const edict_t *entity, unsigned char *pset );
-typedef void (*FN_DELTASETFIELD) ( struct delta_s *pFields, const char *fieldname );
-typedef void (*FN_DELTAUNSETFIELD) ( struct delta_s *pFields, const char *fieldname );
-typedef void (*FN_DELTAADDENCODER) ( char *name, void (*conditionalencode)( struct delta_s *pFields, const unsigned char *from, const unsigned char *to ) );
-typedef int (*FN_GETCURRENTPLAYER) ( void );
-typedef int (*FN_CANSKIPPLAYER) ( const edict_t *player );
-typedef int (*FN_DELTAFINDFIELD) ( struct delta_s *pFields, const char *fieldname );
-typedef void (*FN_DELTASETFIELDBYINDEX) ( struct delta_s *pFields, int fieldNumber );
-typedef void (*FN_DELTAUNSETFIELDBYINDEX) ( struct delta_s *pFields, int fieldNumber );
-typedef void (*FN_SETGROUPMASK) ( int mask, int op );
-typedef int (*FN_CREATEINSTANCEDBASELINE) ( int classname, struct entity_state_s *baseline );
-typedef void (*FN_CVAR_DIRECTSET) ( struct cvar_s *var, char *value );
-typedef void (*FN_FORCEUNMODIFIED) ( FORCE_TYPE type, float *mins, float *maxs, const char *filename );
-typedef void (*FN_GETPLAYERSTATS) ( const edict_t *pClient, int *ping, int *packet_loss );
-typedef void (*FN_ADDSERVERCOMMAND) ( char *cmd_name, void (*function) (void) );
+typedef void (*FN_INFO_REMOVEKEY) (char *s, const char *key);
+typedef const char * (*FN_GETPHYSICSKEYVALUE) (const edict_t *pClient, const char *key);
+typedef void (*FN_SETPHYSICSKEYVALUE) (const edict_t *pClient, const char *key, const char *value);
+typedef const char * (*FN_GETPHYSICSINFOSTRING) (const edict_t *pClient);
+typedef unsigned short (*FN_PRECACHEEVENT) (int type, const char *psz);
+typedef void (*FN_PLAYBACKEVENT) (int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
+typedef unsigned char * (*FN_SETFATPVS) (float *org);
+typedef unsigned char * (*FN_SETFATPAS) (float *org);
+typedef int (*FN_CHECKVISIBILITY) (const edict_t *entity, unsigned char *pset);
+typedef void (*FN_DELTASETFIELD) (struct delta_s *pFields, const char *fieldname);
+typedef void (*FN_DELTAUNSETFIELD) (struct delta_s *pFields, const char *fieldname);
+typedef void (*FN_DELTAADDENCODER) (char *name, void (*conditionalencode)(struct delta_s *pFields, const unsigned char *from, const unsigned char *to));
+typedef int (*FN_GETCURRENTPLAYER) (void);
+typedef int (*FN_CANSKIPPLAYER) (const edict_t *player);
+typedef int (*FN_DELTAFINDFIELD) (struct delta_s *pFields, const char *fieldname);
+typedef void (*FN_DELTASETFIELDBYINDEX) (struct delta_s *pFields, int fieldNumber);
+typedef void (*FN_DELTAUNSETFIELDBYINDEX) (struct delta_s *pFields, int fieldNumber);
+typedef void (*FN_SETGROUPMASK) (int mask, int op);
+typedef int (*FN_CREATEINSTANCEDBASELINE) (int classname, struct entity_state_s *baseline);
+typedef void (*FN_CVAR_DIRECTSET) (struct cvar_s *var, char *value);
+typedef void (*FN_FORCEUNMODIFIED) (FORCE_TYPE type, float *mins, float *maxs, const char *filename);
+typedef void (*FN_GETPLAYERSTATS) (const edict_t *pClient, int *ping, int *packet_loss);
+typedef void (*FN_ADDSERVERCOMMAND) (char *cmd_name, void (*function) (void));
 // Added in SDK 2.2:
 typedef qboolean (*FN_VOICE_GETCLIENTLISTENING) (int iReceiver, int iSender);
 typedef qboolean (*FN_VOICE_SETCLIENTLISTENING) (int iReceiver, int iSender, qboolean bListen);
@@ -229,10 +229,10 @@ typedef void (*FN_PROCESSTUTORMESSAGEDECAYBUFFER) (int *buffer, int bufferLength
 typedef void (*FN_CONSTRUCTTUTORMESSAGEDECAYBUFFER) (int *buffer, int bufferLength);
 typedef void (*FN_RESETTUTORMESSAGEDECAYDATA) (void);
 // Added 2005/08/11 (no SDK update):
-typedef void (*FN_QUERYCLIENTCVARVALUE) ( const edict_t *player, const char *cvarName );
+typedef void (*FN_QUERYCLIENTCVARVALUE) (const edict_t *player, const char *cvarName);
 // Added 2005/11/21 (no SDK update):
-typedef void (*FN_QUERYCLIENTCVARVALUE2) ( const edict_t *player, const char *cvarName, int requestID );
+typedef void (*FN_QUERYCLIENTCVARVALUE2) (const edict_t *player, const char *cvarName, int requestID);
 // Added 2009/06/17 (no SDK update):
-typedef void (*FN_ENGCHECKPARM) ( const char *pchCmdLineToken, char **pchNextVal );
+typedef void (*FN_ENGCHECKPARM) (const char *pchCmdLineToken, char **pchNextVal);
 
 #endif /* ENGINE_API_H */

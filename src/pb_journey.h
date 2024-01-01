@@ -1,4 +1,4 @@
-#if !defined( PB_JOURNEY_H )
+#if !defined(PB_JOURNEY_H)
 #define PB_JOURNEY_H
 
 
@@ -15,7 +15,7 @@ public:
 
 	~PB_Journey();
 
-	bool continues() { return ( !pathList.empty() ); }
+	bool continues() { return (!pathList.empty()); }
 	// returns true if there are more paths to go
 
 	PB_Path* getNextPath();
@@ -28,13 +28,13 @@ public:
 	// cancels the journey (continues() will return false)
 
 	// DATA:
-	std::deque<int>	pathList;	// need access from mapGraph
+	std::deque<int>	pathList; // need access from mapGraph
 
 
 private:
 
 	PB_Path		*currentOriginal;
-	PB_Path		currentCopy;
+	PB_Path currentCopy;
 };
 
 #endif

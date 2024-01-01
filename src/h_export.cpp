@@ -31,14 +31,13 @@ GETENTITYAPI other_GetEntityAPI;
 GIVEFNPTRSTODLL other_GiveFnptrsToDll;
 GETNEWDLLFUNCTIONS other_GetNewDLLFunctions; 
 
-float sineTable[256];					// sine table for e.g. look-arounds
+float sineTable[256]; // sine table for e.g. look-arounds
 
-void initSineTable()
-{
-	for (int i=0; i<256; i++) {
+void initSineTable() {
+	for (int i = 0; i < 256; i++) {
 		float f = (float) i;
 		f *= 2*3.1415927/256;
-		sineTable[i] = sin( f );
+		sineTable[i] = sin(f);
 	}
 }
 
@@ -46,25 +45,24 @@ void initSineTable()
 
 #ifdef _WIN32
 // Required DLL entry point
-BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
-{
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
 	}
 	else if (fdwReason == DLL_PROCESS_DETACH)
 	{
-		if( !g_meta_init )
+		if(!g_meta_init)
 		{
 			if (h_Library)
-				FreeLibrary( h_Library );
-		}
+				FreeLibrary(h_Library);
+	}
 		chat.free();
 /*
 		// try to close ole
 		gpITTSCentral->Release();
 		
 		if (!EndOLE())
-			errorMsg( "Can't shut down OLE." );*/
+			errorMsg("Can't shut down OLE.");*/
 	}
 	
 	return TRUE;
@@ -77,88 +75,87 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
 #pragma comment(linker, "/EXPORT:GiveFnptrsToDll=_GiveFnptrsToDll@8,@1")
 #endif
 
-extern "C" DLLEXPORT void WINAPI GiveFnptrsToDll( enginefuncs_t* pengfuncsFromEngine, globalvars_t *pGlobals )
-{
+extern "C" DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t* pengfuncsFromEngine, globalvars_t *pGlobals) {
 	char game_dir[256], filePath[100];
 	int pos = 0;
 
 	// get the engine functions from the engine...
-	memcpy( &g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t) );
+	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
 	gpGlobals = pGlobals;
 	
 	// find the directory name of the currently running MOD...
-	(*g_engfuncs.pfnGetGameDir)( game_dir );
+	(*g_engfuncs.pfnGetGameDir)(game_dir);
 
 	if(strstr(game_dir,"/"))
 	{
-		pos = strlen( game_dir ) - 1;
+		pos = strlen(game_dir) - 1;
 
 		// scan backwards till first directory separator...
 		while ((pos > 0) && (game_dir[pos] != '/'))
 			pos--;
 		if (pos == 0)
-			errorMsg( "Error determining MOD directory name!" );
+			errorMsg("Error determining MOD directory name!");
 
 		pos++;
 	}
-	strcpy( mod_name, &game_dir[pos] );
+	strcpy(mod_name, &game_dir[pos]);
 	
-	if( !strcmp( mod_name, "ag" ) )
+	if(!strcmp(mod_name, "ag"))
 	{
 		mod_id = AG_DLL;
 	}
-	else if( !strcmp( mod_name, "valve" ) || !strcmp( mod_name, "hldm" ) )
+	else if(!strcmp(mod_name, "valve") || !strcmp(mod_name, "hldm"))
 	{
 		mod_id = VALVE_DLL;
 	}
-	else if( !strcmp( mod_name, "Hunger" ) )
+	else if(!strcmp(mod_name, "Hunger"))
 	{
 		mod_id = HUNGER_DLL;
 	}
-	else if( !strcmp( mod_name, "holywars" ) )
+	else if(!strcmp(mod_name, "holywars"))
 	{
 		mod_id = HOLYWARS_DLL;
 	}
-	else if( !strcmp( mod_name, "dmc" ) )
+	else if(!strcmp(mod_name, "dmc"))
 	{
 		mod_id = DMC_DLL;
 	}
-	else if( !strcmp( mod_name, "gearbox" ) )
+	else if(!strcmp(mod_name, "gearbox"))
 	{
 		mod_id = GEARBOX_DLL;
 	}
 
-	sprintf( filePath, "%s/addons/parabot/config/", mod_name );
+	sprintf(filePath, "%s/addons/parabot/config/", mod_name);
 #if defined(__ANDROID__)
 	struct stat checkdir;
-	if( 0 > stat( filePath, &checkdir ) )
+	if(0 > stat(filePath, &checkdir))
 	{
-		FILE *pfile = fopen( getenv( "PARABOT_EXTRAS_PAK" ), "rb" );
-		if( pfile )
+		FILE *pfile = fopen(getenv("PARABOT_EXTRAS_PAK"), "rb");
+		if(pfile)
 		{
-			extrpak( pfile, mod_name );
-			fclose( pfile );
-		}
+			extrpak(pfile, mod_name);
+			fclose(pfile);
+	}
 	}
 #endif
-	strcat( filePath, mod_name );
-	strcat( filePath, "/" );
-	pbConfig.initConfiguration( filePath );
-	pbConfig.initPersonalities( filePath );
+	strcat(filePath, mod_name);
+	strcat(filePath, "/");
+	pbConfig.initConfiguration(filePath);
+	pbConfig.initPersonalities(filePath);
 
-	pos = strlen( mod_name );
+	pos = strlen(mod_name);
 	filePath[pos] = '\0';
-	strcat( filePath, "/addons/parabot/log");
-	CreateDirectory( filePath, NULL );
+	strcat(filePath, "/addons/parabot/log");
+	CreateDirectory(filePath, NULL);
 
 	// always load chatfile, might be enabled ingame:
 	filePath[pos] = '\0';
-	strcat( filePath, "/addons/parabot/config/lang/" );
-	strcat( filePath, pbConfig.chatFile() );
-	chat.load( filePath );
+	strcat(filePath, "/addons/parabot/config/lang/");
+	strcat(filePath, pbConfig.chatFile());
+	chat.load(filePath);
 	initSineTable();
 
-	if( !g_meta_init )
+	if(!g_meta_init)
 	{
 #if defined(__ANDROID__)
 #ifdef LOAD_HARDFP
@@ -166,51 +163,51 @@ extern "C" DLLEXPORT void WINAPI GiveFnptrsToDll( enginefuncs_t* pengfuncsFromEn
 #else
 		const char *serverdll = "libserver.so";
 #endif
-		snprintf( filePath, sizeof(filePath), "%s/%s", getenv( "XASH3D_GAMELIBDIR" ), serverdll );
+		snprintf(filePath, sizeof(filePath), "%s/%s", getenv("XASH3D_GAMELIBDIR"), serverdll);
 #else
 		filePath[pos]= '\0';
 
-		switch( mod_id )
+		switch(mod_id)
 		{
 			case AG_DLL:
-				strcat( filePath, "/dlls/ag" ARCH_SUFFIX "." OS_LIB_EXT );
+				strcat(filePath, "/dlls/ag" ARCH_SUFFIX "." OS_LIB_EXT);
 				break;
 			case VALVE_DLL:
-				strcat( filePath, "/dlls/hl." OS_LIB_EXT );
+				strcat(filePath, "/dlls/hl." OS_LIB_EXT);
 				break;
 			case DMC_DLL:
-				strcat( filePath, "/dlls/dmc." OS_LIB_EXT );
+				strcat(filePath, "/dlls/dmc." OS_LIB_EXT);
 				break;
 			case GEARBOX_DLL:
-				strcat( filePath, "/dlls/opfor." OS_LIB_EXT );
+				strcat(filePath, "/dlls/opfor." OS_LIB_EXT);
 				break;
 			case HOLYWARS_DLL:
-				strcat( filePath, "/dlls/holywars" ARCH_SUFFIX "." OS_LIB_EXT );
+				strcat(filePath, "/dlls/holywars" ARCH_SUFFIX "." OS_LIB_EXT);
 				break;
 			case HUNGER_DLL:
-                                strcat( filePath, "/dlls/einar" ARCH_SUFFIX "." OS_LIB_EXT );
-                                break;
+										  strcat(filePath, "/dlls/einar" ARCH_SUFFIX "." OS_LIB_EXT);
+										  break;
 			default:
 				break;
-		}
+	}
 #endif
-		h_Library = LoadLibrary( filePath );
+		h_Library = LoadLibrary(filePath);
 
 		if (h_Library == NULL) {	// Directory error or Unsupported MOD!
-			errorMsg( "MOD Dll not found (or unsupported MOD)!" );
-			debugFile( "Library = 0\n" );
-		}
+			errorMsg("MOD Dll not found (or unsupported MOD)!");
+			debugFile("Library = 0\n");
+	}
 
-		other_GetEntityAPI = (GETENTITYAPI)GetProcAddress( h_Library, "GetEntityAPI" );
-		if (other_GetEntityAPI == NULL)	errorMsg( "Can't get MOD's GetEntityAPI!\n" );
+		other_GetEntityAPI = (GETENTITYAPI)GetProcAddress(h_Library, "GetEntityAPI");
+		if (other_GetEntityAPI == NULL)	errorMsg("Can't get MOD's GetEntityAPI!\n");
 
 		if (mod_id == TFC_DLL) {	// NewDLLFunctions only necessary for TFC
-			other_GetNewDLLFunctions = (GETNEWDLLFUNCTIONS)GetProcAddress( h_Library, "GetNewDLLFunctions" ); 
-			if (other_GetNewDLLFunctions == NULL) errorMsg( "Can't get TFC GetNewDLLFunctions!\n" );
-		} 
+			other_GetNewDLLFunctions = (GETNEWDLLFUNCTIONS)GetProcAddress(h_Library, "GetNewDLLFunctions"); 
+			if (other_GetNewDLLFunctions == NULL) errorMsg("Can't get TFC GetNewDLLFunctions!\n");
+	} 
 	
 		other_GiveFnptrsToDll = (GIVEFNPTRSTODLL)GetProcAddress(h_Library, "GiveFnptrsToDll"); 
-		if (other_GiveFnptrsToDll == NULL) errorMsg( "Can't get MOD's GiveFnptrsToDll!\n" );
+		if (other_GiveFnptrsToDll == NULL) errorMsg("Can't get MOD's GiveFnptrsToDll!\n");
 		pengfuncsFromEngine->pfnCmd_Args = Cmd_Args;
 		pengfuncsFromEngine->pfnCmd_Argv = Cmd_Argv;
 		pengfuncsFromEngine->pfnCmd_Argc = Cmd_Argc;

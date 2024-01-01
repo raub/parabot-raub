@@ -29,7 +29,7 @@ void BotClient_TFC_CurrentWeapon(void *p, int bot_index);
 void BotClient_CS_CurrentWeapon(void *p, int bot_index);
 void BotClient_Gearbox_CurrentWeapon(void *p, int bot_index);
 void BotClient_Hunger_CurrentWeapon(void *p, int bot_index);
-void HumanClient_CurrentWeapon( void *p, int clientIndex );
+void HumanClient_CurrentWeapon(void *p, int clientIndex);
 
 void BotClient_Valve_AmmoX(void *p, int bot_index);
 void BotClient_Holywars_AmmoX(void *p, int bot_index);

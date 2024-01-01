@@ -1,80 +1,65 @@
-#if !defined( PB_WEAPON_HANDLING_H )
-#define PB_WEAPON_HANDLING_H
-
+#ifndef _PB_WEAPON_HANDLING_HPP_
+#define _PB_WEAPON_HANDLING_HPP_
 
 #include "pb_weapon.h"
 
-
-#define CHANGE_WEAPON_DELAY		1.0	// time needed to switch between weapons
-
+#define CHANGE_WEAPON_DELAY 1.0	// time needed to switch between weapons
 
 
-class PB_WeaponHandling
-{
-	
+class PB_WeaponHandling {
 public:
-	
 	PB_WeaponHandling();
 	
-	void init( int slot, edict_t *ent, PB_Action *action );
 	// has to be called with the botSlot before all other methods
+	void init(int slot, edict_t *ent, PB_Action *action);
 
-	void initCurrentWeapon();
 	// call every frame
+	void initCurrentWeapon();
 
-	int currentWeapon();
 	// returns the WeaponID of the currently handled weapon
+	int currentWeapon();
 
-	bool available( int wId );
 	// returns true if bot can use weapon wId
+	bool available(int wId);
 
-	bool attack( Vector target, float accuracy, Vector relVel = Vector(0,0,0) );
 	// attacks in best mode at best time the given position when accuracy is reached
+	bool attack(Vector target, float accuracy, Vector relVel = Vector(0,0,0));
 
 	void checkForForcedAttack();
 
-	int getBestWeapon( float distance, float hitProb, int flags );
 	// returns the weapon-ID of best weapon for given situation
+	int getBestWeapon(float distance, float hitProb, int flags);
 
-	bool bestWeaponUsable() { return weaponUsable; }
 	// returns true if getBestWeapon could deliver a score > 0
+	bool bestWeaponUsable() { return weaponUsable; }
 
-	bool armBestWeapon( float distance, float hitProb, int flags );
 	// arms the best weapon for given situation, returns true if already armed before
+	bool armBestWeapon(float distance, float hitProb, int flags);
 	
-	void setPreferredWeapon( int wId, int mode=1 );
 	// sets the weapon that will be armed by armBestWeapon during the next 0.5 seconds
+	void setPreferredWeapon(int wId, int mode=1);
 
-	float getWeaponScore( int wId, float distance, float hitProb, int flags, bool checkAmmo );
+	float getWeaponScore(int wId, float distance, float hitProb, int flags, bool checkAmmo);
 
-	float bestDistance( int wId );
+	float bestDistance(int wId);
 
 	float currentHighAimProb();
 
-
-
 private:
-
-	int			botSlot;				// slot the bot is using
-	edict_t		*botEnt;
-	PB_Action	*botAction;				// pointer to action-instace the bot is using
-
-	PB_Weapon	weapon;
-	int			defaultWeapon;
-	int			armedWeapon;
-	int			preferredWeapon;
-	int			preferredMode;
-	float		preferredWeaponTimeOut;
-	float		lastModeSwitch;			// worldTime last change (zoom in/out) had ocurred
+	int botSlot; // slot the bot is using
+	edict_t *botEnt;
+	PB_Action *botAction; // pointer to action-instace the bot is using
+	PB_Weapon weapon;
+	int defaultWeapon;
+	int armedWeapon;
+	int preferredWeapon;
+	int preferredMode;
+	float preferredWeaponTimeOut;
+	float lastModeSwitch; // worldTime last change (zoom in/out) had ocurred
+	bool weaponUsable;
+	int minModWeapon, maxModWeapon;
 	
-	bool		weaponUsable;
-
-	int			minModWeapon, maxModWeapon;
-	
-
-
-	void switchToWeapon( int wId );
-
+	void switchToWeapon(int wId);
 };
 
-#endif
+#endif /* _PB_WEAPON_HANDLING_HPP_ */

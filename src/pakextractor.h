@@ -15,13 +15,13 @@ based on wreckdum by Neal Tucker <ntucker@fester.axis.net>
 
 #define kBufferSize 10000
 typedef struct {
-	char	name[56];
-	uint32_t	offset, length;
+	char name[56];
+	uint32_t offset, length;
 } dirrec;
 
-static int	makepath(char *fname) {
+static int makepath(char *fname) {
 /* given "some/path/to/file", makes all dirs (ie "some/", "some/path/", */
-/* and "some/path/to/", so that file can be created                     */
+/* and "some/path/to/", so that file can be created							*/
 	char	*c = fname,
 		*o = (char *)malloc(strlen(fname)+1),
 		*n = o;
@@ -35,17 +35,17 @@ static int	makepath(char *fname) {
 			*n = '/';
 			n++;
 			c++;
-		}
+	}
 	}
 	free(o);
 	return(0);
 }
 
-static int	write_rec(dirrec dir, FILE *in) {
-	char	buf[kBufferSize];
+static int write_rec(dirrec dir, FILE *in) {
+	char buf[kBufferSize];
 	FILE	*f = NULL;
-	long	l = 0;
-	int	blocks = 0, count = 0, s = 0;
+	long l = 0;
+	int blocks = 0, count = 0, s = 0;
 
 	makepath(dir.name);
 	if ((f = fopen(dir.name,"wb")) == NULL) {
@@ -67,11 +67,11 @@ static int	write_rec(dirrec dir, FILE *in) {
 	return(0);
 }
 
-static int	extrpak(FILE *in, char *mdir) {
+static int extrpak(FILE *in, char *mdir) {
 	dirrec	*dir = NULL;
-	char	signature[4];
-	unsigned long	dir_start = 0, num_ents = 0;
-	int	i = 0;
+	char signature[4];
+	unsigned long dir_start = 0, num_ents = 0;
+	int i = 0;
 
 	fread((void *)signature, 4, 1, in);
 	if (strncmp(signature, "PACK", 4) != 0) {
