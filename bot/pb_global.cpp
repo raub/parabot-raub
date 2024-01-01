@@ -202,13 +202,12 @@ void debugMarker( Vector pos, int life )
 	MESSAGE_END();
 }
 
-void debugFile( char *msg )
-{
+void debugFile(const char *msg) {
 	char logfile[64];
 	if (!dbgFile) return;
 	sprintf( logfile, "%s/addons/parabot/log/debug.txt", mod_name );
-	FILE *fp=fopen( logfile, "a" ); 
-	fprintf( fp, msg ); 
+	FILE *fp = fopen(logfile, "a");
+	fprintf(fp, "%s", msg);
 	fclose( fp );
 }
 

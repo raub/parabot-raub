@@ -1,6 +1,3 @@
-#pragma warning( disable : 4786 )	// disable warnings
-
-
 #if !defined( PB_GLOBAL_H )
 #define PB_GLOBAL_H
 
@@ -77,7 +74,7 @@ void incTotalAttempts();
 void checkForBreakpoint( int reason );
 // for debugging
 
-void debugFile( char *msg );
+void debugFile(const char *msg);
 
 void debugMsg( const char *str1, const char *str2=0, const char *str3=0, const char *str4=0 );
 void debugMsg( const char *str1, int data1, int data2=NO_I_VALUE, int data3=NO_I_VALUE );
@@ -92,13 +89,13 @@ void infoMsg( const char *str1, const char *str2=0, const char *str3=0, const ch
 
 void errorMsg( const char *str1, const char *str2=0, const char *str3=0, const char *str4=0 );
 #ifdef _DEBUG
-void debugSound( edict_t *recipient, const char *sample );
+    void debugSound( edict_t *recipient, const char *sample );
 
-void debugBeam( Vector start, Vector end, int life, int color=1 );
-void debugMarker( Vector pos, int life );
+    void debugBeam( Vector start, Vector end, int life, int color=1 );
+    void debugMarker( Vector pos, int life );
 #else
-#define debugSound(...)
-#define debugBeam(...)
-#define debugMarker(...)
+    #define debugSound(...)
+    #define debugBeam(...)
+    #define debugMarker(...)
 #endif
 #endif
