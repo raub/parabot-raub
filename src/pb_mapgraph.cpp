@@ -1,4 +1,5 @@
-#pragma warning( disable : 4786 )	// disable 29 graph warnings
+#pragma warning(disable: 4786) // disable 29 graph warnings - volatile??
+#pragma warning(disable: 4530) // warning for disabled exceptions
 
 #include "pb_mapgraph.h"
 #include "dynpq.h"

@@ -1,8 +1,8 @@
+#pragma warning(disable: 4530) // warning for disabled exceptions
+
 #include "pb_path.h"
 #include "pb_global.h"
 #include "pb_action.h"
-
-
 
 
 int journeyMode = JOURNEY_FAST;

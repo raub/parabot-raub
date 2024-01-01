@@ -1,3 +1,6 @@
+#pragma warning(disable: 4530) // warning for disabled exceptions
+
+
 #include "pb_chat.h"
 #include "pb_configuration.h"
 #include "bot.h"

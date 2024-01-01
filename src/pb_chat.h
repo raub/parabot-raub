@@ -1,7 +1,6 @@
 #ifndef PB_CHAT_H
 #define PB_CHAT_H
 
-
 #include <vector>
 #include "pb_global.h"
 
