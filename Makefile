@@ -1,14 +1,19 @@
 LIBNAME = parabot_mm.dll
+OUT_DIR_OBJ = build
+OUT_DIR_LIB = lib-x32
 
 # ------- Debug
-CFLAGS += /Zi /DDEBUG /D_DEBUG
+CFLAGS += /Zi /DDEBUG /D_DEBUG /MDd
 LDFLAGS += /DEBUG:FULL
 # ------- Optimized
-# CFLAGS += /O2 /Oy /GL /GF /Gm- /EHa-s-c- /MT /GS /Gy /GR- /Gd
+# CFLAGS += /O2 /Oy /GL /GF /Gm- /EHa-s-c- /MD /GS /Gy /GR- /Gd
 # LDFLAGS += /DEBUG:NONE /LTCG /OPT:NOREF
 
+# Cleaner w/o unnecessary stuff - when `make -d`
+.SUFFIXES:
+MAKEFLAGS += --no-builtin-rules
 
-INCLUDES = \
+INCLUDES := \
 	/Isrc/bot \
 	/Isrc/utils \
 	/Isrc/common \
@@ -17,63 +22,64 @@ INCLUDES = \
 	/Isrc/pm_shared \
 	/Isrc/metamod
 
-CPP_MODULES = \
-	src/bot/bot.cpp \
-	src/bot/bot_client.cpp \
-	src/dlls/commands.cpp \
-	src/dlls/dll.cpp \
-	src/dlls/engine.cpp \
-	src/dlls/h_export.cpp \
-	src/dlls/linkfunc.cpp \
-	src/dlls/startframe.cpp \
-	src/dlls/util.cpp \
-	src/bot/marker.cpp \
-	src/bot/parabot.cpp \
-	src/bot/pb_action.cpp \
-	src/bot/pb_cell.cpp \
-	src/bot/pb_chat.cpp \
-	src/bot/pb_combat.cpp \
-	src/bot/pb_combatgoals.cpp \
-	src/bot/pb_configuration.cpp \
-	src/bot/pb_focus.cpp \
-	src/bot/pb_global.cpp \
-	src/bot/pb_goalfinder.cpp \
-	src/bot/pb_goals.cpp \
-	src/bot/pb_journey.cpp \
-	src/bot/pb_kills.cpp \
-	src/bot/pb_mapcells.cpp \
-	src/bot/pb_mapgraph.cpp \
-	src/bot/pb_mapimport.cpp \
-	src/bot/pb_navpoint.cpp \
-	src/bot/pb_needs.cpp \
-	src/bot/pb_observer.cpp \
-	src/bot/pb_path.cpp \
-	src/bot/pb_perception.cpp \
-	src/bot/pb_roaming.cpp \
-	src/bot/pb_sectors.cpp \
-	src/bot/pb_vistable.cpp \
-	src/bot/pb_weapon.cpp \
-	src/bot/pb_weaponhandling.cpp \
-	src/bot/pbt_dynarray.cpp \
-	src/bot/pbt_priorityqueue.cpp \
-	src/bot/sounds.cpp \
-	src/bot/utilityfuncs.cpp \
-	src/metamod/meta_api.cpp
+CPP_MODULES := \
+	bot/bot.cpp \
+	bot/bot_client.cpp \
+	dlls/commands.cpp \
+	dlls/dll.cpp \
+	dlls/engine.cpp \
+	dlls/h_export.cpp \
+	dlls/linkfunc.cpp \
+	dlls/startframe.cpp \
+	dlls/util.cpp \
+	bot/marker.cpp \
+	bot/parabot.cpp \
+	bot/pb_action.cpp \
+	bot/pb_cell.cpp \
+	bot/pb_chat.cpp \
+	bot/pb_combat.cpp \
+	bot/pb_combatgoals.cpp \
+	bot/pb_configuration.cpp \
+	bot/pb_focus.cpp \
+	bot/pb_global.cpp \
+	bot/pb_goalfinder.cpp \
+	bot/pb_goals.cpp \
+	bot/pb_journey.cpp \
+	bot/pb_kills.cpp \
+	bot/pb_mapcells.cpp \
+	bot/pb_mapgraph.cpp \
+	bot/pb_mapimport.cpp \
+	bot/pb_navpoint.cpp \
+	bot/pb_needs.cpp \
+	bot/pb_observer.cpp \
+	bot/pb_path.cpp \
+	bot/pb_perception.cpp \
+	bot/pb_roaming.cpp \
+	bot/pb_sectors.cpp \
+	bot/pb_vistable.cpp \
+	bot/pb_weapon.cpp \
+	bot/pb_weaponhandling.cpp \
+	bot/pbt_dynarray.cpp \
+	bot/pbt_priorityqueue.cpp \
+	bot/sounds.cpp \
+	bot/utilityfuncs.cpp \
+	metamod/meta_api.cpp
 
 SRC := $(CPP_MODULES:%.cpp=src/%.cpp)
-OBJ := $(CPP_MODULES:%.cpp=build/%.obj)
-
+OBJ := $(CPP_MODULES:%.cpp=$(OUT_DIR_OBJ)/%.obj)
 
 all: $(LIBNAME)
 
 $(LIBNAME): $(OBJ)
-	link /MACHINE:X86 $(LDFLAGS) /OUT:lib-x32/$(LIBNAME) /DLL $(OBJ)
+	mkdir -p $(OUT_DIR_LIB)
+	link /MACHINE:X86 $(LDFLAGS) /OUT:$(OUT_DIR_LIB)/$(LIBNAME) /DLL $(OBJ)
 
-%.obj: %.cpp
+$(OUT_DIR_OBJ)/%.obj: src/%.cpp
+	mkdir -p $(dir $@)
 	cl $(CFLAGS) /c $(CPPFLAGS) $(INCLUDES) /Fo$@ $<
 
 .PHONY: all clean
 
 clean:
-	rm -rf build
-	rm -rf lib-x32
+	rm -rf $(OUT_DIR_OBJ)
+	rm -rf $(OUT_DIR_LIB)
