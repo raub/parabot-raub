@@ -1,19 +1,18 @@
-#if !defined(PB_NAVPOINT_H)
-#define PB_NAVPOINT_H
-
+#ifndef _PB_NAVPOINT_HPP_
+#define _PB_NAVPOINT_HPP_
 
 #include "extdll.h"
 
-#define NAV_W_CROSSBOW 1	
+#define NAV_W_CROSSBOW 1
 #define NAV_W_CROWBAR 2
 #define NAV_W_EGON 3
 #define NAV_W_GAUSS 4
 #define NAV_W_HANDGRENADE 5
 #define NAV_W_HORNETGUN 6
 #define NAV_W_MP5 7
-#define NAV_W_9MMAR 8	// ok
+#define NAV_W_9MMAR 8 // ok
 #define NAV_W_PYTHON 9
-#define NAV_W_357 10	// ok
+#define NAV_W_357 10 // ok
 #define NAV_W_RPG 11
 #define NAV_W_SATCHEL 12
 #define NAV_W_SHOTGUN 13
@@ -22,20 +21,20 @@
 #define NAV_W_GLOCK 16
 #define NAV_W_9MMHANDGUN 17
 
-#define NAV_A_CROSSBOW 20	// ok
+#define NAV_A_CROSSBOW 20 // ok
 #define NAV_A_CROSSBOW_BOLT 21
 #define NAV_A_EGONCLIP 22
-#define NAV_A_GAUSSCLIP 23	// ok
+#define NAV_A_GAUSSCLIP 23 // ok
 #define NAV_A_MP5CLIP 24
 #define NAV_A_MP5GRENADES 25
-#define NAV_A_9MMAR 26	// ok
+#define NAV_A_9MMAR 26 // ok
 #define NAV_A_9MMBOX 27
 #define NAV_A_9MMCLIP 28
-#define NAV_A_ARGRENADES 29	// ok
-#define NAV_A_357 30	// ok
-#define NAV_A_RPGCLIP 31	// ok
+#define NAV_A_ARGRENADES 29 // ok
+#define NAV_A_357 30 // ok
+#define NAV_A_RPGCLIP 31 // ok
 #define NAV_A_RPG_ROCKET 32
-#define NAV_A_BUCKSHOT 33	// ok
+#define NAV_A_BUCKSHOT 33 // ok
 #define NAV_A_GLOCKCLIP 34
 
 #define NAV_F_BUTTON 40
@@ -105,17 +104,17 @@
 #define NAV_HW_JUMPPAD_SIGN 143
 
 // DMC Navpoints
-#define NAV_DMCI_ARMOR1 150		// armor = 100
-#define NAV_DMCI_ARMOR2 151		// armor = 150
-#define NAV_DMCI_ARMOR3 152		// ???
-#define NAV_DMCI_ARMOR_INV 153		// armor = 200
-#define NAV_DMCI_ENVIROSUIT 154		// ???
+#define NAV_DMCI_ARMOR1 150 // armor = 100
+#define NAV_DMCI_ARMOR2 151 // armor = 150
+#define NAV_DMCI_ARMOR3 152 // ???
+#define NAV_DMCI_ARMOR_INV 153 // armor = 200
+#define NAV_DMCI_ENVIROSUIT 154 // ???
 #define NAV_DMCI_INVISIBILITY 155
 #define NAV_DMCI_INVULNERABILITY 156
 #define NAV_DMCI_SUPERDAMAGE 157
-#define NAV_DMCI_HEALTH_SMALL 159		// +15 health
-#define NAV_DMCI_HEALTH_NORM 160		// +25 health
-#define NAV_DMCI_HEALTH_LARGE 161		// ++100 health
+#define NAV_DMCI_HEALTH_SMALL 159 // +15 health
+#define NAV_DMCI_HEALTH_NORM 160 // +25 health
+#define NAV_DMCI_HEALTH_LARGE 161 // ++100 health
 #define NAV_DMCI_CELLS 162
 #define NAV_DMCI_ROCKETS 163
 #define NAV_DMCI_SHELLS 164
@@ -177,24 +176,18 @@
 #define NAV_AGI_FLAG_TEAM2 222
 #define NAV_AGI_DOM_CONTROLPOINT 223
 
-#define MAX_NAV_TYPES 224		// keep up to date!!!
+#define MAX_NAV_TYPES 224 // keep up to date!!!
 
 
-
-
-
-class PB_Navpoint
-{
-
-public:	
-
+class PB_Navpoint {
+public:
 	static char* classname(int code);
-	
 	void init(const Vector &pos, int type, int special);
 	void setId(int id) { data.privateId = id; }
-	void initEntityPtr();
+	
 	// gets a pointer to the corresponding t_edict if possible and stores it
-
+	void initEntityPtr();
+	
 	int id() { return data.privateId; }
 	int type() { return data.type; }
 	char* classname();
@@ -203,26 +196,26 @@ public:
 	
 	Vector pos() { return data.pos; }
 	Vector pos(edict_t *playerEnt);
-
+	
 	//bool offers(int classType);
 	// returns true if navpoint is of type or belongs to superclass type
-
-	bool doorOpen(edict_t *playerEnt);
+	
 	// call only for NAV_F_DOOR and NAV_F_DOOR_ROTATING
+	bool doorOpen(edict_t *playerEnt);
 	bool visible(edict_t *playerEnt);
 	bool reached(edict_t *playerEnt);
-
-	void reportVisit(edict_t *player, float time);
+	
 	// reports a visit to the navpoint
-	void doNotVisitBefore(edict_t *player, float time);
+	void reportVisit(edict_t *player, float time);
 	// tells that player should not visit this navpoint before time
-	float nextVisit(edict_t *player);
+	void doNotVisitBefore(edict_t *player, float time);
 	// returns the worldTime after which navpoint can be visited again
-
-	bool offersHealth(); 
-	bool offersArmor(); 
+	float nextVisit(edict_t *player);
+	
+	bool offersHealth();
+	bool offersArmor();
 	bool offersCamping() { return (data.type == NAV_S_CAMPING); }
-
+	
 	bool needsTriggering() { return needsTrigger; };
 	bool isTriggerFor(PB_Navpoint &wp);
 	bool isTriggered();
@@ -231,15 +224,12 @@ public:
 	void save(FILE *fp);
 	void print(); // debugMsg navName
 	void printPos(); // debugMsg navName
-
-
-	// operators for graph algorithms:
-	bool operator==(const PB_Navpoint& O) const  {  return data.privateId == O.data.privateId; }
-	 bool operator<(const PB_Navpoint& O) const	{  return data.privateId < O.data.privateId;  }
 	
-
+	// operators for graph algorithms:
+	bool operator==(const PB_Navpoint& O) const { return data.privateId == O.data.privateId; }
+	bool operator<(const PB_Navpoint& O) const { return data.privateId < O.data.privateId; }
+	
 private:
-
 	typedef struct {
 		int privateId;
 		int type; // type of navpoint
@@ -248,14 +238,13 @@ private:
 		int special; // e.g. viewangle for camping-spots
 		float damageComp; // ((damage done to others) - (own damage)) for camping-spots
 	} TSaveData;
-
+	
 	TSaveData data;
-	edict_t		*ent; // pointer to entity
+	edict_t *ent; // pointer to entity
 	float lastVisitedAt, nextVisitAt; // in worldtime
-	edict_t		*lastVisitor; // last player visiting this navpoint
+	edict_t *lastVisitor; // last player visiting this navpoint
 	bool needsTrigger;
 	int normalState;
 };
 
-
-#endif
+#endif // _PB_NAVPOINT_HPP_

@@ -1,22 +1,13 @@
-// Based on:
-//
-// HPB bot - botman's High Ping Bastard bot
-//
-// (http://planethalflife.com/botman/)
-//
-// engine.cpp
-//
-
 #include "extdll.h"
 #include "dllapi.h"
 #include "meta_api.h"
 #include "entity_state.h"
 #include "pb_global.h"
 #include "sounds.h"
-
 #include "bot.h"
 #include "bot_client.h"
 #include "engine.h"
+
 // HolyWars: gets modified in writeString
 bool haloOnBase = true;
 
@@ -30,8 +21,6 @@ extern bool g_meta_init;
 bool valveTeamPlayMode = false;
 char valveTeamList[MAX_TEAMS][32] = { "","","","","","","","","","","","","","","","" };
 int valveTeamNumber = 0;
-
-
 
 int debug_engine = 0;
 
@@ -57,244 +46,252 @@ static FILE *fp;
 
 void pfnChangeLevel(const char *s1, const char *s2) {
 #ifdef _DEBUG
-	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnChangeLevel:\n"); fclose(fp); }
+	if (debug_engine) {
+		fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnChangeLevel:\n"); fclose(fp);
+	}
 #endif
 	// kick any bot off of the server after time/frag limit...
-	for (int index = 0; index < 32; index++)
-	{
-		if (bots[index].is_used) // is this slot used?
-		{
+	for (int index = 0; index < 32; index++) {
+		if (bots[index].is_used) {// is this slot used?
 			char cmd[41];
-
 			sprintf_s(cmd, 40, "kick \"%s\"\n", bots[index].name);
-
 			bots[index].respawn_state = RESPAWN_NEED_TO_RESPAWN;
-		 bots[index].is_used = false;
-
+			bots[index].is_used = false;
+			
 			SERVER_COMMAND(cmd); // kick the bot using (kick "name")
+		}
 	}
-	}
-	if(!g_meta_init)
+	
+	if (!g_meta_init)
 		(*g_engfuncs.pfnChangeLevel)(s1, s2);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 
-void pfnMessageBegin(int msg_dest, int msg_type, const float *pOrigin, edict_t *ed) {
-	if (gpGlobals->deathmatch)
-	{
-		int index = -1;
-#ifdef _DEBUG
-		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnMessageBegin: edict=%p dest=%d type=%d\n",ed,msg_dest,msg_type); fclose(fp); }
-#endif
-	  if (msg_type == message_Death) {
-		  botMsgFunction = Client_Valve_DeathMsg;
-	  }
-
-		if (ed)
-		{
-		  
-			index = UTIL_GetBotIndex(ed);
-
-			// is this message for a bot?
-			if (index != -1)
-			{
-				botMsgFunction = NULL; // no msg function until known otherwise
-				botMsgIndex = index; // index of bot receiving message
-
-				switch(mod_id) {
-		case AG_DLL:
-		case VALVE_DLL:
-				if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_Valve_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_Valve_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_Valve_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_Valve_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_Valve_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_Valve_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_Valve_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_Valve_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_Valve_Damage;
-				break;
-				case HOLYWARS_DLL:
-				if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_Holywars_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_Holywars_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_Holywars_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_Holywars_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_Holywars_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_Holywars_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_Holywars_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_Holywars_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_Holywars_Damage;
-				break;
-				case DMC_DLL:
-				if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_DMC_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_DMC_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_DMC_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_DMC_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_DMC_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_DMC_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_DMC_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_DMC_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_DMC_Damage;
-				break;
-				case TFC_DLL:
-				if (msg_type == message_VGUI)
-					botMsgFunction = BotClient_TFC_VGUI;
-				else if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_TFC_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_TFC_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_TFC_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_TFC_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_TFC_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_TFC_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_TFC_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_TFC_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_TFC_Damage;
-				break;
-				case CSTRIKE_DLL:
-				if (msg_type == message_VGUI)
-					botMsgFunction = BotClient_CS_VGUI;
-				else if (msg_type == message_ShowMenu)
-					botMsgFunction = BotClient_CS_ShowMenu;
-				else if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_CS_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_CS_CurrentWeapon;
-				else if (msg_type == message_AmmoX) 
-					botMsgFunction = BotClient_CS_AmmoX;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_CS_WeaponPickup;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_CS_AmmoPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_CS_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_CS_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_CS_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_CS_Damage;
-				else if (msg_type == message_Money)
-					botMsgFunction = BotClient_CS_Money;
-				break;
-		case GEARBOX_DLL:
-				if (msg_type == message_VGUI)
-													 botMsgFunction = BotClient_Gearbox_VGUI;
-				else if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_Gearbox_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_Gearbox_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_Gearbox_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_Gearbox_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_Gearbox_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_Gearbox_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_Gearbox_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_Gearbox_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_Gearbox_Damage;
-				break;
-		case HUNGER_DLL:
-				if (msg_type == message_WeaponList)
-					botMsgFunction = BotClient_Hunger_WeaponList;
-				else if (msg_type == message_CurWeapon)
-					botMsgFunction = BotClient_Hunger_CurrentWeapon;
-				else if (msg_type == message_AmmoX)
-					botMsgFunction = BotClient_Hunger_AmmoX;
-				else if (msg_type == message_AmmoPickup)
-					botMsgFunction = BotClient_Hunger_AmmoPickup;
-				else if (msg_type == message_WeapPickup)
-					botMsgFunction = BotClient_Hunger_WeaponPickup;
-				else if (msg_type == message_ItemPickup)
-					botMsgFunction = BotClient_Hunger_ItemPickup;
-				else if (msg_type == message_Health)
-					botMsgFunction = BotClient_Hunger_Health;
-				else if (msg_type == message_Battery)
-					botMsgFunction = BotClient_Hunger_Battery;
-				else if (msg_type == message_Damage)
-					botMsgFunction = BotClient_Hunger_Damage;
-				break;
-	}
-	}
-		 else {	// message for a human client
-			if (msg_type == message_CurWeapon) {
-				 botMsgIndex = ENTINDEX(ed);
-				 botMsgFunction = HumanClient_CurrentWeapon;
-			 }
-		 }
-	}
-	}
-	if(!g_meta_init)
+static inline void pfnMessageBeginImpl(int msg_dest, int msg_type, const float *pOrigin, edict_t *ed) {
+	if (!g_meta_init)
 		(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ed);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
+void pfnMessageBegin(int msg_dest, int msg_type, const float *pOrigin, edict_t *ed) {
+	if (!gpGlobals->deathmatch) {
+		return pfnMessageBeginImpl(msg_dest, msg_type, pOrigin, ed);
+	}
+	
+	int index = -1;
+#ifdef _DEBUG
+	if (debug_engine) {
+		fp = UTIL_OpenDebugLog();
+		fprintf(fp,"pfnMessageBegin: edict=%p dest=%d type=%d\n", ed, msg_dest, msg_type);
+		fclose(fp);
+	}
+#endif
+	if (msg_type == message_Death) {
+		botMsgFunction = Client_Valve_DeathMsg;
+	}
+	
+	if (!ed) {
+		return pfnMessageBeginImpl(msg_dest, msg_type, pOrigin, ed);
+	}
+
+	index = UTIL_GetBotIndex(ed);
+	
+	// is this message not for a bot?
+	if (index == -1) {
+		if (msg_type == message_CurWeapon) {
+			botMsgIndex = ENTINDEX(ed);
+			botMsgFunction = HumanClient_CurrentWeapon;
+		}
+		return pfnMessageBeginImpl(msg_dest, msg_type, pOrigin, ed);
+	}
+
+	botMsgFunction = NULL; // no msg function until known otherwise
+	botMsgIndex = index; // index of bot receiving message
+	
+	switch(mod_id) {
+	case AG_DLL:
+	case VALVE_DLL:
+		if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_Valve_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_Valve_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_Valve_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_Valve_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_Valve_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_Valve_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_Valve_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_Valve_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_Valve_Damage;
+		break;
+	case HOLYWARS_DLL:
+		if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_Holywars_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_Holywars_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_Holywars_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_Holywars_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_Holywars_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_Holywars_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_Holywars_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_Holywars_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_Holywars_Damage;
+		break;
+	case DMC_DLL:
+		if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_DMC_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_DMC_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_DMC_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_DMC_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_DMC_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_DMC_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_DMC_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_DMC_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_DMC_Damage;
+		break;
+	case TFC_DLL:
+		if (msg_type == message_VGUI)
+			botMsgFunction = BotClient_TFC_VGUI;
+		else if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_TFC_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_TFC_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_TFC_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_TFC_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_TFC_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_TFC_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_TFC_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_TFC_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_TFC_Damage;
+		break;
+	case CSTRIKE_DLL:
+		if (msg_type == message_VGUI)
+			botMsgFunction = BotClient_CS_VGUI;
+		else if (msg_type == message_ShowMenu)
+			botMsgFunction = BotClient_CS_ShowMenu;
+		else if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_CS_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_CS_CurrentWeapon;
+		else if (msg_type == message_AmmoX) 
+			botMsgFunction = BotClient_CS_AmmoX;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_CS_WeaponPickup;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_CS_AmmoPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_CS_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_CS_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_CS_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_CS_Damage;
+		else if (msg_type == message_Money)
+			botMsgFunction = BotClient_CS_Money;
+		break;
+	case GEARBOX_DLL:
+		if (msg_type == message_VGUI)
+												botMsgFunction = BotClient_Gearbox_VGUI;
+		else if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_Gearbox_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_Gearbox_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_Gearbox_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_Gearbox_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_Gearbox_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_Gearbox_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_Gearbox_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_Gearbox_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_Gearbox_Damage;
+		break;
+	case HUNGER_DLL:
+		if (msg_type == message_WeaponList)
+			botMsgFunction = BotClient_Hunger_WeaponList;
+		else if (msg_type == message_CurWeapon)
+			botMsgFunction = BotClient_Hunger_CurrentWeapon;
+		else if (msg_type == message_AmmoX)
+			botMsgFunction = BotClient_Hunger_AmmoX;
+		else if (msg_type == message_AmmoPickup)
+			botMsgFunction = BotClient_Hunger_AmmoPickup;
+		else if (msg_type == message_WeapPickup)
+			botMsgFunction = BotClient_Hunger_WeaponPickup;
+		else if (msg_type == message_ItemPickup)
+			botMsgFunction = BotClient_Hunger_ItemPickup;
+		else if (msg_type == message_Health)
+			botMsgFunction = BotClient_Hunger_Health;
+		else if (msg_type == message_Battery)
+			botMsgFunction = BotClient_Hunger_Battery;
+		else if (msg_type == message_Damage)
+			botMsgFunction = BotClient_Hunger_Damage;
+		break;
+	}
+	
+	pfnMessageBeginImpl(msg_dest, msg_type, pOrigin, ed);
+}
+
 int pfnRegUserMsg(const char *pszName, int iSize) {
 	int msg = (*g_engfuncs.pfnRegUserMsg)(pszName, iSize);
 	
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 		//fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnRegUserMsg: pszName=%s msg=%d\n",pszName,msg); fclose(fp);
-				
-			 if (strcmp(pszName, "WeaponList"	) == 0)	message_WeaponList = msg;
-		else if (strcmp(pszName, "CurWeapon"	) == 0)	message_CurWeapon = msg;
-		else if (strcmp(pszName, "AmmoX"		) == 0)	message_AmmoX = msg;
-		else if (strcmp(pszName, "AmmoPickup" ) == 0)	message_AmmoPickup = msg;
-		else if (strcmp(pszName, "WeapPickup" ) == 0)	message_WeapPickup = msg;
-		else if (strcmp(pszName, "ItemPickup" ) == 0)	message_ItemPickup = msg;
-		else if (strcmp(pszName, "Health"	  ) == 0)	message_Health = msg;
-		else if (strcmp(pszName, "Battery"	 ) == 0)	message_Battery = msg;
-		else if (strcmp(pszName, "Damage"	  ) == 0)	message_Damage = msg;
-		else if (strcmp(pszName, "DeathMsg"	) == 0)	message_Death = msg;
+		
+		if (strcmp(pszName, "WeaponList") == 0) message_WeaponList = msg;
+		else if (strcmp(pszName, "CurWeapon") == 0) message_CurWeapon = msg;
+		else if (strcmp(pszName, "AmmoX") == 0) message_AmmoX = msg;
+		else if (strcmp(pszName, "AmmoPickup") == 0) message_AmmoPickup = msg;
+		else if (strcmp(pszName, "WeapPickup") == 0) message_WeapPickup = msg;
+		else if (strcmp(pszName, "ItemPickup") == 0) message_ItemPickup = msg;
+		else if (strcmp(pszName, "Health") == 0) message_Health = msg;
+		else if (strcmp(pszName, "Battery") == 0) message_Battery = msg;
+		else if (strcmp(pszName, "Damage") == 0) message_Damage = msg;
+		else if (strcmp(pszName, "DeathMsg") == 0) message_Death = msg;
 		// TFC / CS
-		else if (strcmp(pszName, "VGUIMenu"		) == 0) message_VGUI = msg;
-		// CS only			
-		else if (strcmp(pszName, "ShowMenu"		) == 0) message_ShowMenu = msg;
-		else if (strcmp(pszName, "Money"		) == 0) message_Money = msg;					
+		else if (strcmp(pszName, "VGUIMenu") == 0) message_VGUI = msg;
+		// CS only
+		else if (strcmp(pszName, "ShowMenu") == 0) message_ShowMenu = msg;
+		else if (strcmp(pszName, "Money") == 0) message_Money = msg;					
 	}
-	if(!g_meta_init)
+	
+	if (!g_meta_init)
 		return msg;
 	else
 		RETURN_META_VALUE(MRES_SUPERCEDE, msg);
@@ -302,25 +299,22 @@ int pfnRegUserMsg(const char *pszName, int iSize) {
 
 
 void pfnMessageEnd(void) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
-		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnMessageEnd:\n"); fclose(fp); }
+		if (debug_engine) {
+			fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnMessageEnd:\n"); fclose(fp);
+		}
 #endif
 		// clear out the bot message function pointer...
 		botMsgFunction = NULL;
 	}
-	if(!g_meta_init)
+	
+	if (!g_meta_init)
 		(*g_engfuncs.pfnMessageEnd)();
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-//
-//  FORWARD ENGINE FUNCTIONS...
-//
-///////////////////////////////////////////////////////////////////////////////////
 int pfnPrecacheModel(const char *s) {
 #ifdef _DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnPrecacheModel: %s\n",s); fclose(fp); }
@@ -422,7 +416,7 @@ edict_t* pfnFindEntityByString(edict_t *pEdictStartSearchAfter, const char *pszF
 		//debugMsg("NEW CS-ROUND!\n");
 		roundStartTime = worldTime() + CVAR_GET_FLOAT("mp_freezetime"); // 5 seconds until round starts
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		return (*g_engfuncs.pfnFindEntityByString)(pEdictStartSearchAfter, pszField, pszValue);
 	else
 		RETURN_META_VALUE(MRES_IGNORED, 0);
@@ -481,8 +475,7 @@ edict_t* pfnCreateEntity(void) {
 void pfnRemoveEntity(edict_t* e) {
 #ifdef _DEBUG
 //	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnRemoveEntity: %p\n",e); fclose(fp); }
-	if (debug_engine)
-	{
+	if (debug_engine) {
 		fp = UTIL_OpenDebugLog();
 		fprintf(fp,"pfnRemoveEntity: %p\n",e);
 		if (e->v.model != 0)
@@ -541,7 +534,7 @@ void pfnEmitSound(edict_t *entity, int channel, const char *sample, /*int*/float
 #ifdef _DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnEmitSound:\n"); fclose(fp); }
 #endif
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnEmitSound)(entity, channel, sample, volume, attenuation, fFlags, pitch);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -552,7 +545,7 @@ void pfnEmitAmbientSound(edict_t *entity, float *pos, const char *samp, float vo
 #ifdef _DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnEmitAmbientSound:\n"); fclose(fp); }
 #endif
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnEmitAmbientSound)(entity, pos, samp, vol, attenuation, fFlags, pitch);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -621,11 +614,11 @@ void pfnServerCommand(const char* str) {
 #ifdef _DEBUG
 	 if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnServerCommand: %s\n",str); fclose(fp); }
 #endif
-/*	 if (FStrEq(str, "addbot")) {	// we've got this is DSaddbot
+/*	 if (FStrEq(str, "addbot")) { // we've got this is DSaddbot
 		BotCreate();
 		return;
 	}*/
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnServerCommand)(str);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -642,21 +635,17 @@ void pfnClientCommand(edict_t* pEdict, const char* szFmt, ...) {
 #ifdef _DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnClientCommand=%s\n",szFmt); fclose(fp); }
 #endif
-	if(!g_meta_init)
-	{
-		if (!(pEdict->v.flags & FL_FAKECLIENT))
-		{
+	if (!g_meta_init) {
+		if (!(pEdict->v.flags & FL_FAKECLIENT)) {
 			char tempFmt[256];
 			va_list argp;
 			va_start(argp, szFmt);
 			vsprintf(tempFmt, szFmt, argp);
 			(*g_engfuncs.pfnClientCommand)(pEdict, tempFmt);
 			va_end(argp);
-	}
+		}
 		return;
-	}
-	else
-	{
+	} else {
 		if (!(pEdict->v.flags & FL_FAKECLIENT))
 			RETURN_META(MRES_IGNORED);
 		RETURN_META(MRES_SUPERCEDE);
@@ -692,8 +681,7 @@ int pfnPointContents(const float *rgflVector) {
 }
 
 void pfnWriteByte(int iValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteByte: %d\n",iValue); fclose(fp); }
 #endif
@@ -701,7 +689,7 @@ void pfnWriteByte(int iValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&iValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteByte)(iValue);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -709,8 +697,7 @@ void pfnWriteByte(int iValue) {
 }
 
 void pfnWriteChar(int iValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteChar: %d\n",iValue); fclose(fp); }
 #endif
@@ -718,15 +705,14 @@ void pfnWriteChar(int iValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&iValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteChar)(iValue);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteShort(int iValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"prnWriteShort: %d\n",iValue); fclose(fp); }
 #endif
@@ -734,15 +720,14 @@ void pfnWriteShort(int iValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&iValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteShort)(iValue);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteLong(int iValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteLong: %d\n",iValue); fclose(fp); }
 #endif
@@ -750,15 +735,14 @@ void pfnWriteLong(int iValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&iValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteLong)(iValue);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteAngle(float flValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteAngle: %f\n",flValue); fclose(fp); }
 #endif
@@ -766,15 +750,14 @@ void pfnWriteAngle(float flValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&flValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteAngle)(flValue);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteCoord(float flValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteCoord: %f\n",flValue); fclose(fp); }
 #endif
@@ -782,50 +765,51 @@ void pfnWriteCoord(float flValue) {
 		if (botMsgFunction)
 			(*botMsgFunction)((void *)&flValue, botMsgIndex);
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteCoord)(flValue);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteString(const char *sz) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 		if (mod_id == HOLYWARS_DLL) {
 			if (strncmp(sz, "The halo disappeared", 10)==0) {
 				//debugMsg("HALO ON BASE!\n");
 				haloOnBase = true;
-	}
+			}
 			else if (strncmp(sz, "We've got a new saint", 3)==0) {
 				//debugMsg("HALO NOT ON BASE!\n");
 				haloOnBase = false;
-	}
-	}
+			}
+		}
 		//debugMsg("MSG: ", sz, "\n");
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteString: %s\n",sz); fclose(fp); }
 #endif
 		// if this message is for a bot, call the client message function...
-		if (botMsgFunction)
+		if (botMsgFunction) {
 			(*botMsgFunction)((void *)sz, botMsgIndex);
+		}
 	}
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteString)(sz);
 	else
 		RETURN_META(MRES_IGNORED);
 }
 
 void pfnWriteEntity(int iValue) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnWriteEntity: %d\n",iValue); fclose(fp); }
 #endif
 		// if this message is for a bot, call the client message function...
-		if (botMsgFunction)
+		if (botMsgFunction) {
 			(*botMsgFunction)((void *)&iValue, botMsgIndex);
+		}
 	}
-	if(!g_meta_init)
+	
+	if (!g_meta_init)
 		(*g_engfuncs.pfnWriteEntity)(iValue);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -1161,29 +1145,31 @@ void pfnSetKeyValue(const char *infobuffer, const char *key, const char *value) 
 }
 
 void pfnSetClientKeyValue(int clientIndex, const char *infobuffer, const char *key, const char *value) {
-	if ((mod_id == VALVE_DLL || mod_id == DMC_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) && (strcmp(key, "team") == 0)) {	// init teamlist
+	if (
+		(mod_id == VALVE_DLL || mod_id == DMC_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) &&
+		strcmp(key, "team") == 0
+	) { // init teamlist
 		valveTeamPlayMode = true;
-
+		
 		bool teamKnown = false;
-		for (int team=0; team<valveTeamNumber; team++) 
+		for (int team=0; team < valveTeamNumber; team++) {
 			if (strcmp(value, valveTeamList[team]) == 0) {
 				teamKnown = true;
 				break;
-	}
-		if (!teamKnown && valveTeamNumber<MAX_TEAMS) {
+			}
+		}
+		if (!teamKnown && valveTeamNumber < MAX_TEAMS) {
 			strcpy(valveTeamList[valveTeamNumber], value);
 			debugMsg("Registered team ", value, "\n");
 			valveTeamNumber++;
-	}
-	}
-	else if(mod_id == AG_DLL)
-	{
+		}
+	} else if (mod_id == AG_DLL) {
 		valveTeamPlayMode = true;
 	}
 #ifdef _DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnSetClientKeyValue: %s %s\n",key,value); fclose(fp); }
 #endif
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*g_engfuncs.pfnSetClientKeyValue)(clientIndex, infobuffer, key, value);
 	else
 		RETURN_META(MRES_IGNORED);
@@ -1211,8 +1197,7 @@ int pfnPrecacheGeneric(const char* s) {
 }
 
 int pfnGetPlayerUserId(edict_t *e) {
-	if (gpGlobals->deathmatch)
-	{
+	if (gpGlobals->deathmatch) {
 #ifdef _DEBUG
 		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"pfnGetPlayerUserId: %p\n",e); fclose(fp); }
 #endif
@@ -1262,10 +1247,10 @@ void pfnInfo_RemoveKey(const char *s, const char *key) {
 const char *pfnGetPhysicsKeyValue(const edict_t *pClient, const char *key) {
 	const char *res = (*g_engfuncs.pfnGetPhysicsKeyValue)(pClient, key);
 #ifdef _DEBUG
-	if (debug_engine) { 
-		fp = UTIL_OpenDebugLog(); 
-		fprintf(fp,"pfnGetPhysicsKeyValue: key=%s, result=%s\n", key, res); 
-		fclose(fp); 
+	if (debug_engine) {
+		fp = UTIL_OpenDebugLog();
+		fprintf(fp,"pfnGetPhysicsKeyValue: key=%s, result=%s\n", key, res);
+		fclose(fp);
 	}
 #endif
 	//int ir = (int) res[0];
@@ -1297,10 +1282,10 @@ unsigned short pfnPrecacheEvent(int type, const char *psz) {
 void pfnPlaybackEvent(int flags, const edict_t *pInvoker, unsigned short eventindex, float delay,
 	float *origin, float *angles, float fparam1,float fparam2, int iparam1, int iparam2, int bparam1, int bparam2) {
 #ifdef _DEBUG
-	if (debug_engine) { 
-		fp = UTIL_OpenDebugLog(); 
-		fprintf(fp,"pfnPlaybackEvent(flags=%i,index=%i, delay=%.2f)\n", flags, eventindex, delay); 
-		fclose(fp); 
+	if (debug_engine) {
+		fp = UTIL_OpenDebugLog();
+		fprintf(fp,"pfnPlaybackEvent(flags=%i,index=%i, delay=%.2f)\n", flags, eventindex, delay);
+		fclose(fp);
 	}
 #endif
 	(*g_engfuncs.pfnPlaybackEvent)(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2);
@@ -1447,7 +1432,6 @@ extern "C" int EXPORT GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int
 	pengfuncsFromEngine->pfnWriteString = pfnWriteString;
 	pengfuncsFromEngine->pfnWriteEntity = pfnWriteEntity;
 	pengfuncsFromEngine->pfnSetClientKeyValue = pfnSetClientKeyValue;
-
+	
 	return TRUE;
 }
-

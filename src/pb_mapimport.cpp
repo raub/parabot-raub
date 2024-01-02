@@ -13,28 +13,27 @@ extern char mod_name[32];
 char actualMapname[100] = "";
 
 
-
 void saveLevelData() {
 	char fileName[100];
-
+	
 	// Directory exists?
 	strcpy(fileName, mod_name);
 	strcat(fileName, "/addons/parabot/navpoints/");
 	CreateDirectory(fileName, NULL);
-
+	
 	strcat(fileName, actualMapname);
 	strcat(fileName, ".pnf");
 	infoMsg("\nSaving level data to ", fileName, "\n");
 	mapGraph.save(fileName);
-
+	
 	fileName[strlen(fileName) - 4] = '\0'; // cut file extention
 	strcat(fileName, ".pcf");
 	infoMsg("\nSaving cell data to ", fileName, "\n");
 	map.save(fileName);
+	
 	return;
 }
 
-	
 
 void importNav(int code) {
 	CBaseEntity *pOther = NULL;
@@ -42,7 +41,7 @@ void importNav(int code) {
 	Vector pos;
 	
 	char *classname = PB_Navpoint::classname(code); 
-
+	
 	while ((pOther = UTIL_FindEntityByClassname (pOther, classname)) != NULL) {
 		pos = (pOther->pev->absmax + pOther->pev->absmin) * 0.5;
 		n.init(pos, code, 0);
@@ -57,9 +56,11 @@ void importNav(int code, const char *modelName) {
 	Vector pos;
 	
 	char *classname = PB_Navpoint::classname(code); 
-
+	
 	while ((pOther = UTIL_FindEntityByClassname (pOther, classname)) != NULL) {
-		if (!FStrEq(STRING(pOther->pev->model), modelName)) continue;
+		if (!FStrEq(STRING(pOther->pev->model), modelName)) {
+			continue;
+		}
 		pos = (pOther->pev->absmax + pOther->pev->absmin) * 0.5;
 		n.init(pos, code, 0);
 		mapGraph.addNavpoint(n);
@@ -90,10 +91,10 @@ void importHL_Specifics() {
 	importNav(NAV_A_CROSSBOW);
 	importNav(NAV_A_CROSSBOW_BOLT);
 	importNav(NAV_A_EGONCLIP);
-	importNav(NAV_A_GAUSSCLIP	);
+	importNav(NAV_A_GAUSSCLIP);
 	importNav(NAV_A_MP5CLIP);
 	importNav(NAV_A_MP5GRENADES);
-	importNav(NAV_A_9MMAR	);
+	importNav(NAV_A_9MMAR);
 	importNav(NAV_A_9MMBOX);
 	importNav(NAV_A_9MMCLIP);
 	importNav(NAV_A_ARGRENADES);
@@ -101,7 +102,7 @@ void importHL_Specifics() {
 	importNav(NAV_A_RPGCLIP);
 	importNav(NAV_A_RPG_ROCKET);
 	importNav(NAV_A_BUCKSHOT);
-	importNav(NAV_A_GLOCKCLIP	);
+	importNav(NAV_A_GLOCKCLIP);
 	// import funcs	
 	importNav(NAV_F_TANK);
 	importNav(NAV_F_TANKCONTROLS);
@@ -146,18 +147,18 @@ void importHW_Specifics() {
 	importNav(NAV_F_HEALTHCHARGER);
 	importNav(NAV_I_HEALTHKIT);
 	importNav(NAV_I_BATTERY);
-
+	
 	importNav(NAV_HWW_DOUBLESHOTGUN);
 	importNav(NAV_HWW_JACKHAMMER);
 	importNav(NAV_HWW_RAILGUN);
 	importNav(NAV_HWW_MACHINEGUN);
 	importNav(NAV_HWW_ROCKETLAUNCHER);
-
+	
 	importNav(NAV_HWA_DOUBLESHOTGUN);
 	importNav(NAV_HWA_RAILGUN);
 	importNav(NAV_HWA_MACHINEGUN);
 	importNav(NAV_HWA_ROCKETLAUNCHER);
-
+	
 	importNav(NAV_HW_HALOBASE);
 	importNav(NAV_HW_JUMPPAD_TARGET);
 //	importNav(NAV_HW_TRIG_JUMPPAD);
@@ -240,10 +241,13 @@ void importHunger_Specifics() {
 bool loadLevelData() {
 	char fileName[100];
 	
-	if (strcmp(STRING(gpGlobals->mapname), actualMapname)==0) return true;
-
-	if (strcmp(actualMapname, "") != 0 && 
-		 mapGraph.numberOfNavpoints() > 0	) saveLevelData();
+	if (strcmp(STRING(gpGlobals->mapname), actualMapname)==0) {
+		return true;
+	}
+	
+	if (strcmp(actualMapname, "") != 0 && mapGraph.numberOfNavpoints() > 0) {
+		saveLevelData();
+	}
 	
 	mapGraph.clear();
 	map.clear();
@@ -254,41 +258,41 @@ bool loadLevelData() {
 	strcat(fileName, ".pnf");
 	if (!mapGraph.load(fileName)) {
 		infoMsg("Importing level data...\n");
-			
-	// import funcs
-		importNav(NAV_F_BUTTON	);
-		importNav(NAV_F_ROT_BUTTON	);
+		
+		// import funcs
+		importNav(NAV_F_BUTTON);
+		importNav(NAV_F_ROT_BUTTON);
 		importNav(NAV_F_DOOR);
 		importNav(NAV_F_DOOR_ROTATING);
 		importNav(NAV_F_PLAT);
 		importNav(NAV_F_PLATROT);
 		importNav(NAV_F_TRAIN);
 		importNav(NAV_F_BREAKABLE);
-
-	// import player-start
+		
+		// import player-start
 		importNav( NAV_INFO_PLAYER_DM);
-
-	// teleport
+		
+		// teleport
 		importNav( NAV_INFO_TELEPORT_DEST);
 		importNav( NAV_TRIG_TELEPORT);
 		
-	// import ladders
+		// import ladders
 		CBaseEntity *pOther = NULL;
 		PB_Navpoint n;
 		Vector posUp, posDown;
-	
+		
 		while ((pOther = UTIL_FindEntityByClassname (pOther, "func_ladder")) != NULL) {
 			posUp = (pOther->pev->absmax + pOther->pev->absmin) * 0.5;
 			posUp.z = pOther->pev->absmax.z;
 			posDown = posUp;
 			posDown.z = pOther->pev->absmin.z;
-		/*	Vector dir = pOther->v.absmax - pOther->v.absmin;
+			/* Vector dir = pOther->v.absmax - pOther->v.absmin;
 			dir.z = 0;
 			dir = CrossProduct(dir, Vector(0,0,1));
 			dir = 30 * dir.Normalize();
 			TraceResult tr;
 			UTIL_TraceLine(posUp, posDown + dir, ignore_monsters, NULL, &tr);
-			if (tr.flFraction<1.0) posDown = posDown - dir;
+			if (tr.flFraction < 1.0) posDown = posDown - dir;
 			else posDown = posDown + dir; */
 			posUp.z += 36;
 			posDown.z += 36;
@@ -296,36 +300,57 @@ bool loadLevelData() {
 			mapGraph.addNavpoint(n);
 			n.init(posDown, NAV_F_LADDER_BOTTOM, 0);
 			mapGraph.addNavpoint(n);
-	}
-
+		}
+		
 		// import MOD-specifics
 		switch(mod_id) {
-		case AG_DLL:		importAG_Specifics();break;
-		case HUNGER_DLL:	importHunger_Specifics();break;
-		case VALVE_DLL:		importHL_Specifics();break;
-		case CSTRIKE_DLL:	importCS_Specifics();break;
-		case TFC_DLL:		importTFC_Specifics();break;
-		case HOLYWARS_DLL:	importHW_Specifics();break;
-		case DMC_DLL:		importDMC_Specififcs();break;
-		case GEARBOX_DLL:	importGearbox_Specifics();break;
-		default:			errorMsg("Unsupported MOD in pb_mapimport.cpp!\n");
-	}
+		case AG_DLL:
+			importAG_Specifics();
+			break;
+		case HUNGER_DLL:
+			importHunger_Specifics();
+			break;
+		case VALVE_DLL:
+			importHL_Specifics();
+			break;
+		case CSTRIKE_DLL:
+			importCS_Specifics();
+			break;
+		case TFC_DLL:
+			importTFC_Specifics();
+			break;
+		case HOLYWARS_DLL:
+			importHW_Specifics();
+			break;
+		case DMC_DLL:
+			importDMC_Specififcs();
+			break;
+		case GEARBOX_DLL:
+			importGearbox_Specifics();
+			break;
+		default:
+			errorMsg("Unsupported MOD in pb_mapimport.cpp!\n");
+			break;
+		}
 		
 		// import specials
 		if ((mod_id == VALVE_DLL || mod_id == AG_DLL) && strcmp(STRING(gpGlobals->mapname), "crossfire")==0) {
 			Vector v(0,-2236,-1852);
 			n.init(v, NAV_S_AIRSTRIKE_BUTTON, 0);
 			mapGraph.addNavpoint(n);
-	}
-	}
-	else {
+		}
+	} else {
 		fileName[strlen(fileName) - 4] = '\0'; // cut file extention
 		strcat(fileName, ".pcf");
 		map.load(fileName);
 		infoMsg("Loaded level data.\n");
 	}
-	if (mapGraph.numberOfNavpoints() > 0) return true;
-	else return false;
+	
+	if (mapGraph.numberOfNavpoints() > 0) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 

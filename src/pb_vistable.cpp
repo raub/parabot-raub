@@ -37,7 +37,7 @@ void PB_VisTable::clear() {
 
 
 int *PB_VisTable::getMem(int numBits) {
-	int numInts = ((numBits-1) >> 5) + 1;
+	int numInts = ((numBits - 1) >> 5) + 1;
 	return reinterpret_cast<int*>(calloc(numInts, sizeof(int)));
 }
 

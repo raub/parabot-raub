@@ -5,16 +5,17 @@
 extern int mod_id;
 extern char mod_name[32];
 
+
 PB_Configuration::PB_Configuration() {
 	// number of bots
 	myNumBots = 5;
 	myMinBots = 4;
 	myMaxBots = 6;
-
+	
 	// skills
 	minAimSkill = 1;
 	maxAimSkill = 10;
-
+	
 	// chat
 	botChat = true;
 	strcpy(chatFileName, "ChatEnglish.txt");
@@ -26,116 +27,130 @@ PB_Configuration::PB_Configuration() {
 	restrictedWeaponMode = false;
 	serverMode = false;
 	myStayTime = 20.0 * 60;
-
+	
 	// personalities:
 	maxPers = 0;
 }
 
 
-PB_Personality PB_Configuration::personality(int index) { 
-/*	char dbgBuffer[256];
+PB_Personality PB_Configuration::personality(int index) {
+	/* char dbgBuffer[256];
 	sprintf(dbgBuffer, "  %i: %s  ", index, character[index].name);
-	debugFile(dbgBuffer);*/
-	return character[index]; 
+	debugFile(dbgBuffer); */
+	return character[index];
 }
 
 
 int PB_Configuration::clampInt(const char *str, int min, int max) {
 	int val = atoi(str);
-	if (val<min) val=min;
-	else if (val>max) val=max;
+	
+	if (val < min) {
+		val = min;
+	} else if (val > max) {
+		val = max;
+	}
+	
 	return val;
 }
 
 
 bool PB_Configuration::varSet(const char *srcName, FILE *file, const char *varName, bool &var) {
 	char buffer[1024];
-
+	
 	if (_stricmp(srcName, varName) == 0) {
 		fscanf(file, " = %s ", buffer);
-		if (_stricmp(buffer, "ON") == 0) var = true;
-		else if (_stricmp(buffer, "OFF") == 0) var = false;
+		
+		if (_stricmp(buffer, "ON") == 0) {
+			var = true;
+		} else if (_stricmp(buffer, "OFF") == 0) {
+			var = false;
+		}
+		
 		return true;
+	} else {
+		return false;
 	}
-	else return false;
 }
 
 
 bool PB_Configuration::varSet(const char *srcName, const char *srcValue, const char *varName, bool &var) {
-	if (_stricmp(srcName, varName) == 0) {
-		if (srcValue == 0) {
-			if (var) infoMsg(varName, " is on.\n");
-			else infoMsg(varName, " is off.\n");
+	if (_stricmp(srcName, varName)) {
+		return false;
 	}
-		else {
-			if (_stricmp(srcValue, "ON") == 0) {
-				var = true;
-				infoMsg(varName, " activated.\n");
+	
+	if (srcValue == 0) {
+		if (var) infoMsg(varName, " is on.\n");
+		else infoMsg(varName, " is off.\n");
+	} else {
+		if (_stricmp(srcValue, "ON") == 0) {
+			var = true;
+			infoMsg(varName, " activated.\n");
+		} else if (_stricmp(srcValue, "OFF") == 0) {
+			var = false;
+			infoMsg(varName, " deactivated.\n");
+		} else {
+			infoMsg("Usage: ", varName, " on/off\n"	);
+		}
 	}
-			else if (_stricmp(srcValue, "OFF") == 0) {
-				var = false;
-				infoMsg(varName, " deactivated.\n");
-	}
-			else {
-				infoMsg("Usage: ", varName, " on/off\n"	);
-	}
-	}
-		return true;
-	}
-	else return false;
+	return true;
 }
 
 
 bool PB_Configuration::varSet(const char *srcName, int srcValue, const char *varName, int &var) {
 	char buffer[64];
-	if (_stricmp(srcName, varName) == 0) {
-		var = srcValue;
-		sprintf(buffer, "%s set to %i\n", varName, srcValue);
-		infoMsg(buffer);
-		return true;
+	if (_stricmp(srcName, varName)) {
+		return false;
 	}
-	else return false;
+	
+	var = srcValue;
+	sprintf(buffer, "%s set to %i\n", varName, srcValue);
+	infoMsg(buffer);
+	return true;
 }
 
 
 bool PB_Configuration::setBoolVar(const char *name, const char *value) {
-	if (!varSet(name, value, "BotChat", botChat					)) 
-	if (!varSet(name, value, "AlwaysRespond", chatAlwaysRespond		))
-	if (!varSet(name, value, "ChatLog", chatLog					))
-	if (!varSet(name, value, "PeaceMode", peaceMode				))
-	if (!varSet(name, value, "RestrictedWeapons", restrictedWeaponMode	))
-	if (!varSet(name, value, "HideWelcome", touringMode				))
-	if (!varSet(name, value, "ServerMode", serverMode				))
-		return false;
-	return true;
+	return (
+		varSet(name, value, "BotChat", botChat) ||
+		varSet(name, value, "AlwaysRespond", chatAlwaysRespond) ||
+		varSet(name, value, "ChatLog", chatLog) ||
+		varSet(name, value, "PeaceMode", peaceMode) ||
+		varSet(name, value, "RestrictedWeapons", restrictedWeaponMode) ||
+		varSet(name, value, "HideWelcome", touringMode) ||
+		varSet(name, value, "ServerMode", serverMode)
+	);
 }
 
 
 bool PB_Configuration::setIntVar(const char *name, int value, int min, int max) {
-	if (value < min) value = min;
-	if (value > max) value = max;
-
-	if (!varSet(name, value, "MinBots", myMinBots	)) 
-	if (!varSet(name, value, "MaxBots", myMaxBots	)) 
-	if (!varSet(name, value, "NumBots", myNumBots	)) 
-//	if (!varSet(name, value, "StayTime", myStayTime	)) 
-	if (!varSet(name, value, "MinAimSkill", minAimSkill	)) 
-	if (!varSet(name, value, "MaxAimSkill", maxAimSkill	)) 
-		return false;
-	return true;
+	if (value < min) {
+		value = min;
+	}
+	if (value > max) {
+		value = max;
+	}
+	
+	return (
+		varSet(name, value, "MinBots", myMinBots) ||
+		varSet(name, value, "MaxBots", myMaxBots) ||
+		varSet(name, value, "NumBots", myNumBots) ||
+//		varSet(name, value, "StayTime", myStayTime) ||
+		varSet(name, value, "MinAimSkill", minAimSkill) ||
+		varSet(name, value, "MaxAimSkill", maxAimSkill)
+	);
 }
 
 bool PB_Configuration::initConfiguration(const char *configPath) {
 	char str[256];
 	strcpy(str, configPath);
 	strcat(str, "parabot.cfg");
-
+	
 	FILE *file = fopen(str, "rt");
 	if (!file) {
 		infoMsg("Missing ", str, "\n");
-
+		
 		CreateDirectory(configPath, NULL);
-		if(!createConfiguration(str))
+		if (!createConfiguration(str))
 			return false;
 		file = fopen(str, "rt");
 	}
@@ -143,50 +158,44 @@ bool PB_Configuration::initConfiguration(const char *configPath) {
 	
 	while (!feof(file)) {
 		fscanf(file, "%1s", str); // read first char
-		if (feof(file)) break;
-
-		while (str[0]=='#') {				// Comments:
-			fscanf(file, "%[^\n]", str); //	read entire line
-			fscanf(file, "%1s", str); //	read first char
-	}
+		if (feof(file)) {
+			break;
+		}
+		
+		while (str[0]=='#') { // Comments:
+			fscanf(file, "%[^\n]", str); // read entire line
+			fscanf(file, "%1s", str); // read first char
+		}
+		
 		if (!feof(file)) {
-			
 			fseek(file, -1, SEEK_CUR); // reset filepointer
 			fscanf(file, "%[a-zA-Z]", str);// now we've got a complete word
 			
 			if (_stricmp(str, "NumBots") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read number of bots
 				myNumBots = clampInt(str, 0, 32);
-	}
-			else if (_stricmp(str, "MinBots") == 0) {
+			} else if (_stricmp(str, "MinBots") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read min. number of bots
 				myMinBots = clampInt(str, 0, 32);
-	}
-			else if (_stricmp(str, "MaxBots") == 0) {
+			} else if (_stricmp(str, "MaxBots") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read max. number of bots
 				myMaxBots = clampInt(str, myMinBots, 32);
-	}
-			else if (_stricmp(str, "AverageStay") == 0) {
+			} else if (_stricmp(str, "AverageStay") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read staytime
 				myStayTime = 60.0 * (float)clampInt(str, 2, 180);
-	}
-			else if (_stricmp(str, "MinAimSkill") == 0) {
+			} else if (_stricmp(str, "MinAimSkill") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read min aim skill
 				minAimSkill = clampInt(str, 1, 10);
-	}
-			else if (_stricmp(str, "MaxAimSkill") == 0) {
+			} else if (_stricmp(str, "MaxAimSkill") == 0) {
 				fscanf(file, " = %[0-9] ", str); // read max aim skill
 				maxAimSkill = clampInt(str, minAimSkill, 10);
-	}
-			else if (_stricmp(str, "ChatFile") == 0) {
+			} else if (_stricmp(str, "ChatFile") == 0) {
 				fscanf(file, " = \"%[^\"]\" ", str); // read chat file
 				strcpy(chatFileName, str);
-	}
-			else if (_stricmp(str, "MenuKey") == 0) {
+			} else if (_stricmp(str, "MenuKey") == 0) {
 				fscanf(file, " = \"%[^\"]\" ", str); // read menu key
 				strcpy(menuKey, str);
-	}
-			else {
+			} else {
 				// simple on/off switches:
 				if (!varSet(str, file, "BotChat", botChat					))
 				if (!varSet(str, file, "AlwaysRespond", chatAlwaysRespond		))
@@ -197,12 +206,14 @@ bool PB_Configuration::initConfiguration(const char *configPath) {
 				if (!varSet(str, file, "ServerMode", serverMode				)) {
 					debugMsg("Unknown variable ", str, "\n");
 					fscanf(file, "%[^\n]", str); //	ignore entire line
+				}
+			}
+		}
 	}
-	}
-	}
-	}
+	
 	fclose(	file);
 	infoMsg("OK!\n");
+	
 	return true;
 }
 
@@ -210,32 +221,34 @@ bool PB_Configuration::initPersonalities(const char *personalityPath) {
 	char str[256];
 	strcpy(str, personalityPath);
 	strcat(str, "characters.cfg");
-
+	
 	FILE *file = fopen(str, "rt");
 	if (!file) {
 		infoMsg("Missing ", str, "\n");
-
-		if(!createPersonalities(str))
+		
+		if (!createPersonalities(str)) {
 			return false;
+		}
 		file = fopen(str, "rt");
 	}
 	infoMsg("Reading ", str, "... ");
-
+	
 	int nr = 0;
 	while (!feof(file)) {
 		fscanf(file, "%1s", str); // supposed name start '"'
-		if (feof(file)) break;
-
-		while (str[0]=='#') {							// Comments
+		if (feof(file)) {
+			break;
+		}
+		
+		while (str[0]=='#') { // Comments
 			fscanf(file, "%[^\n]", str); // read entire line
 			fscanf(file, "%1s", str); // supposed name start '"'
-	}
+		}
+		
 		if (!feof(file)) {
-			
 			fscanf(file, "%[^\"]\"", character[nr].name); // read entire name
-						
 			fscanf(file, " \"%[^\"]\" ", character[nr].model); // read entire model
-						
+			
 			fscanf(file, "%s", str); // aim skill
 			character[nr].aimSkill = clampInt(str, 1, 10);
 			
@@ -244,29 +257,34 @@ bool PB_Configuration::initPersonalities(const char *personalityPath) {
 			
 			fscanf(file, "%s", str); // sensitivity
 			character[nr].sensitivity = clampInt(str, 1, 10);
-
+			
 			fscanf(file, "%s", str); // communication
 			character[nr].communication = clampInt(str, 1, 10);
 			
 			nr++;
-			if (nr == MAX_PERS) break;
+			if (nr == MAX_PERS) {
+				break;
+			}
+		}
 	}
-	}
+	
 	maxPers = nr;
 	fclose(	file);
-	for (nr=0; nr<MAX_PERS; nr++) character[nr].inUse = false;
+	for (nr=0; nr < MAX_PERS; nr++) {
+		character[nr].inUse = false;
+	}
+	
 	infoMsg("OK!\n");
 	return true;
 }
 
 bool PB_Configuration::createConfiguration(const char *configFile) {
 	FILE *file;
-
+	
 	infoMsg("Creating ", configFile, "... ");
 	file = fopen(configFile, "wt");
-
-	if(!file)
-	{
+	
+	if (!file) {
 		infoMsg("failed!\n");
 		return false;
 	}
@@ -320,25 +338,22 @@ bool PB_Configuration::createConfiguration(const char *configFile) {
 	fprintf(file, "# If enabled bots will always respond to things you say, never mind their comm-value.\n\n");
 	fprintf(file, "AlwaysRespond = On\n\n");
 	fprintf(file, "#-------------------------------------------------------------------------------------------");
-
+	
 	fclose(file);
-
+	
 	infoMsg("OK!\n");
 	return true;
 }
 
 bool PB_Configuration::createPersonalities(const char *PersonalitityFile) {
-	FILE *file;
-
 	infoMsg("Creating ", PersonalitityFile, "... ");
-	file = fopen(PersonalitityFile, "wt");
-
-	if(!file)
-	{
+	FILE *file = fopen(PersonalitityFile, "wt");
+	
+	if (!file) {
 		infoMsg("failed!\n");
 		return false;
 	}
-
+	
 	fprintf(file, "############################################################################################\n");
 	fprintf(file, "#											  CHARACTERS.CFG													  #\n");
 	fprintf(file, "#																														#\n");
@@ -362,8 +377,7 @@ bool PB_Configuration::createPersonalities(const char *PersonalitityFile) {
 	fprintf(file, "# Botname\t\tBotmodel\t\tAiming\tAggres.\tSensing\tChat\n");
 	fprintf(file, "# -----------------------------------------------------------------------------\n");
 
-	switch(mod_id)
-	{
+	switch(mod_id) {
 		case GEARBOX_DLL:
 			fprintf(file, "\"Adrian Shepard\"\t\"shepard\"\t\t9\t8\t8\t6\n");
 			fprintf(file, "\"Otis Laurey\"\t\t\"otis\"\t\t\t6\t3\t5\t8\n");
@@ -444,9 +458,8 @@ bool PB_Configuration::createPersonalities(const char *PersonalitityFile) {
 			fprintf(file, "\"Renaissance\"\t\t\"patient\"\t\t4\t1\t8\t10\n");
 			break;
 	}
-
-	switch(mod_id)
-	{
+	
+	switch(mod_id) {
 		case AG_DLL:
 			fprintf(file, "\"Red Byte\"\t\t\"red\"\t\t\t8\t8\t8\t8\n");
 			fprintf(file, "\"Blue Byte\"\t\t\"blue\"\t\t\t8\t8\t8\t8\n");
@@ -454,8 +467,9 @@ bool PB_Configuration::createPersonalities(const char *PersonalitityFile) {
 		default:
 			break;
 	}
+	
 	fclose(file);
-
+	
 	infoMsg("OK!\n");
 	return true;
 }
@@ -464,9 +478,13 @@ char* PB_Configuration::getColor(int persNr, int modulo) {
 	static char color[4];
 	int code = 0;
 	int nameLen = strlen(character[persNr].name);
-	for (int i = 0; i < nameLen; i++) 
+	
+	for (int i = 0; i < nameLen; i++) {
 		code += ((int)character[persNr].name[i] * (729 + i)) % modulo;
+	}
+	
 	code = (code % 255) + 1;
 	sprintf(color, "%i", code);
+	
 	return color;
 }

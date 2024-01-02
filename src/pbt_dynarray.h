@@ -28,13 +28,13 @@ private:
 };
 
 
-template <class T> 
+template <class T>
 PBT_DynArray<T>::PBT_DynArray(int maxCapacity, int bankCapacity) {
 	numBanks = 0;
 	capacity = 0;
 	numElements = 0;
 	bankSize = bankCapacity;
-	maxBanks = ((maxCapacity-1) / bankSize) + 1;
+	maxBanks = ((maxCapacity - 1) / bankSize) + 1;
 	typedef T* TA;
 	bank = new TA[maxBanks];
 }

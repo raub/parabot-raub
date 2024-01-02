@@ -1,26 +1,21 @@
-// Extended:
-//
-// HPB bot - botman's High Ping Bastard bot
-//
-// (http://planethalflife.com/botman/)
-//
-// linkfunc.cpp
-//
 #include "extdll.h"
 #include "bot.h"
 
 extern HINSTANCE h_Library;
 
-#define LINK_ENTITY_TO_FUNC(mapClassName) \
-	extern "C" EXPORT void mapClassName(entvars_t *pev); \
-	void mapClassName(entvars_t *pev) \
-	{ \
-		static LINK_ENTITY_FUNC otherClassName = NULL; \
-		static int skip_this = 0; \
-		if (skip_this) return; \
-		if (!otherClassName) otherClassName = (LINK_ENTITY_FUNC)GetProcAddress(h_Library, #mapClassName); \
-		if (!otherClassName) {  skip_this = 1;	return;  } \
-		(*otherClassName)(pev); \
+#define LINK_ENTITY_TO_FUNC(mapClassName)                            \
+	extern "C" EXPORT void mapClassName(entvars_t *pev);             \
+	void mapClassName(entvars_t *pev) {                              \
+		static LINK_ENTITY_FUNC otherClassName = NULL;               \
+		static int skip_this = 0;                                    \
+		if (skip_this) return;                                       \
+		if (!otherClassName) {                                       \
+			otherClassName = reinterpret_cast<LINK_ENTITY_FUNC>(     \
+				GetProcAddress(h_Library, #mapClassName)             \
+			);                                                       \
+		}                                                            \
+		if (!otherClassName) {  skip_this = 1;	return;  }           \
+		(*otherClassName)(pev);                                      \
 	}
 
 // entities for Valve's hl.dll and Standard SDK...

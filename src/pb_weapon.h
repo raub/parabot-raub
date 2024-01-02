@@ -238,7 +238,7 @@ public:
 	float getAudibleDistance(int attackFlags);
 	// returns the audible distance
 	
-	bool attack(Vector target, float accuracy, Vector relVel = Vector(0,0,0));
+	bool attack(Vector target, float accuracy, Vector relVel = Vector(0, 0, 0));
 	// attacks in best mode at best time the given position when accuracy is reached
 	
 	bool hasToFinishAttack() { return grenadePrepared; }
@@ -285,15 +285,16 @@ private:
 	int armedWeapon; // weapon the player has armed
 	
 	int botSlot; // slot the bot is using
-	edict_t		*botEnt;
-	PB_Action	*botAction; // pointer to action-instace the bot is using
+	edict_t *botEnt;
+	PB_Action *botAction; // pointer to action-instace the bot is using
 	
 	float nextAttackTime; // worldTime next attack can occur
 	float lastAttackTime; // worldTime last attack was executed
 	bool reloading; // true if current weapon is being reloaded
-
-	int bestMode[MAX_WEAPONS]; // if weapons have several modes, the best get
-								// stored here in getWeaponScore()
+	
+	// if weapons have several modes, the best get
+	// stored here in getWeaponScore()
+	int bestMode[MAX_WEAPONS]; 
 	
 	tWeaponRec *modWeapon; // pointer to the correct mod-weapons
 	int minModWeapon, maxModWeapon;

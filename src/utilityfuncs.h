@@ -1,9 +1,7 @@
-#ifndef UTILITY_FUNCS_H
-#define UTILITY_FUNCS_H
-
+#ifndef _UTILITY_FUNCS_HPP_
+#define _UTILITY_FUNCS_HPP_
 
 #include "extdll.h"
-
 
 
 Vector getRight(const Vector &vec);
@@ -29,4 +27,4 @@ bool isInvisible(edict_t *ent);
 bool isInvulnerable(edict_t *ent);
 
 
-#endif
+#endif /* _UTILITY_FUNCS_HPP_ */

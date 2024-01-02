@@ -1,15 +1,10 @@
+#ifndef _PB_GOALS_HPP_
+#define _PB_GOALS_HPP_
+
 class CParabot;
 class PB_Percept;
 
-
-
 void goalDoNothing(CParabot *pb, PB_Percept*item);
-
-
-
-//***************************************************************************
-//							COMBAT GOALS
-//***************************************************************************
 
 // hunt enemy that is trackable but currently not seen
 void goalHuntEnemy(CParabot *pb, PB_Percept*item);
@@ -52,12 +47,6 @@ float weightShootAtSnark(CParabot *pb, PB_Percept*item);
 void goalArmBestWeapon(CParabot *pb, PB_Percept*item);
 float weightArmBestWeapon(CParabot *pb, PB_Percept*item);
 
-
-
-//***************************************************************************
-//							COLLECT GOALS
-//***************************************************************************
-
 // chose route to collect static items
 void goalCollectItems(CParabot *pb, PB_Percept*item);
 float weightCollectItems(CParabot *pb, PB_Percept*item);
@@ -66,12 +55,6 @@ float weightCollectItems(CParabot *pb, PB_Percept*item);
 void goalGetItem(CParabot *pb, PB_Percept*item);
 float weightGetWeaponbox(CParabot *pb, PB_Percept*item);
 float weightGetHalo(CParabot *pb, PB_Percept*item);
-
-
-
-//***************************************************************************
-//							MISC MOVE GOALS
-//***************************************************************************
 
 // evade an item
 void goalGetAway(CParabot *pb, PB_Percept*item);
@@ -87,12 +70,6 @@ float weightWaitForHalo(CParabot *pb, PB_Percept*item);
 void goalPause(CParabot *pb, PB_Percept*item);
 float weightPause(CParabot *pb, PB_Percept*item);
 
-
-
-//***************************************************************************
-//							LOOK GOALS
-//***************************************************************************
-
 // look around to discover enemy
 void goalLookAround(CParabot *pb, PB_Percept*item);
 float weightLookAroundLaserdot(CParabot *pb, PB_Percept*item);
@@ -107,12 +84,6 @@ float weightLookAtNewArea(CParabot *pb, PB_Percept*item);
 // look closer at unidentified player
 void goalReactToUnidentified(CParabot *pb, PB_Percept*item);
 float weightReactToUnidentified(CParabot *pb, PB_Percept*item);
-
-
-
-//***************************************************************************
-//							TACTICAL GOALS
-//***************************************************************************
 
 // go sniping
 void goalCamp(CParabot *pb, PB_Percept*item);
@@ -130,12 +101,6 @@ float weightLayTripmine(CParabot *pb, PB_Percept*item);
 void goalLoadHealthOrArmor(CParabot *pb, PB_Percept*item);
 float weightLoadHealthOrArmor(CParabot *pb, PB_Percept*item);
 
-
-
-//***************************************************************************
-//							TEAM GOALS
-//***************************************************************************
-
 // make room for a team-mamber to pass
 void goalMakeRoom(CParabot *pb, PB_Percept*item);
 float weightMakeRoom(CParabot *pb, PB_Percept*item);
@@ -148,3 +113,5 @@ float weightFollowEnemy(CParabot *pb, PB_Percept*item);
 // assist team-member in combat
 void goalAssistFire(CParabot *pb, PB_Percept*item);
 float weightAssistFire(CParabot *pb, PB_Percept*item);
+
+#endif // _PB_GOALS_HPP_

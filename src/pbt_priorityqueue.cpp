@@ -1,8 +1,7 @@
 #include <float.h>
 #include <stdio.h>
+
 #include "pbt_priorityqueue.h"
-
-
 
 
 PBT_PriorityQueue::PBT_PriorityQueue() {
@@ -34,25 +33,23 @@ short PBT_PriorityQueue::getFirst() {
 			if (heap[hPos] == EMPTY_KEY) {
 				freePos[numFree++] = (short)hPos;
 				break;
-	}
-			else if (l >= ((MAX_QUEUE_ELEMENTS-1)/2)) {
+			}
+			else if (l >= ((MAX_QUEUE_ELEMENTS - 1)/2)) {
 				heap[l] = EMPTY_KEY;
 				freePos[numFree++] = (short)l;
 				break;
-	}
+			}
 			hPos=l;
-	}
-		else {
+		} else {
 			heap[hPos] = heap[r];
 			if (heap[hPos] == EMPTY_KEY) {
 				freePos[numFree++] = (short)hPos;
 				break;
-	}
-			else if (r >= ((MAX_QUEUE_ELEMENTS-1)/2)) {
+			} else if (r >= ((MAX_QUEUE_ELEMENTS - 1)/2)) {
 				heap[r] = EMPTY_KEY;
 				freePos[numFree++] = (short)r;
 				break;
-	}
+			}
 			hPos=r;
 	}
 	} while (0 == 0);
@@ -69,17 +66,17 @@ void PBT_PriorityQueue::addOrUpdate(short index, float newWeight, float newValue
 
 	if (hPos == NOT_IN_HEAP) {
 		// find position in heap too store new node
-		if (numFree>0) hPos = freePos[--numFree];
+		if (numFree > 0) hPos = freePos[--numFree];
 		else {
 			hPos = numElements;
-			if (hPos < ((MAX_QUEUE_ELEMENTS-1)/2)) {
+			if (hPos < ((MAX_QUEUE_ELEMENTS - 1)/2)) {
 				// set empty keys:
 				int l = hPos + hPos + 1;
 				int r = l + 1;
 				heap[l] = EMPTY_KEY;
 				heap[r] = EMPTY_KEY;
-	}
-	}
+			}
+		}
 		weight[index] = FLT_MAX;
 		numElements++;
 	}
@@ -87,12 +84,12 @@ void PBT_PriorityQueue::addOrUpdate(short index, float newWeight, float newValue
 	if (newWeight < weight[index]) {
 		// update weight
 		short pre;
-		while ((hPos > 0) && (newWeight < weight[heap[(pre=(hPos-1)/2)]])) {
+		while ((hPos > 0) && (newWeight < weight[heap[(pre=(hPos - 1)/2)]])) {
 			// swap indices
 			heap[hPos] = heap[pre];
 			heapPos[heap[pre]] = hPos;
 			hPos = pre;
-	}
+		}
 		heap[hPos] = index;
 		weight[index] = newWeight;
 		value[index] = newValue;

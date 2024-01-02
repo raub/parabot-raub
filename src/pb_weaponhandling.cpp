@@ -71,11 +71,10 @@ void PB_WeaponHandling::init(int slot, edict_t *ent, PB_Action *action) {
 
 void PB_WeaponHandling::initCurrentWeapon() {
 	int cwId = bots[botSlot].current_weapon.iId;
-	if(cwId >= minModWeapon && cwId < maxModWeapon) {
+	if (cwId >= minModWeapon && cwId < maxModWeapon) {
 		armedWeapon = cwId;
 		weapon.registerArmedWeapon(armedWeapon);
-	}
-	else {
+	} else {
 		// strange values in weapon_id, check model:
 		if (botEnt->v.weaponmodel != 0) {
 			debugMsg("CWBug");
@@ -195,7 +194,7 @@ int PB_WeaponHandling::getBestWeapon(float distance, float hitProb, int flags) {
 	float score, bestScore = -10;
 	int bestWeapon = defaultWeapon;
 	
-	for (int wId=minModWeapon; wId<maxModWeapon; wId++) {
+	for (int wId=minModWeapon; wId < maxModWeapon; wId++) {
 		if (available(wId)) {
 			weapon.setCurrentWeapon(wId);
 			score = weapon.getScore(distance, hitProb, flags, true);
@@ -234,7 +233,7 @@ void PB_WeaponHandling::switchToWeapon(int wId) {
 		cmd.impulse = 0; // Impulse command issued.
 		cmd.weaponselect = wId + 1; // Current weapon id (WEAPON SLOT!)
 		
-		if(!g_meta_init) {
+		if (!g_meta_init) {
 			CmdStart(botEnt, &cmd, 0);
 			CmdEnd(botEnt);
 		} else {
@@ -278,7 +277,7 @@ bool PB_WeaponHandling::armBestWeapon(float distance, float hitProb, int flags) 
 	
 	int bestMode = weapon.bestAttackMode();
 	
-	if (mod_id == VALVE_DLL || mod_id == AG_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) {	// switch to correct weapon-mode
+	if (mod_id == VALVE_DLL || mod_id == AG_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) { // switch to correct weapon-mode
 		if (bestWeapon == VALVE_WEAPON_CROSSBOW || bestWeapon == VALVE_WEAPON_PYTHON) {	
 			if (
 				bestMode == 1 && botEnt->v.fov!=90 && 
@@ -300,14 +299,14 @@ bool PB_WeaponHandling::armBestWeapon(float distance, float hitProb, int flags) 
 			CBaseEntity *pent = NULL;
 			bool spotActive = false;
 			while((pent = UTIL_FindEntityInSphere(pent, botEnt->v.origin, MAX_DIST_VP))) {
-				if(!strcmp(STRING(pent->pev->classname), "laser_spot")) {
-					if(laserdotOwner(pent->edict()) == botEnt) {
+				if (!strcmp(STRING(pent->pev->classname), "laser_spot")) {
+					if (laserdotOwner(pent->edict()) == botEnt) {
 						spotActive = true;
 						break;
 					}
 				}
 			}
-			if(bestMode == 1 && !spotActive && 
+			if (bestMode == 1 && !spotActive && 
 				(lastModeSwitch + 0.5)<worldTime()) {
 				botAction->add(BOT_FIRE_SEC);
 				lastModeSwitch = worldTime();

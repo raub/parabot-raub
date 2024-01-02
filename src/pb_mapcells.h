@@ -1,5 +1,5 @@
-#if !defined(PB_MapCells_H)
-#define PB_MapCells_H
+#ifndef _PB_MAPCELLS_HPP_
+#define _PB_MAPCELLS_HPP_
 
 #include "pb_cell.h"
 #include "pb_vistable.h"
@@ -12,13 +12,12 @@
 #define NO_CELL_FOUND -1 // returned by getCellId() when no cell is found
 
 
-class PBT_FoundCell
-{
+class PBT_FoundCell {
 public:
 	PBT_FoundCell() {}
-	PBT_FoundCell(float d, short i) {  dist=d; index=i;  }
-	bool operator==(const PBT_FoundCell& O) const {  return dist == O.dist; }
-	bool operator<(const PBT_FoundCell& O) const {  return dist < O.dist; }
+	PBT_FoundCell(float d, short i) { dist=d; index=i; }
+	bool operator==(const PBT_FoundCell& O) const { return dist == O.dist; }
+	bool operator<(const PBT_FoundCell& O) const { return dist < O.dist; }
 	
 	float dist;
 	short index;
@@ -30,10 +29,10 @@ public:
 	PB_MapCells();
 	~PB_MapCells();
 	
-	PB_Cell& cell(int index) {  return cellArray[index];  }
+	PB_Cell& cell(int index) { return cellArray[index]; }
 	
 	int getCellId(const Vector &pos, float maxDist=CELL_SIZE);
-	int getCellId(edict_t *pEdict) {  return getCellId(PB_Cell::makePos(pEdict));  }
+	int getCellId(edict_t *pEdict) { return getCellId(PB_Cell::makePos(pEdict)); }
 	
 	// returns index of newCell:
 	int addCell(PB_Cell newCell, bool initNbs, int addedFrom=NO_CELL_FOUND);
@@ -41,7 +40,7 @@ public:
 	int initNeighbours(int cellIndex, int firstNb );
 	int numberOfCells() { return numCells; }
 	
-	bool lineOfSight(int cell1, int cell2) {  return vis.isVisible(cell1, cell2);  }
+	bool lineOfSight(int cell1, int cell2) { return vis.isVisible(cell1, cell2); }
 	int updateVisibility(int maxUpdates);
 	int lastVisUpdate();
 	
@@ -58,22 +57,21 @@ public:
 	bool load(char *mapname);
 	bool save(char *mapname);
 	void clear();
-
+	
 private:
 	PBT_DynArray<PB_Cell> cellArray;
-
+	
 	short cellHash[4096];
 	int numCells;
-		
+	
 	PBT_FoundCell cellFound[256]; // holds all WPs found by getCellId()
 	int numCellsFound; // number of elements in cellSearch
 	int lastCellFound; // last passed element
-
+	
 	PB_VisTable vis;
-
+	
 	int getHashcode(const Vector &pos);
 	Vector getAllignedPos(const Vector &pos);
 };
 
-
-#endif
+#endif // _PB_MAPCELLS_HPP_

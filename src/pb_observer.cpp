@@ -126,7 +126,7 @@ void PB_Observer::registerClients() {
 	edict_t *player;
 
 	//debugMsg("PB_Observer::registerClients()\n");
-	 for (int i=1; i<=gpGlobals->maxClients; i++)
+	 for (int i = 1; i <= gpGlobals->maxClients; i++)
 	 {
 		player = INDEXENT(i);
 		if (!playerExists(player)) continue;
@@ -160,11 +160,11 @@ int PB_Observer::checkGround(int oId, edict_t **plat)
 			{
 				// try to find the corresponding navpoint for this groundentity:
 				int sId = obs[oId].lastPlatId;
-				if (sId >= 0) {	// have we got the right one?
+				if (sId >= 0) { // have we got the right one?
 					if (getNavpoint(sId).entity() != ground) sId = -1;
 	}
 				if (sId < 0) sId = getNavpointIndex(ground);
-				if (sId<0) {
+				if (sId < 0) {
 					debugMsg("ERROR: Couldn't find navpoint for func ", STRING(ground->v.classname), " !\n");
 	}
 				else {
@@ -182,7 +182,7 @@ int PB_Observer::checkGround(int oId, edict_t **plat)
 						flags |= WP_PLAT_NEEDS_TRIGGER;
 						debugSound(ENT(obs[oId].player->pev), "weapons/mine_activate.wav");
 						debugMsg("Plat needs triggering by ");
-						for (int ni=0; ni < mapGraph.numberOfNavpoints(); ni++) {
+						for (int ni = 0; ni < mapGraph.numberOfNavpoints(); ni++) {
 							PB_Navpoint t = getNavpoint(ni);
 							if (t.isTriggerFor(platNav)) {
 								t.print();
@@ -203,11 +203,11 @@ int PB_Observer::checkGround(int oId, edict_t **plat)
 			if (obs[oId].platform) {	
 				// try to find the corresponding navpoint for this platform:
 				int sId = obs[oId].lastPlatId;
-				if (sId >= 0) {	// have we got the right one?
+				if (sId >= 0) { // have we got the right one?
 					if (getNavpoint(sId).entity() != obs[oId].platform) sId = -1;
 	}
 				if (sId < 0) sId = getNavpointIndex(obs[oId].platform);
-				if (sId<0) {
+				if (sId < 0) {
 					debugMsg("ERROR: Couldn't find navpoint for func ", STRING(obs[oId].platform->v.classname), " !\n");
 	}
 				else {
@@ -245,16 +245,16 @@ bool PB_Observer::shouldObservePlayer(int oId)
 		return false;
 	}
 
-	if (obs[oId].active) {	// check if observation has to stop...
+	if (obs[oId].active) { // check if observation has to stop...
 		assert (obs[oId].player != 0);
 		if ((obs[oId].player->pev->health < 1)		|| 
 			 (obs[oId].player->pev->solid == SOLID_NOT)) 
-		{	// ...yes -> mark inactive
+		{ // ...yes -> mark inactive
 			//debugMsg("Stopping observation\n");
 			obs[oId].active = false;
 	}
 	}
-	else if (obs[oId].player !=0) {	// check if observation has to continue...
+	else if (obs[oId].player !=0) { // check if observation has to continue...
 		if ((obs[oId].player->pev->health >= 1)	&& 
 			 (obs[oId].player->pev->solid != SOLID_NOT)) 
 		{
@@ -295,7 +295,7 @@ int PB_Observer::getStartIndex(int oId, PB_Navpoint *endNav) {
 				//PB_Navpoint *plat = &(mapGraph[platInfo[oId][currentIndex].data.navId].first);
 				PB_Navpoint *plat = &(getNavpoint(platInfo[oId][currentIndex].data.navId));
 				bool platRegistered = false;
-				for (int i=(triggerCount-1); i>=0; i--) if (trigger[i]==plat) {
+				for (int i=(triggerCount - 1); i >= 0; i--) if (trigger[i]==plat) {
 					platRegistered = true;  break;
 	}
 				if (!platRegistered) {
@@ -304,7 +304,7 @@ int PB_Observer::getStartIndex(int oId, PB_Navpoint *endNav) {
 					triggerCount++;
 	}
 	}
-			currentIndex--;  if (currentIndex<0) currentIndex = MAX_WPTS-1;
+			currentIndex--;  if (currentIndex < 0) currentIndex = MAX_WPTS - 1;
 	}
 		if (waypoint[oId][currentIndex].isNavpoint()) {
 			PB_Navpoint *currentNav = mapGraph.getNearestNavpoint(waypoint[oId][currentIndex].data.pos);
@@ -317,7 +317,7 @@ int PB_Observer::getStartIndex(int oId, PB_Navpoint *endNav) {
 				foundIndex = currentIndex;
 	}
 			else if (currentIndex != lastIndex) {
-				currentIndex--;  if (currentIndex<0) currentIndex = MAX_WPTS-1;
+				currentIndex--;  if (currentIndex < 0) currentIndex = MAX_WPTS - 1;
 	}
 	}
 		/*if (dbgCnt2 == 1000 || dbgCnt1 == 999) {
@@ -350,7 +350,7 @@ void PB_Observer::newNavpointReached(int oId, Vector &pos, PB_Navpoint *endNav) 
 	if (!FBitSet(obs[oId].player->pev->flags, FL_FAKECLIENT)) {
 		// search beginning of path
 		int startIndex = getStartIndex(oId, endNav);
-		if (startIndex != -1) {	// beginning of this path was recorded
+		if (startIndex != -1) { // beginning of this path was recorded
 			int pathMode = PATH_NORMAL;
 			PB_Navpoint *startNav = mapGraph.getNearestNavpoint(waypoint[oId][startIndex].data.pos);
 			newPath.startRecord(startNav->id(), waypoint[oId][startIndex].data.arrival);
@@ -454,7 +454,7 @@ void PB_Observer::checkForUse(int oId, Vector &pos) {
 			PB_Navpoint *nearestButton;
 			if (navType == NAV_F_BUTTON) nearestButton = mapGraph.getNearestNavpoint(pos, NAV_F_BUTTON);
 			else nearestButton = mapGraph.getNearestNavpoint(pos, NAV_F_ROT_BUTTON);
-			if (nearestButton) {	// TODO: check if looking at button!!!
+			if (nearestButton) { // TODO: check if looking at button!!!
 				Vector usedItemPos = nearestButton->pos();
 				addWaypoint(oId, usedItemPos, BOT_USE);
 	}
@@ -467,10 +467,10 @@ void PB_Observer::checkForUse(int oId, Vector &pos) {
 void PB_Observer::checkForMove(int oId, Vector &pos) {
 	// sharp turn means >90 degrees yaw change and moved >10 units:
 	bool sharpTurn = ((std::abs(UTIL_AngleDiff(obs[oId].lastWpYaw, obs[oId].player->pev->v_angle.y)) > 90) &&
-					 (pos-obs[oId].lastWpPos).Length() > 10);
+					 (pos - obs[oId].lastWpPos).Length() > 10);
 
-	if (((pos-obs[oId].lastWpPos).Length() > MIN_WAYPOINT_DIST) || sharpTurn)
-	{	// distance reached or angle too big
+	if (((pos - obs[oId].lastWpPos).Length() > MIN_WAYPOINT_DIST) || sharpTurn)
+	{ // distance reached or angle too big
 		//debugMsg("x");
 		if (FBitSet(obs[oId].player->pev->flags, FL_ONGROUND) // on ground
 			|| (obs[oId].player->pev->waterlevel > 0) // or in water
@@ -492,9 +492,9 @@ void PB_Observer::checkForCamping(int oId, Vector &pos) {
 				PB_Navpoint *nearestCamp = mapGraph.getNearestNavpoint(pos, NAV_S_CAMPING);
 				PB_Navpoint *nearestTank = mapGraph.getNearestNavpoint(pos, NAV_F_TANKCONTROLS);
 				// check if we know the location:
-				if((nearestCamp && ((nearestCamp->pos()-pos).Length() < 128)) ||
+				if ((nearestCamp && ((nearestCamp->pos()-pos).Length() < 128)) ||
 					(nearestTank && ((nearestTank->pos()-pos).Length() < 128))) 
-				{	// ...yes -> let bots camp longer here!
+				{ // ...yes -> let bots camp longer here!
 					bot_t *bot = UTIL_GetBotPointer(ENT(obs[oId].player->pev));
 					if (bot) bot->parabot->campTime = 0;
 	}
@@ -530,7 +530,7 @@ void PB_Observer::checkForTripmines(int oId, Vector &pos)
 			 (playerWeapon == VALVE_WEAPON_TRIPMINE)) ||
 			(g_hldm_mod == BMOD &&(obs[oId].player->pev->button & IN_ATTACK2) &&
 								 (playerWeapon == VALVE_WEAPON_TRIPMINE || playerWeapon == VALVE_WEAPON_SNARK)))
-		{	// player is trying set up a tripmine, check if possible:
+		{ // player is trying set up a tripmine, check if possible:
 			UTIL_MakeVectors(obs[oId].player->pev->v_angle);
 			TraceResult tr;
 			Vector startTrace = pos + obs[oId].player->pev->view_ofs;
@@ -568,13 +568,13 @@ void PB_Observer::checkForButtonShot(int oId, Vector &pos)
 
 		if ((obs[oId].player->pev->button & IN_ATTACK) && 
 			 (playerWeapon!=DMC_WEAPON_CROWBAR)				) 
-		{	// player is shooting at something, check at what:
+		{ // player is shooting at something, check at what:
 			UTIL_MakeVectors(obs[oId].player->pev->v_angle);
 			TraceResult tr;
 			Vector startTrace = pos + obs[oId].player->pev->view_ofs;
 			Vector endTrace = startTrace + 1024 * gpGlobals->v_forward;
 			UTIL_TraceLine(startTrace, endTrace, dont_ignore_monsters, ENT(obs[oId].player->pev), &tr);
-			if (tr.flFraction<1.0 && tr.pHit!=0) {
+			if (tr.flFraction < 1.0 && tr.pHit!=0) {
 				const char *hitClass = STRING(tr.pHit->v.classname);
 				if (strcmp(hitClass, "func_button") == 0 &&
 					 tr.pHit->v.health > 0						)
@@ -668,7 +668,7 @@ void PB_Observer::updateCellInfo(int i) {
 
 			// set new viewdir for bots:
 			int bNr = UTIL_GetBotIndex(obsEdict);
-			if (bNr>=0) {
+			if (bNr >= 0) {
 				Vector moveDir = bots[bNr].parabot->action.getMoveDir();
 				float fd1 = (map.cell(obs[i].currentCell).focus.cellsForDir(Vector(1,0,0)) +
 							  3*map.cell(obs[i].currentCell).kills.forDir(Vector(1,0,0))	 )
@@ -684,19 +684,19 @@ void PB_Observer::updateCellInfo(int i) {
 					* (1.5 - moveDir.y);
 				
 				Vector bp = obsEdict->v.origin;
-				if (fd1>fd2 && fd1>fd3 && fd1>fd4) {
+				if (fd1 > fd2 && fd1 > fd3 && fd1 > fd4) {
 					bots[bNr].parabot->senses.addNewArea(Vector(1000, 0, 0));
 					//debugMsg("  VD=1  ");
 	}
-				else if (fd2>fd1 && fd2>fd3 && fd2>fd4) {
+				else if (fd2 > fd1 && fd2 > fd3 && fd2 > fd4) {
 					bots[bNr].parabot->senses.addNewArea(Vector(0, 1000, 0));
 					//debugMsg("  VD=2  ");
 	}
-				else if (fd3>fd1 && fd3>fd2 && fd3>fd4) {
+				else if (fd3 > fd1 && fd3 > fd2 && fd3 > fd4) {
 					bots[bNr].parabot->senses.addNewArea(Vector(-1000, 0, 0));
 					//debugMsg("  VD=3  ");
 	}
-				else if (fd4>fd1 && fd4>fd2 && fd4>fd3) {
+				else if (fd4 > fd1 && fd4 > fd2 && fd4 > fd3) {
 					bots[bNr].parabot->senses.addNewArea(Vector(0, -1000, 0));
 					//debugMsg("  VD=4  ");
 	}
@@ -708,7 +708,7 @@ void PB_Observer::updateCellInfo(int i) {
 					map.cell(obs[i].lastCell).pos() + Vector(0,0,-30), 100, 0);
 				// draw beams to neighbours
 				if (obs[i].currentCell != NO_CELL_FOUND && obs[i].currentCell != obs[i].lastCell) {
-					for (int nb=0; nb<10; nb++) {
+					for (int nb=0; nb < 10; nb++) {
 						short nbId = map.cell(obs[i].currentCell).getNeighbour(nb);
 						if (nbId == -1) break;
 						debugBeam( map.cell(obs[i].currentCell).pos() + Vector(0,0,-32),
@@ -736,7 +736,7 @@ void PB_Observer::observeAll()
 
 	for (int i = 0; i < MAX_OBS; i++) {
 		
-		if (shouldObservePlayer(i)) {	// still observing this one
+		if (shouldObservePlayer(i)) { // still observing this one
 			assert (obs[i].player != 0);
 			obs[i].inCombat = false; // only true for one frame
 
@@ -745,7 +745,7 @@ void PB_Observer::observeAll()
 			nav = getNearestNavpoint(obs[i].player->edict());
 			assert(nav != 0);
 
-			if(!nav)
+			if (!nav)
 				continue;
 			if (nav->reached(obs[i].player->edict())) {
 				// check if reached new navpoint	
@@ -809,7 +809,7 @@ void PB_Observer::addWaypoint(int oId, Vector pos, int action, int col)
 	//debugMsg("Added WP %i", obs[oId].leadWaypoint);
 	//debugMsg(" at (%.f, %.f)\n", pos.x, pos.y);
 	waypoint[oId][obs[oId].leadWaypoint] = wp;
-	if(wp.isOnPlatform() && plat)
+	if (wp.isOnPlatform() && plat)
 	{
 		PB_Path_Platform pf(obs[oId].lastPlatId, plat->v.absmin);
 		platInfo[oId][obs[oId].leadWaypoint] = pf;

@@ -1,13 +1,7 @@
-//
-// HPB_bot - botman's High Ping Bastard bot
-//
-// (http://planethalflife.com/botman/)
-//
-// bot_client.h
-//
+#ifndef _BOT_CLIENT_HPP_
+#define _BOT_CLIENT_HPP_
 
 void Client_Valve_DeathMsg(void *p, int noMatter);
-
 
 void BotClient_TFC_VGUI(void *p, int bot_index);
 void BotClient_CS_VGUI(void *p, int bot_index);
@@ -89,3 +83,4 @@ void BotClient_Hunger_Damage(void *p, int bot_index);
 
 void BotClient_CS_Money(void *p, int bot_index);
 
+#endif // _BOT_CLIENT_HPP_

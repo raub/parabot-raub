@@ -2,7 +2,6 @@
 #include "pb_global.h"
 
 
-
 PB_Journey::PB_Journey() {
 	currentOriginal = 0;
 }
@@ -20,7 +19,7 @@ PB_Path* PB_Journey::getNextPath() {
 //	return getPath(pathId);
 	currentOriginal = getPath(pathId);
 	currentCopy = *currentOriginal;
-	return &currentCopy; 
+	return &currentCopy;
 }
 
 

@@ -12,66 +12,76 @@ int activeBot; // bot that's thinking
 extern int botNr; // bot that's getting debugged
 extern int botHalt; // if set to >0, breaks at checkForBreakpoint()
 extern char mod_name[32];
-
 int gmsgParabot2dMsg = 0;
 int gmsgParabot3dMsg = 0;
-
 bool dbgFile = true;
 
 
+void pfnEmitSound(
+	edict_t *entity, int channel, const char *sample, /*int*/float volume,
+	float attenuation, int fFlags, int pitch
+);
 
-void pfnEmitSound(edict_t *entity, int channel, const char *sample, /*int*/float volume, float attenuation, int fFlags, int pitch);
-// from engine.h
 
-
-
-bool LOSExists(Vector v1, Vector v2)
 // traces line with ignore monster from v1 to v2
-{
+bool LOSExists(Vector v1, Vector v2) {
 	TraceResult tr;
-
+	
 	UTIL_TraceLine(v1, v2, ignore_monsters, ignore_glass, 0, &tr);
-	if (tr.fStartSolid) return false;
+	if (tr.fStartSolid) {
+		return false;
+	}
+	
 	return (tr.flFraction == 1.0);
 }
 
 
-edict_t* getEntity(const char *classname, Vector pos)
 // returns a pointer to edict at pos if it exists, else 0
-{
+edict_t* getEntity(const char *classname, Vector pos) {
 	CBaseEntity *pOther = NULL;
 	Vector p;
 	bool found = false;
-
+	
 	while ((pOther = UTIL_FindEntityByClassname (pOther, classname)) != NULL) {
 		p = (pOther->pev->absmax + pOther->pev->absmin) * 0.5;
-/*		float d = (pos-p).Length();
+/*		float d = (pos - p).Length();
 		if (strcmp(STRING(pOther->pev->classname), "func_train")==0) {
 			debugMsg("train\n");
 	}*/
-		if (p == pos) { found=true; break; }
+		if (p == pos) {
+			found = true;
+			break;
+		}
 	}
-	if (found) return pOther->edict();
-	else return 0;
+	
+	if (found) {
+		return pOther->edict();
+	} else {
+		return 0;
+	}
 }
 
 
 PB_Navpoint& getNavpoint(int index) {
 	assert(index >= 0);
 	assert(index < mapGraph.numberOfNavpoints());
+	
 	if (index < 0 || index >= mapGraph.numberOfNavpoints()) {
 		debugMsg("Navpoint-Index-ERROR!\n");
 		return mapGraph[0].first;
 	}
+	
 	return mapGraph[index].first;
 }
 
 
-int getNavpointIndex(edict_t *entity)
 // returns the index of navpoint with given entity or -2 if not found
-{
-	for (int i = 0; i < mapGraph.numberOfNavpoints(); i++)
-		if (mapGraph[i].first.entity() == entity) return i;
+int getNavpointIndex(edict_t *entity) {
+	for (int i = 0; i < mapGraph.numberOfNavpoints(); i++) {
+		if (mapGraph[i].first.entity() == entity) {
+			return i;
+		}
+	}
 	return -2;
 }
 
@@ -145,10 +155,12 @@ void pb3dMsg(Vector pos, const char *msg) {
 extern int wpBeamTexture;
 #ifdef _DEBUG
 void debugBeam(Vector start, Vector end, int life, int color) {
-	if (botNr!=activeBot) return;
-
+	if (botNr!=activeBot) {
+		return;
+	}
+	
 	edict_t *player = INDEXENT(1);
-
+	
 	MESSAGE_BEGIN(MSG_ONE, SVC_TEMPENTITY, NULL, player);
 	WRITE_BYTE(TE_BEAMPOINTS);
 	WRITE_COORD(start.x);
@@ -165,12 +177,21 @@ void debugBeam(Vector start, Vector end, int life, int color) {
 	WRITE_BYTE(0); // noise
 	
 	switch(color) {
-	case 0:	WRITE_BYTE(255);  WRITE_BYTE(0);  WRITE_BYTE(0);
-			break;
-	case 1:	WRITE_BYTE(0);  WRITE_BYTE(255);  WRITE_BYTE(0);
-			break;
-	case 2:	WRITE_BYTE(0);  WRITE_BYTE(0);  WRITE_BYTE(255);
-			break;
+	case 0:
+		WRITE_BYTE(255);
+		WRITE_BYTE(0);
+		WRITE_BYTE(0);
+		break;
+	case 1:
+		WRITE_BYTE(0);
+		WRITE_BYTE(255);
+		WRITE_BYTE(0);
+		break;
+	case 2:
+		WRITE_BYTE(0);
+		WRITE_BYTE(0);
+		WRITE_BYTE(255);
+		break;
 	}
 	WRITE_BYTE(255); // brightness
 	WRITE_BYTE(5); // speed
@@ -178,10 +199,12 @@ void debugBeam(Vector start, Vector end, int life, int color) {
 }
 
 void debugMarker(Vector pos, int life) {
-	if (botNr!=activeBot) return;
-
+	if (botNr!=activeBot) {
+		return;
+	}
+	
 	edict_t *player = INDEXENT(1);
-
+	
 	MESSAGE_BEGIN(MSG_ONE, SVC_TEMPENTITY, NULL, player);
 	WRITE_BYTE(TE_IMPLOSION);
 	WRITE_COORD(pos.x);
@@ -195,7 +218,10 @@ void debugMarker(Vector pos, int life) {
 
 void debugFile(const char *msg) {
 	char logfile[64];
-	if (!dbgFile) return;
+	if (!dbgFile) {
+		return;
+	}
+	
 	sprintf(logfile, "%s/addons/parabot/log/debug.txt", mod_name);
 	FILE *fp = fopen(logfile, "a");
 	fprintf(fp, "%s", msg);
@@ -203,19 +229,28 @@ void debugFile(const char *msg) {
 }
 
 void debugMsg(const char *str1, const char *str2, const char *str3, const char *str4) {
-	if (botNr != activeBot) return;
-	char buffer[256];
+	if (botNr != activeBot) {
+		return;
+	}
 	
+	char buffer[256];
 	strcpy(buffer, str1);
+	
 	if (str2) {
 		strcat(buffer, str2);
 		if (str3) {
 			strcat(buffer, str3);
-			if (str4) strcat(buffer, str4);
+			if (str4) {
+				strcat(buffer, str4);
+			}
+		}
 	}
+	
+	if (IS_DEDICATED_SERVER()) {
+		printf("%s", buffer);
+	} else {
+		ALERT(at_console, buffer);
 	}
-	if (IS_DEDICATED_SERVER()) printf("%s", buffer);
-	else ALERT(at_console, buffer);
 }
 #endif
 
@@ -228,9 +263,12 @@ void errorMsg(const char *str1, const char *str2, const char *str3, const char *
 		strcat(buffer, str2);
 		if (str3) {
 			strcat(buffer, str3);
-			if (str4) strcat(buffer, str4);
+			if (str4) {
+				strcat(buffer, str4);
+			}
+		}
 	}
-	}
+	
 #ifdef _WIN32
 	MessageBox(NULL, buffer, "Parabot", MB_OK);
 #else
@@ -240,8 +278,7 @@ void errorMsg(const char *str1, const char *str2, const char *str3, const char *
 }
 
 
-void infoMsg(const char *str1, const char *str2, const char *str3, const char *str4) 
-{
+void infoMsg(const char *str1, const char *str2, const char *str3, const char *str4) {
 	char buffer[256];
 	
 	strcpy(buffer, str1);
@@ -249,21 +286,33 @@ void infoMsg(const char *str1, const char *str2, const char *str3, const char *s
 		strcat(buffer, str2);
 		if (str3) {
 			strcat(buffer, str3);
-			if (str4) strcat(buffer, str4);
+			if (str4) {
+				strcat(buffer, str4);
+			}
+		}
 	}
+	
+	if (IS_DEDICATED_SERVER()) {
+		printf("%s", buffer);
+	} else {
+		ALERT(at_console, buffer);
 	}
-	if (IS_DEDICATED_SERVER()) printf("%s", buffer);
-	else ALERT(at_console, buffer);
 }
 
 #ifdef _DEBUG
 void debugMsg(const char *str1, int data1, int data2, int data3) {
-	if (botNr != activeBot) return;
+	if (botNr != activeBot) {
+		return;
+	}
+	
 	ALERT (at_console, (char*)str1, data1, data2, data3);
 }
 
 void debugMsg(const char *str1, float data1, float data2, float data3) {
-	if (botNr != activeBot) return;
+	if (botNr != activeBot) {
+		return;
+	}
+	
 	ALERT (at_console, (char*)str1, data1, data2, data3);
 }
 

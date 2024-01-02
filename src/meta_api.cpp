@@ -2,6 +2,7 @@
 #include "dllapi.h"
 #include "meta_api.h"
 
+
 enginefuncs_t meta_engfuncs;
 gamedll_funcs_t *gpGamedllFuncs;
 mutil_funcs_t *gpMetaUtilFuncs;
@@ -47,7 +48,9 @@ extern "C" DLLEXPORT int Meta_Query (char *ifvers, plugin_info_t **pPlugInfo, mu
 	return TRUE; // tell metamod this plugin looks safe
 }
 
-extern "C" DLLEXPORT int Meta_Attach (PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs) {
+extern "C" DLLEXPORT int Meta_Attach (
+	PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs
+) {
 	// this function is called when metamod attempts to load the plugin. Since it's the place
 	// where we can tell if the plugin will be allowed to run or not, we wait until here to make
 	// our initialization stuff, like registering CVARs and dedicated server commands.

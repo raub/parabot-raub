@@ -23,7 +23,7 @@ public:
 	bool available(int wId);
 
 	// attacks in best mode at best time the given position when accuracy is reached
-	bool attack(Vector target, float accuracy, Vector relVel = Vector(0,0,0));
+	bool attack(Vector target, float accuracy, Vector relVel = Vector(0, 0, 0));
 
 	void checkForForcedAttack();
 

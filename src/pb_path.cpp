@@ -215,7 +215,7 @@ void PB_Path::load(FILE *fp) {
 	int i;
 	fread(&data, sizeof(TSaveData), 1, fp);
 	
-	if (data.dataId == data.privateId) {	// read lists if stored here
+	if (data.dataId == data.privateId) { // read lists if stored here
 
 		// read waypoints
 		waypoint = new WaypointList;
@@ -223,7 +223,7 @@ void PB_Path::load(FILE *fp) {
 		fread(&numWpts, sizeof(int), 1, fp);
 		PB_Path_Waypoint wp;
 		assert(waypoint != 0);
-		for (i=0; i < numWpts; i++) {
+		for (i = 0; i < numWpts; i++) {
 			//printf("w");
 			fread(&wp.data, sizeof(PB_Path_Waypoint::TSaveData), 1, fp);
 			waypoint->push_back(wp);
@@ -235,7 +235,7 @@ void PB_Path::load(FILE *fp) {
 		fread(&numAtts, sizeof(int), 1, fp);
 		PB_Path_Attack att;
 		assert(hiddenAttack != 0);
-		for (i=0; i < numAtts; i++) {
+		for (i = 0; i < numAtts; i++) {
 			//printf("a");
 			fread(&att.data, sizeof(PB_Path_Attack::TSaveData), 1, fp);
 			hiddenAttack->push_back(att);
@@ -248,18 +248,18 @@ void PB_Path::load(FILE *fp) {
 		PB_Path_Platform pf;
 		assert(platformPos != 0);
 		float pos[3];
-		for (i=0; i < numPlats; i++) {
+		for (i = 0; i < numPlats; i++) {
 			fread(&(pf.data.navId), sizeof(int), 1, fp);
 			fread(&pos, 3*sizeof(float), 1, fp);
 			pf.data.pos.x=pos[0];pf.data.pos.y=pos[1];pf.data.pos.z=pos[2];
-			if(pf.data.navId < 0) {
+			if (pf.data.navId < 0) {
 				readyToDelete = true;
 				debugMsg("Deleted 1 path because of incorrect platform info\n");
 	}
 			platformPos->push_back(pf);
 	}
 	}
-	else {	// must be initialized later on when all paths are loaded...
+	else { // must be initialized later on when all paths are loaded...
 		waypoint = 0;
 		hiddenAttack = 0;
 		platformPos = 0;
@@ -277,7 +277,7 @@ void PB_Path::save(FILE *fp) {
 	int i;
 	fwrite(&data, sizeof(TSaveData), 1, fp);
 	
-	if (data.dataId == data.privateId) {	// save lists if stored here
+	if (data.dataId == data.privateId) { // save lists if stored here
 		
 		// save waypoints
 		assert(waypoint != 0);
@@ -285,7 +285,7 @@ void PB_Path::save(FILE *fp) {
 		fwrite(&numWpts, sizeof(int), 1, fp);
 		WaypointList::iterator wpi = waypoint->begin();
 		PB_Path_Waypoint wp;
-		for (i=0; i < numWpts; i++) {
+		for (i = 0; i < numWpts; i++) {
 			//printf("W");
 			fwrite(&(wpi->data), sizeof(PB_Path_Waypoint::TSaveData), 1, fp);
 			wpi++;
@@ -297,7 +297,7 @@ void PB_Path::save(FILE *fp) {
 		fwrite(&numAtts, sizeof(int), 1, fp);
 		AttackList::iterator atti = hiddenAttack->begin();
 		//PB_Path_Attack att;
-		for (i=0; i < numAtts; i++) {
+		for (i = 0; i < numAtts; i++) {
 			//printf("A");
 			fwrite(&(atti->data), sizeof(PB_Path_Attack::TSaveData), 1, fp);
 			atti++;
@@ -309,7 +309,7 @@ void PB_Path::save(FILE *fp) {
 		fwrite(&numPlats, sizeof(int), 1, fp);
 		PlatformList::iterator pfi = platformPos->begin();
 		float pos[3];
-		for (i=0; i < numPlats; i++) {
+		for (i = 0; i < numPlats; i++) {
 			pfi->data.pos.CopyToArray(pos);
 			assert(pfi->data.navId < 1000);
 			fwrite(&(pfi->data.navId), sizeof(int), 1, fp);
@@ -362,7 +362,7 @@ float PB_Path::weight() {
 			encounterProb = ((float)data.enemyEncounters) / ((float)data.attempts);
 			if (encounterProb > 9.9) encounterProb = 9.9;
 	}
-		return (10-encounterProb); // encounterProb may be >1
+		return (10 - encounterProb); // encounterProb may be >1
 
 	case JOURNEY_LONELY:
 		if (data.attempts > 0) 
@@ -407,7 +407,7 @@ void PB_Path::startAttempt(float worldTime) {
 			if (platformPos->size() > 1) currentPlat--;
 	}
 	}
-	else {	// no waypoints stored: simulate forward
+	else { // no waypoints stored: simulate forward
 		forwardPass = true;
 		currentWaypoint = waypoint->begin();
 		currentPlat = platformPos->begin();
@@ -444,7 +444,7 @@ void PB_Path::reportTargetReached(edict_t *traveller, float worldTime) {
 	}
 	data.passTime = allTime / ((float)data.successful); // set new passTime
 	endNav().reportVisit(traveller, worldTime); //now in observer
-	if (ignoredPlat) {	// we ignored a plat but arrived nevertheless?
+	if (ignoredPlat) { // we ignored a plat but arrived nevertheless?
 		WaypointList::iterator wpi = waypoint->begin();
 		PlatformList::iterator pfi = platformPos->begin();
 		while (wpi!=waypoint->end()) {
@@ -499,7 +499,7 @@ void PB_Path::addAttack(Vector &origin) {
 // Priority values return 0 (nextWaypoint) or 2 (button) { 
 Vector PB_Path::getViewPos(edict_t *traveller, int &prior) {
 	assert(waypoint != 0);
-	if (lastReachedWaypoint != waypoint->end()) {	// watch at buttons for pressing them
+	if (lastReachedWaypoint != waypoint->end()) { // watch at buttons for pressing them
 		if (lastReachedWaypoint->action()==BOT_USE) {
 			assert(traveller != 0);
 			Vector t = traveller->v.origin;
@@ -550,7 +550,7 @@ bool PB_Path::cannotBeContinued(edict_t *ent) {
 bool PB_Path::finished(edict_t *traveller) {
 
 	// UNDONE for teleporter hintpoints!
-//	if (currentWaypoint == waypoint->end()) {	// no more waypoints to go...
+//	if (currentWaypoint == waypoint->end()) { // no more waypoints to go...
 	if (endNav().reached(traveller)) return true;
 // }
 	return false;
@@ -563,7 +563,7 @@ int PB_Path::getNextAction() {
 	if (!hasData()) return 0; // don't do anything on return path
 
 	assert(waypoint != 0);
-	if (currentWaypoint != waypoint->end()) {	// approaching another waypoint
+	if (currentWaypoint != waypoint->end()) { // approaching another waypoint
 		return currentWaypoint->action();
 	}
 	else return 0;
@@ -625,12 +625,12 @@ bool PB_Path::waitForPlatform() {
 
 
 
-// returns the next waypoint on a platform or (0,0,0) if no platform on path
+// returns the next waypoint on a platform or (0, 0, 0) if no platform on path
 Vector PB_Path::nextPlatformPos() {
 	
 	Vector wpPlatPos;
 	assert(platformPos != 0);
-	if (platformPos->size() == 0) return Vector(0,0,0); // no platform on path
+	if (platformPos->size() == 0) return Vector(0, 0, 0); // no platform on path
 	
 	if ((currentWaypoint != waypoint->end()) && currentWaypoint->isOnPlatform()) {
 		wpPlatPos = currentWaypoint->pos();
@@ -643,7 +643,7 @@ Vector PB_Path::nextPlatformPos() {
 		if ((currentWaypoint != waypoint->end()) && currentWaypoint->isOnPlatform()) {
 			wpPlatPos = currentWaypoint->pos();
 	}
-		else {	// alright this if-else is bad style :-(
+		else { // alright this if-else is bad style :-(
 			// simulate next WP
 			reportWaypointReached();
 			if ((currentWaypoint != waypoint->end()) && currentWaypoint->isOnPlatform()) {
@@ -666,7 +666,7 @@ PB_Path_Waypoint PB_Path::getNextWaypoint() {
 	if (currentWaypoint != waypoint->end()) { // approaching another waypoint
 		return (*currentWaypoint);
 	}
-	else {	// approaching the target navpoint
+	else { // approaching the target navpoint
 		//PB_Navpoint n = getNavpoint(data.endId);
 		return PB_Path_Waypoint(endNav().pos(), WP_IS_NAVPOINT, 0);
 	}
@@ -680,7 +680,7 @@ Vector PB_Path::getLastWaypointPos(edict_t *playerEnt) {
 	if (lastReachedWaypoint != waypoint->end()) { // at least one waypoint has been reached
 		return lastReachedWaypoint->pos(playerEnt);
 	}
-	else {	// nothing reached yet
+	else { // nothing reached yet
 		PB_Navpoint n = getNavpoint(data.startId);
 		return n.pos(playerEnt);
 	}
@@ -705,7 +705,7 @@ void PB_Path::reportWaypointReached() {
 			if (currentPlat != platformPos->begin()) currentPlat--;
 			else currentPlat = platformPos->end();
 	}
-		if (currentWaypoint != waypoint->begin()) {	// approaching another waypoint
+		if (currentWaypoint != waypoint->begin()) { // approaching another waypoint
 			currentWaypoint--;
 	}
 		else {

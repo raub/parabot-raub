@@ -19,7 +19,7 @@ extern bool pb_pause;
 extern float bot_check_time;
 extern enginefuncs_t g_engfuncs;
 extern int debug_engine;
-extern globalvars_t  *gpGlobals;
+extern globalvars_t *gpGlobals;
 extern DLL_FUNCTIONS other_gFunctionTable;
 extern bot_t bots[32];
 extern int mod_id;
@@ -62,16 +62,17 @@ int currentMenu;
 int menuState = NO_MENU;
 int menuChoice;
 
-
-
 void saveLevelData(void); // in pb_mapimport.cpp
-
 
 void adjustAimSkills() {
 	int minAimSkill = pbConfig.minSkill();
 	int maxAimSkill = pbConfig.maxSkill();
-
-	for (int i = 0; i < 32; i++) if (bots[i].is_used) {
+	
+	for (int i = 0; i < 32; i++) {
+		if (!bots[i].is_used) {
+			continue;
+		}
+		
 		int aimSkill = pbConfig.personality(bots[i].personality).aimSkill;
 		if (aimSkill < minAimSkill) aimSkill = minAimSkill;
 		if (aimSkill > maxAimSkill) aimSkill = maxAimSkill;
@@ -80,10 +81,11 @@ void adjustAimSkills() {
 }
 
 
-
 int menuSlot(int number) {
 	int res = 0;
-	for (int i = 0; i < number; i++) res |= 1<<i;
+	for (int i = 0; i < number; i++) {
+		res |= 1<<i;
+	}
 	return res;
 }
 
@@ -97,7 +99,7 @@ void showMainMenu(edict_t *pEntity) {
 	4. Configure Botchat\n\
 	5. Exit\
 	"};
-
+	
 	currentMenu = MAIN_MENU;
 	UTIL_ShowMenu(pEntity, menuSlot(5), -1, FALSE, main_menu);
 }
@@ -105,14 +107,18 @@ void showMainMenu(edict_t *pEntity) {
 
 void showGameModeMenu(edict_t *pEntity) {
 	strcpy(dynMenu, "Change Gamemodes\n\n");
-	if (pbConfig.onRestrictedWeaponMode()) 
-		 strcat(dynMenu, "1. Disable RestrictedWeapons\n");
-	else strcat(dynMenu, "1. Enable RestrictedWeapons\n");
-	if (pbConfig.onPeaceMode()) 
-		 strcat(dynMenu, "2. Disable PeaceMode\n");
-	else strcat(dynMenu, "2. Enable PeaceMode\n");
+	if (pbConfig.onRestrictedWeaponMode()) {
+		strcat(dynMenu, "1. Disable RestrictedWeapons\n");
+	} else {
+		strcat(dynMenu, "1. Enable RestrictedWeapons\n");
+	}
+	if (pbConfig.onPeaceMode()) {
+		strcat(dynMenu, "2. Disable PeaceMode\n");
+	} else {
+		strcat(dynMenu, "2. Enable PeaceMode\n");
+	}
 	strcat(dynMenu, "3. Exit\n");
-
+	
 	currentMenu = MODE_MENU;
 	UTIL_ShowMenu(pEntity, menuSlot(3), -1, FALSE, dynMenu);
 }
@@ -122,18 +128,21 @@ void showChatMenu(edict_t *pEntity) {
 	strcpy(dynMenu, "Configure Botchat\n\n");
 	if (pbConfig.usingChat()) {
 		strcat(dynMenu, "1. Disable Botchat\n");
-		if (pbConfig.onAlwaysRespond()) 
-			 strcat(dynMenu, "2. Disable AlwaysRespond\n");
-		else strcat(dynMenu, "2. Enable AlwaysRespond\n");
-		if (pbConfig.onChatLog()) 
-			 strcat(dynMenu, "3. Disable ChatLog\n");
-		else strcat(dynMenu, "3. Enable ChatLog\n");
+		if (pbConfig.onAlwaysRespond()) {
+			strcat(dynMenu, "2. Disable AlwaysRespond\n");
+		} else {
+			strcat(dynMenu, "2. Enable AlwaysRespond\n");
+		}
+		if (pbConfig.onChatLog()) {
+			strcat(dynMenu, "3. Disable ChatLog\n");
+		} else {
+			strcat(dynMenu, "3. Enable ChatLog\n");
+		}
 		strcat(dynMenu, "4. Exit\n");
-	}
-	else {
+	} else {
 		strcat(dynMenu, "1. Enable Botchat\n\n\n4. Exit\n");
 	}
-
+	
 	currentMenu = CHAT_MENU;
 	UTIL_ShowMenu(pEntity, menuSlot(4), -1, FALSE, dynMenu);
 }
@@ -141,7 +150,7 @@ void showChatMenu(edict_t *pEntity) {
 
 void showNumberMenu(edict_t *pEntity) {
 	char buffer[64];
-
+	
 	strcpy(dynMenu, "Configure Number of Bots\n\n");
 	if (pbConfig.onServerMode()) {
 		sprintf(buffer, "MinBots is %i\n", pbConfig.minBots());
@@ -152,15 +161,14 @@ void showNumberMenu(edict_t *pEntity) {
 		strcat(dynMenu, "  3. -	 4. +\n");
 		strcat(dynMenu, "5. Disable ServerMode\n");
 		strcat(dynMenu, "6. Exit\n");
-	}
-	else {
+	} else {
 		sprintf(buffer, "NumBots is %i\n", pbConfig.numBots());
 		strcat(dynMenu, buffer);
 		strcat(dynMenu, "  1. -	 2. +\n\n\n");
 		strcat(dynMenu, "5. Enable ServerMode\n");
 		strcat(dynMenu, "6. Exit\n");
 	}
-
+	
 	currentMenu = NUMBER_MENU;
 	UTIL_ShowMenu(pEntity, menuSlot(6), -1, FALSE, dynMenu);
 }
@@ -168,7 +176,7 @@ void showNumberMenu(edict_t *pEntity) {
 
 void showSkillMenu(edict_t *pEntity) {
 	char buffer[64];
-
+	
 	strcpy(dynMenu, "Configure Bot Aimskill\n\n");
 	sprintf(buffer, "MinSkill is %i\n", pbConfig.minSkill());
 	strcat(dynMenu, buffer);
@@ -183,46 +191,42 @@ void showSkillMenu(edict_t *pEntity) {
 }
 
 
-void DSaddbot() 
-{	 
+void DSaddbot() {
 	BotCreate();
 }
 
 
 void DSsimulate() {
-	int arg_count = CMD_ARGC(); // number of arguments	 
-	const char *pcmd = CMD_ARGV(0);	 
-	if(arg_count == 2) {
+	int arg_count = CMD_ARGC(); // number of arguments
+	const char *pcmd = CMD_ARGV(0);
+	if (arg_count == 2) {
 		const char *arg1 = CMD_ARGV(1);
 		pbConfig.setBoolVar(pcmd, arg1);
-	}
-	else {
+	} else {
 		pbConfig.setBoolVar(pcmd, 0);
 	}
 }
 
 
 void DSlogChat() {
-	int arg_count = CMD_ARGC(); // number of arguments	 
-	const char *pcmd = CMD_ARGV(0);	 
-	if(arg_count == 2) {
+	int arg_count = CMD_ARGC(); // number of arguments
+	const char *pcmd = CMD_ARGV(0);
+	if (arg_count == 2) {
 		const char *arg1 = CMD_ARGV(1);
 		pbConfig.setBoolVar(pcmd, arg1);
-	}
-	else {
+	} else {
 		pbConfig.setBoolVar(pcmd, 0);
 	}
 }
 
 
 void DSrestrictedWeapons() {
-	int arg_count = CMD_ARGC(); // number of arguments	 
-	const char *pcmd = CMD_ARGV(0);	 
-	if(arg_count == 2) {
+	int arg_count = CMD_ARGC(); // number of arguments
+	const char *pcmd = CMD_ARGV(0);
+	if (arg_count == 2) {
 		const char *arg1 = CMD_ARGV(1);
 		pbConfig.setBoolVar(pcmd, arg1);
-	}
-	else {
+	} else {
 		pbConfig.setBoolVar(pcmd, 0);
 	}
 }
@@ -231,11 +235,10 @@ void DSrestrictedWeapons() {
 void DSpeace() {
 	int arg_count = CMD_ARGC(); // number of arguments	 
 	const char *pcmd = CMD_ARGV(0);	 
-	if(arg_count == 2) {
+	if (arg_count == 2) {
 		const char *arg1 = CMD_ARGV(1);
 		pbConfig.setBoolVar(pcmd, arg1);
-	}
-	else {
+	} else {
 		pbConfig.setBoolVar(pcmd, 0);
 	}
 }
@@ -243,25 +246,27 @@ void DSpeace() {
 
 void startBotCam(edict_t *pEntity) {
 	assert(pEntity != 0);
-
+	
 	if (mod_id == VALVE_DLL || mod_id == AG_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) {
 		int clientIndex = ENTINDEX(pEntity) - 1;
 		assert(clientIndex >= 0);
 		assert(clientIndex < 32);
-		if (clientWeapon[clientIndex]==VALVE_WEAPON_RPG	  ||
-			 (mod_id == GEARBOX_DLL && clientWeapon[clientIndex]==GEARBOX_WEAPON_EAGLE)) 
-		{	// kill laserspot
+		if (
+			clientWeapon[clientIndex]==VALVE_WEAPON_RPG ||
+			(mod_id == GEARBOX_DLL && clientWeapon[clientIndex]==GEARBOX_WEAPON_EAGLE)
+		) {
+			// kill laserspot
 			CBaseEntity *dot = NULL;
 			while ((dot = UTIL_FindEntityByClassname (dot, "laser_spot")) != NULL) {
 				if (laserdotOwner(dot->edict()) == pEntity) {
 					dot->pev->effects |= EF_NODRAW;
 					camPlayerLaser = dot->edict();
 					break;
+				}
+			}
+		}
 	}
-	}
-	}
-	}
-
+	
 	camPlayerPos = pEntity->v.origin;
 	camPlayerModel = pEntity->v.modelindex;
 	camPlayerWeapon = pEntity->v.viewmodel;
@@ -276,11 +281,15 @@ void startBotCam(edict_t *pEntity) {
 	pEntity->v.modelindex = 0;
 	pEntity->v.viewmodel = 0;
 	camPlayer = pEntity;
-	camPos = camPlayer->v.origin + Vector(0,0,100);
+	camPos = camPlayer->v.origin + Vector(0, 0, 100);
+	
 	// hide all hud
-	if (gmsgHideWeapon == 0) gmsgHideWeapon = REG_USER_MSG("HideWeapon", 1);
+	if (gmsgHideWeapon == 0) {
+		gmsgHideWeapon = REG_USER_MSG("HideWeapon", 1);
+	}
+	
 	MESSAGE_BEGIN(MSG_ONE, gmsgHideWeapon, NULL, camPlayer);
-		WRITE_BYTE(HIDEHUD_ALL);
+	WRITE_BYTE(HIDEHUD_ALL);
 	MESSAGE_END();
 }
 
@@ -290,7 +299,6 @@ void endBotCam() {
 		endCam = 2;
 	}
 }
-
 
 
 edict_t *lastGround;
@@ -321,46 +329,43 @@ void ClientCommand(edict_t *pEntity) {
 
 	// these client commands aren't allow in single player mode or
 	// on dedicated servers
-	if ((gpGlobals->deathmatch) && (!IS_DEDICATED_SERVER()))
-	{
+	if ((gpGlobals->deathmatch) && (!IS_DEDICATED_SERVER())) {
 #ifdef _DEBUG
 		CParabot *pb = bots[botNr].parabot;
-		if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp,"ClientCommand: %s %s %s\n",pcmd, arg1, arg2); fclose(fp); }
+		if (debug_engine) {
+			fp = UTIL_OpenDebugLog();
+			fprintf(fp,"ClientCommand: %s %s %s\n",pcmd, arg1, arg2);
+			fclose(fp);
+		}
 #endif
 		// mapchange redefined:
-		if (FStrEq(pcmd, "map")) {	
+		if (FStrEq(pcmd, "map")) {
 			char *newmap = (char*) arg1;
 			if (!IS_MAP_VALID(newmap)) {
 				debugMsg("Map not valid!\n");
-				if(!g_meta_init)
+				if (!g_meta_init)
 					return;
 				else
 					RETURN_META(MRES_IGNORED);
-	}
+			}
 			debugFile("Changing map...\n");
 			FakeClientCommand(pEntity, "hideconsole", 0, 0);
 			CHANGE_LEVEL(newmap, NULL);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		// bot commands:
-		else if (FStrEq(pcmd, "botmenu"))
-		{
+		} else if (FStrEq(pcmd, "botmenu")) { // bot commands:
 			oldBotStop = pb_pause;
 			pb_pause = true; // while in menu, bots don't move
 			showMainMenu(pEntity);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "menuselect"))
-		{
+		} else if (FStrEq(pcmd, "menuselect")) {
 			menuChoice = atoi(arg1);
 			switch(currentMenu) {
-
 			case MAIN_MENU:
 				switch(menuChoice) {
 				case 1:	showNumberMenu(pEntity);
@@ -371,11 +376,11 @@ void ClientCommand(edict_t *pEntity) {
 						break;
 				case 4:	showChatMenu(pEntity);
 						break;
-				default:currentMenu = NO_MENU; // exit		
+				default:currentMenu = NO_MENU; // exit
 						pb_pause = oldBotStop; 
-	}
+				}
 				break;
-
+			
 			case NUMBER_MENU:
 				if (pbConfig.onServerMode()) {
 					switch(menuChoice) {
@@ -396,9 +401,8 @@ void ClientCommand(edict_t *pEntity) {
 							showNumberMenu(pEntity);
 							break;
 					default:showMainMenu(pEntity);
-	}
-	}
-				else {
+					}
+				} else {
 					switch(menuChoice) {
 					case 1: pbConfig.setIntVar("NumBots", pbConfig.numBots()-1, 0, 32);
 							showNumberMenu(pEntity);
@@ -414,9 +418,9 @@ void ClientCommand(edict_t *pEntity) {
 							showNumberMenu(pEntity);
 							break;
 					default:showMainMenu(pEntity);
-	}
+				}
 				break;
-
+			
 			case SKILL_MENU:
 				switch(menuChoice) {
 					case 1: pbConfig.setIntVar("MinAimSkill", pbConfig.minSkill()-1, 1, 10);
@@ -433,10 +437,10 @@ void ClientCommand(edict_t *pEntity) {
 							break;
 					
 					default:showMainMenu(pEntity);
-	}
+				}
 				adjustAimSkills();
 				break;
-
+			
 			case MODE_MENU:
 				switch(menuChoice) {
 				case 1: if (pbConfig.onRestrictedWeaponMode()) pbConfig.setBoolVar("RestrictedWeapons", "Off");
@@ -448,9 +452,9 @@ void ClientCommand(edict_t *pEntity) {
 						showGameModeMenu(pEntity);
 						break;
 				default:showMainMenu(pEntity);
-	}
+				}
 				break;
-
+			
 			case CHAT_MENU:
 				switch(menuChoice) {
 				case 1:	if (pbConfig.usingChat()) pbConfig.setBoolVar("BotChat", "Off");
@@ -460,143 +464,124 @@ void ClientCommand(edict_t *pEntity) {
 				case 2: if (pbConfig.usingChat()) {
 							if (pbConfig.onAlwaysRespond()) pbConfig.setBoolVar("AlwaysRespond", "Off");
 							else pbConfig.setBoolVar("AlwaysRespond", "On");
-	}
+						}
 						showChatMenu(pEntity);
 						break;
 				case 3: if (pbConfig.usingChat()) {
 							if (pbConfig.onChatLog()) pbConfig.setBoolVar("ChatLog", "Off");
 							else pbConfig.setBoolVar("ChatLog", "On");
-	}
+						}
 						showChatMenu(pEntity);
 						break;
 				default:showMainMenu(pEntity);
-	}
+				}
 				break;
-	}
-
+			}
+			
 			default: break;
-
-	}
-			if(!g_meta_init)
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "addbot"))
-		{
+		} else if (FStrEq(pcmd, "addbot")) {
 			BotCreate();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "peacemode")) {
+		} else if (FStrEq(pcmd, "peacemode")) {
 			DSpeace();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "restrictedweapons")) {
+		} else if (FStrEq(pcmd, "restrictedweapons")) {
 			DSrestrictedWeapons();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "hidewelcome")) {
+		} else if (FStrEq(pcmd, "hidewelcome")) {
 			DSsimulate();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "chatlog")) {
+		} else if (FStrEq(pcmd, "chatlog")) {
 			DSlogChat();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "botstop")) {
+		} else if (FStrEq(pcmd, "botstop")) {
 			pb_pause = true;
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "botgo")) {
+		} else if (FStrEq(pcmd, "botgo")) {
 			pb_pause = false;
 			// call resetStuck() for all bots
 			for (int i = 0; i < gpGlobals->maxClients; i++) {
 				if (bots[i].is_used && bots[i].respawn_state == RESPAWN_IDLE) {
 					assert(bots[i].parabot != 0);
 					bots[i].parabot->action.resetStuck();
-	}
-	}
-			if(!g_meta_init)
+				}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "botcam")) {
+		} else if (FStrEq(pcmd, "botcam")) {
 			if (!camPlayer)	startBotCam(pEntity);
-			else {	// switch to next bot
+			else { // switch to next bot
 				int count = 32;
 				do {
 					count--;
 					botNr++;
 					if (botNr == 32) botNr = 0;
-	}
-				while (!bots[botNr].is_used && count>0);
-	}
-			if(!g_meta_init)
+				} while (!bots[botNr].is_used && count > 0);
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "camstop")) {
+		} else if (FStrEq(pcmd, "camstop")) {
 			endBotCam();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-
+		}
+		
 // rest only for debugmode!
 #ifdef _DEBUG
-		else if (FStrEq(pcmd, "debug_engine"))
-		{
+		else if (FStrEq(pcmd, "debug_engine")) {
 			debug_engine = 1;
 			ClientPrint(VARS(pEntity), HUD_PRINTNOTIFY, "debug_engine enabled!\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "debug_off"))
-		{
+		} else if (FStrEq(pcmd, "debug_off")) {
 			debug_engine = 0;
 			ClientPrint(VARS(pEntity), HUD_PRINTNOTIFY, "debug_engine disabled!\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "dbgfile")) {
+		} else if (FStrEq(pcmd, "dbgfile")) {
 			if (FStrEq(arg1, "on")) {
 				dbgFile = true;
-	}
-			else if (FStrEq(arg1, "off")) {
+			} else if (FStrEq(arg1, "off")) {
 				dbgFile = false;
-	}
-			if(!g_meta_init)
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "debugTrace"))
-		{
+		} else if (FStrEq(pcmd, "debugTrace")) {
 			PB_Action at;
 			PB_Roaming rt;
 			at.init(pEntity);
@@ -605,111 +590,101 @@ void ClientCommand(edict_t *pEntity) {
 			Vector pos = pEntity->v.origin + 200*gpGlobals->v_forward;
 			at.setMoveAngle(pEntity->v.v_angle);
 			rt.checkWay(pos);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setstep")) {
+		} else if (FStrEq(pcmd, "setstep")) {
 			char *newSample = (char*) arg1;
 			strcpy(stepSample, newSample);
 			sprintf(stepSound, "player/pl_%s%i.wav", stepSample, stepNr);
 			debugMsg("New stepSound = ", stepSound, "\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setstepnr")) {
+		} else if (FStrEq(pcmd, "setstepnr")) {
 			char *newNr = (char*) arg1;
 			stepNr = atoi(newNr);
 			sprintf(stepSound, "player/pl_%s%i.wav", stepSample, stepNr);
 			debugMsg("New stepSound = ", stepSound, "\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setvol")) {
+		} else if (FStrEq(pcmd, "setvol")) {
 			char *newVol = (char*) arg1;
 			int iVol = atoi(newVol);
 			stepVol = (float)iVol;stepVol/=100;
 			if (stepVol > 1.0) stepVol = 1.0;
 			debugMsg("New stepVolume = %.2f\n", stepVol);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "playstep")) {
+		} else if (FStrEq(pcmd, "playstep")) {
 			//EMIT_SOUND(pb->ent, CHAN_BODY, stepSound, stepVol, ATTN_NORM);
 			pfnEmitSound(pb->ent, CHAN_BODY, stepSound, stepVol, ATTN_NORM, 0, 100);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "playsound")) {
+		} else if (FStrEq(pcmd, "playsound")) {
 			char *sound = (char*) arg1;
 			pfnEmitSound(pEntity, CHAN_BODY, sound, 1.0, ATTN_NORM, 0, 100);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "debugbreak"))
-		{
+		} else if (FStrEq(pcmd, "debugbreak")) {
 			char *reason = (char*) arg1;
 			if (FStrEq(reason, "weapon")) botHalt = BREAK_WEAPON;
 			else if (FStrEq(reason, "goals")) botHalt = BREAK_GOALS;
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setbotnr")) {
+		} else if (FStrEq(pcmd, "setbotnr")) {
 			char *stopstr;
 			botNr = strtol(arg1, &stopstr, 10);
 			debugMsg("OK.\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "botdist")) {
+		} else if (FStrEq(pcmd, "botdist")) {
 			Vector p = pb->ent->v.origin - pEntity->v.origin;
 			debugMsg("Distance = %.f\n", p.Length());
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "pathinfo")) {
+		} else if (FStrEq(pcmd, "pathinfo")) {
 			if (pb->actualPath) {
-				debugMsg("Actual ");  pb->actualPath->print();  debugMsg("\n");
-	}
-			if(!g_meta_init)
+				debugMsg("Actual ");
+				pb->actualPath->print();
+				debugMsg("\n");
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "wpinfo")) {
+		} else if (FStrEq(pcmd, "wpinfo")) {
 			if (pb->actualPath) {
 				Vector p = pb->waypoint.pos();
 				debugMsg("Heading for waypoint (%.f, %.f, %.f)\n", p.x, p.y, p.z);
-	}
-			if(!g_meta_init)
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "ground")) {
+		} else if (FStrEq(pcmd, "ground")) {
 			assert(pEntity != 0);
 			if (pEntity->v.groundentity == 0) {
 				debugMsg("No ground entity!\n");
-				if(!g_meta_init)
+				if (!g_meta_init)
 					return;
-	}
+			}
 			lastGround = pEntity->v.groundentity;
 			assert(lastGround != 0);
 			Vector p = lastGround->v.absmin;
@@ -717,38 +692,36 @@ void ClientCommand(edict_t *pEntity) {
 			p = lastGround->v.absmax;
 			ALERT(at_console, "max at(%.f, %.f, %.f), solid=%i\n", p.x, p.y, p.z,
 				lastGround->v.solid);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "lastground")) {
+		} else if (FStrEq(pcmd, "lastground")) {
 			if (lastGround == 0) {
 				debugMsg("No ground entity!\n");
-				if(!g_meta_init)
+				if (!g_meta_init)
 					return;
 				else
 					RETURN_META(MRES_IGNORED);
-	}
+			}
 			Vector p = lastGround->v.absmin;
 			ALERT(at_console, "%s, min at(%.f, %.f, %.f), ", STRING(lastGround->v.classname), p.x, p.y, p.z);
 			p = lastGround->v.absmax;
 			ALERT(at_console, "max at(%.f, %.f, %.f), solid=%i\n", p.x, p.y, p.z,
 				lastGround->v.solid);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "navinfo") && (pb->actualNavpoint)) {
-			debugMsg("Actual navpoint is ");  pb->actualNavpoint->print();  
+		} else if (FStrEq(pcmd, "navinfo") && (pb->actualNavpoint)) {
+			debugMsg("Actual navpoint is ");
+			pb->actualNavpoint->print();
 			debugMsg(", Linkage=%i\n", mapGraph.linkedNavpointsFrom(pb->actualNavpoint));
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "playernav")) {
+		} else if (FStrEq(pcmd, "playernav")) {
 			PB_Navpoint *nav = mapGraph.getNearestNavpoint(pEntity->v.origin);
 			//PB_Navpoint::Nav2Classname(str, nav->type());
 			Vector p = pEntity->v.origin;
@@ -762,7 +735,7 @@ void ClientCommand(edict_t *pEntity) {
 			if (nav->entity()) {
 				debugMsg("NavHealth = %.f, ", nav->entity()->v.health);
 				debugMsg("solid = %i\n", nav->entity()->v.solid);
-	}
+			}
 			if (nav->type()==NAV_F_DOOR || nav->type()==NAV_F_PLAT || nav->type()==NAV_F_TRAIN) 
 				debugMsg("Targetname = ", STRING(nav->entity()->v.targetname), "\n");
 			if (nav->type()==NAV_F_BUTTON) {
@@ -775,13 +748,12 @@ void ClientCommand(edict_t *pEntity) {
 				if (pTarget) debugMsg("Target3 = ", STRING(pTarget->v.classname), "\n");
 				pTarget = FIND_ENTITY_BY_TARGETNAME(pTarget, STRING(nav->entity()->v.target));
 				if (pTarget) debugMsg("Target4 = ", STRING(pTarget->v.classname), "\n");
-	}
-			if(!g_meta_init)
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "items")) {
+		} else if (FStrEq(pcmd, "items")) {
 			Vector pos = pEntity->v.origin;
 			CBaseEntity *ent = 0;
 			while (ent = UTIL_FindEntityInSphere(ent, pos, 100)) 
@@ -796,28 +768,26 @@ void ClientCommand(edict_t *pEntity) {
 					char **ownerEd = (char**)(tmClass + 680);
 					edict_t *tmOwner = (edict_t*)(*ownerEd);
 					edict_t *tmOwner2 = *((edict_t**)(ent + 680));
-	}
+				}
 				/*if (strcmp(iname, "func_button")==0) {
 					CBaseButton *buttonClass = (CBaseButton*)ent;// rpgClass = pointer to CWeaponRPG
 					buttonClass->TriggerAndWait();
 					//char **targetPev = (char**)(buttonClass + 500); // (*targetPev) = pointer to Pev
 					//ALERT(at_console, "	TargetPev = %x\n", (*targetPev));
-	}*/
-	}
-			if(!g_meta_init)
+				}*/
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "botpos")) {
+		} else if (FStrEq(pcmd, "botpos")) {
 			Vector p = pb->botPos();
 			debugMsg("Botpos = (%.f, %.f, %.f)\n", p.x, p.y, p.z);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setbotpos")) {
+		} else if (FStrEq(pcmd, "setbotpos")) {
 			char *stopstr;
 			int id = strtol(arg1, &stopstr, 10);
 			Vector p = getNavpoint(id).pos();
@@ -827,109 +797,104 @@ void ClientCommand(edict_t *pEntity) {
 			pb->actualNavpoint = &(getNavpoint(id));
 			pb->actualPath = 0;
 			pb->actualJourney.cancel();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "bottarget")) {
+		} else if (FStrEq(pcmd, "bottarget")) {
 			if (pb->botState == PB_ON_TOUR) {
-				debugMsg("Path-target = ");  pb->actualPath->endNav().printPos();  debugMsg("\n");
-	}
-			else if (pb->botState == PB_ROAMING) {
-				debugMsg("Roaming-target = ");  pb->roamingTarget->printPos();  debugMsg("\n");
-	}
-			if(!g_meta_init)
+				debugMsg("Path-target = ");
+				pb->actualPath->endNav().printPos();
+				debugMsg("\n");
+			} else if (pb->botState == PB_ROAMING) {
+				debugMsg("Roaming-target = ");
+				pb->roamingTarget->printPos();
+				debugMsg("\n");
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "setbottarget")) {
+		} else if (FStrEq(pcmd, "setbottarget")) {
 			char *stopstr;
 			botTarget = strtol(arg1, &stopstr, 10);
 			debugMsg("Affirmative\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "nopartner")) {
+		} else if (FStrEq(pcmd, "nopartner")) {
 			pb->partner = 0;
 			pb->botState = PB_NO_TASK;
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "ptbot")) {
+		} else if (FStrEq(pcmd, "ptbot")) {
 			ptBotPos = map.getCellId(pEntity);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "ptcover")) {
+		} else if (FStrEq(pcmd, "ptcover")) {
 			short plId = map.getCellId(pEntity);
 			int pl = map.getPathToCover(ptBotPos, plId, path);
 			Vector start = map.cell(ptBotPos).pos();
 			Vector end;
 			if (pl != -1) {
-				for (int l=(pl-1); l>=0; l--) {
+				for (int l=(pl - 1); l >= 0; l--) {
 					end = map.cell(path[l]).pos();
 					debugBeam(start, end, 50);
 					start = end;
-	}
-	}
-			if(!g_meta_init)
+				}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "ptattack")) {
+		} else if (FStrEq(pcmd, "ptattack")) {
 			short plId = map.getCellId(pEntity);
 			int pl = map.getPathToAttack(ptBotPos, plId, path);
 			Vector start = map.cell(ptBotPos).pos();
 			Vector end;
 			if (pl != -1) {
-				for (int l=(pl-1); l>=0; l--) {
+				for (int l=(pl - 1); l >= 0; l--) {
 					end = map.cell(path[l]).pos();
 					debugBeam(start, end, 50);
 					start = end;
-	}
-	}
-			if(!g_meta_init)
+				}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "showcells")) {
+		} else if (FStrEq(pcmd, "showcells")) {
 			if (FStrEq(arg1, "on")) {
 				visualizeCellConnections = true;
-	}
+			}
 			else if (FStrEq(arg1, "off")) {
 				visualizeCellConnections = false;
-	}
-			if(!g_meta_init)
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "markvis")) {
+		} else if (FStrEq(pcmd, "markvis")) {
 			glMarker.deleteAll();
 			int homeCell = map.getCellId(pEntity->v.origin);
 			if (homeCell != -1) {
-				for (int i = 0; i < map.numberOfCells(); i++)
+				for (int i = 0; i < map.numberOfCells(); i++) {
 					if (map.lineOfSight(homeCell, i)) {
 						if (i == homeCell) glMarker.newMarker(map.cell(i).pos(), 2);
 						else glMarker.newMarker(map.cell(i).pos(), 1);
-	}
-	}
-			if(!g_meta_init)
+					}
+				}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}	
-		else if (FStrEq(pcmd, "markfocus")) {
+		} else if (FStrEq(pcmd, "markfocus")) {
 			glMarker.deleteAll();
 			int homeCell = map.getCellId(pEntity->v.origin);
 			if (homeCell != -1) {
@@ -941,54 +906,50 @@ void ClientCommand(edict_t *pEntity) {
 							glMarker.newMarker(map.cell(i).pos(), 1);
 						else 
 							glMarker.newMarker(map.cell(i).pos(), 2);
-	}
-	}
-			if(!g_meta_init)
+					}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}	
-		else if (FStrEq(pcmd, "markenv")) {
+		} else if (FStrEq(pcmd, "markenv")) {
 			char *thresh = (char*) arg1;
 			float fThresh = atof(thresh);
 			glMarker.deleteAll();
 			for (int i = 0; i < map.numberOfCells(); i++) {
 				if (map.cell(i).getEnvDamage() > fThresh) {
 					glMarker.newMarker(map.cell(i).pos(), 1);
-	}
-	}
-			if(!g_meta_init)
+				}
+			}
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}	
-		else if (FStrEq(pcmd, "savemap")) {
+		} else if (FStrEq(pcmd, "savemap")) {
 			saveLevelData();
 			ClientPrint(VARS(pEntity), HUD_PRINTNOTIFY, "Map data saved.\n");
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
-		else if (FStrEq(pcmd, "delmarkers")) {
+		} else if (FStrEq(pcmd, "delmarkers")) {
 			glMarker.deleteAll();
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}	
-		else if (FStrEq(pcmd, "numclients")) {
+		} else if (FStrEq(pcmd, "numclients")) {
 			debugMsg("Number of clients = %i\n", numberOfClients);
-			if(!g_meta_init)
+			if (!g_meta_init)
 				return;
 			else
 				RETURN_META(MRES_IGNORED);
-	}
+		}
 // end of debug mode commands...
 #endif
 	}
 
-	if(!g_meta_init)
+	if (!g_meta_init)
 		(*other_gFunctionTable.pfnClientCommand)(pEntity);
 	else
 		RETURN_META(MRES_IGNORED);

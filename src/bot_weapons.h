@@ -1,24 +1,11 @@
-//
-// HPB_bot - botman's High Ping Bastard bot
-//
-// (http://planethalflife.com/botman/)
-//
-// bot_weapons.h
-//
-
-#ifndef BOT_WEAPONS_H
-#define BOT_WEAPONS_H
-
-
+#ifndef _BOT_WEAPONS_HPP_
+#define _BOT_WEAPONS_HPP_
 
 #define VALVE_MAX_NORMAL_BATTERY 100
 #define VALVE_HORNET_MAX_CARRY 8
 
 
-
-
-typedef struct
-{
+typedef struct {
 	char szClassname[64];
 	int iAmmo1; // ammo index for primary ammo
 	int iAmmo1Max; // max primary ammo
@@ -31,5 +18,5 @@ typedef struct
 } bot_weapon_t;
 
 
-#endif // BOT_WEAPONS_H
+#endif // _BOT_WEAPONS_HPP_
 

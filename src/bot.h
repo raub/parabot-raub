@@ -1,13 +1,5 @@
-//
-// HPB_bot - botman's High Ping Bastard bot
-//
-// (http://planethalflife.com/botman/)
-//
-// bot.h
-//
-
-#ifndef BOT_H
-#define BOT_H
+#ifndef _BOT_HPP_
+#define _BOT_HPP_
 
 #include "exportdef.h"
 #ifdef _WIN32
@@ -52,8 +44,9 @@ typedef void (*GIVEFNPTRSTODLL)(enginefuncs_t *, globalvars_t *);
 typedef void (FAR *LINK_ENTITY_FUNC)(entvars_t *);
 
 // define some function prototypes...
-BOOL ClientConnect(edict_t *pEntity, const char *pszName,
-						  const char *pszAddress, char szRejectReason[ 128 ]);
+BOOL ClientConnect(
+	edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128]
+);
 void ClientPutInServer(edict_t *pEntity);
 void ClientCommand(edict_t *pEntity);
 
@@ -62,7 +55,6 @@ void FakeClientCommand(edict_t *pBot, const char *arg1, const char *arg2, const 
 const char *Cmd_Args(void);
 const char *Cmd_Argv(int argc);
 int Cmd_Argc(void);
-
 
 // more constants...
 #define BOT_PITCH_SPEED 20  // degrees per frame for rotation
@@ -100,15 +92,13 @@ int Cmd_Argc(void);
 #define TFC_CLASS_SPY 8
 #define TFC_CLASS_ENGINEER 9
 
-
 #define BOT_SKIN_LEN 32
 #define BOT_NAME_LEN 32
 
 #define MAX_TEAMS 16
 
 
-typedef struct
-{
+typedef struct {
 	int iId; // weapon ID
 	int iClip; // amount of ammo in the clip
 	int iAmmo1; // amount of ammo in primary reserve
@@ -120,11 +110,10 @@ class CBaseEntity;
 class CParabot;
 
 
-typedef struct
-{
+typedef struct {
 	CParabot *parabot; // pointer to Parabot instance
 	int personality; // index to personality-table
-
+	
 	edict_t *pEdict; // Pointer to bot-edict
 	bool is_used; // must be true if BotThink should be called
 	int respawn_state; // used to handle respawns after map changes
@@ -132,16 +121,16 @@ typedef struct
 	int not_started; // true while bot still has to chose team and/or class
 	int start_action; // actions before getting started (chose team/class)
 	float menuSelectTime;
-
-// TheFatal - START
+	
+	// TheFatal - START
 	int msecnum;
 	float msecdel;
 	float msecval;
-// TheFatal - END				// ...for runPlayerMove-Timing
-
+	// TheFatal - END // ...for runPlayerMove-Timing
+	
 	char name[BOT_NAME_LEN + 1];
 	char skin[BOT_SKIN_LEN + 1];
-
+	
 	// things from pev in CBasePlayer...
 	int bot_team;
 	int bot_class;
@@ -149,19 +138,18 @@ typedef struct
 	int bot_armor;
 	int bot_weapons; // bit map of weapons the bot is carrying
 	int bot_money; // for Counter-Strike
-
+	
 	//edict_t *pBotEnemy;
-
+	
 	float f_max_speed;
 	float prev_speed;
 	Vector v_prev_origin;
 	float f_pause_time;
-
+	
 	float f_move_speed;
-
+	
 	bot_current_weapon_t current_weapon; // one current weapon
 	int m_rgAmmo[MAX_AMMO_SLOTS]; // total ammo amounts
-
 } bot_t;
 
 // new UTIL.CPP functions (from HPB-bot)...
@@ -173,6 +161,4 @@ void UTIL_SelectItem(edict_t *pEdict, char *item_name);
 void UTIL_ShowMenu(edict_t *pEdict, int slots, int displaytime, bool needmore, const char *pText);
 CBaseEntity	*UTIL_PlayerByIndex(int playerIndex);
 
-
-#endif // BOT_H
-
+#endif // _BOT_HPP_

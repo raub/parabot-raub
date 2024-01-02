@@ -1,11 +1,10 @@
-#ifndef EXPORTDEF_H
-#define EXPORTDEF_H
-#if defined _WIN32 || defined __CYGWIN__
-	#ifdef __GNUC__
-		#define EXPORT __attribute__ ((dllexport))
-	#else
-		#define EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-	#endif
+#ifndef _EXPORTDEF_HPP_
+#define _EXPORTDEF_HPP_
+
+#if defined _WIN32
+	#define EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+	#pragma comment(lib, "user32.lib")
+	#pragma comment(linker, "/EXPORT:GiveFnptrsToDll=_GiveFnptrsToDll@8,@1")
 #else
 	#if __GNUC__ >= 4
 		#define EXPORT __attribute__ ((visibility ("default")))
@@ -13,6 +12,8 @@
 		#define EXPORT
 	#endif
 #endif
+
 #define DLLEXPORT EXPORT
 #define _DLLEXPORT EXPORT
-#endif // EXPORTDEF_H
+
+#endif // _EXPORTDEF_HPP_

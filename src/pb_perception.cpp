@@ -148,7 +148,7 @@ Vector PB_Percept::predictedAppearance(const Vector &botPos)
 
 float PB_Percept::targetAccuracy() {
 	if (orientation < 0.5) return 0;
-	float x = distance * (1-orientation);
+	float x = distance * (1 - orientation);
 	if (x >= 5.48) return 0.2;
 	if (x >= 0.77) return 0.4;
 	if (x >= 0.152) return 0.6;
@@ -202,7 +202,7 @@ void PB_Perception::init(edict_t *ent)
 
 void PB_Perception::setSensitivity(int skill) {
 	//sensitivity = ((float)skill + 3.5)/9.0;
-	sensitivity =  30.0 / ((float)(20-skill)) - 1.0; // worst=0.58 .. best=2.0
+	sensitivity =  30.0 / ((float)(20 - skill)) - 1.0; // worst=0.58 .. best=2.0
 }
 
 
@@ -330,7 +330,7 @@ bool PB_Perception::isNewPerception(tPerceptionList &oldList, PB_Percept &perc)
 		pli++;
 	}
 
-	if (match != oldList.end()) {	// match found?
+	if (match != oldList.end()) { // match found?
 		perc.id = match->id;
 		// copy timings:
 		perc.update = match->update;
@@ -342,7 +342,7 @@ bool PB_Perception::isNewPerception(tPerceptionList &oldList, PB_Percept &perc)
 			perc.pState |= PI_PREDICTED; // add PREDICTED-flag
 			perc.flags &= ~PI_PREEMPTIVE; // stop preemptive fire
 	}
-		else {	// not visible:
+		else { // not visible:
 			perc.lastSeenTime = match->lastSeenTime;
 			perc.lastSeenPos = match->lastSeenPos;
 			perc.lastSeenVelocity = match->lastSeenVelocity;
@@ -350,7 +350,7 @@ bool PB_Perception::isNewPerception(tPerceptionList &oldList, PB_Percept &perc)
 			perc.lastCalcTarget = match->lastCalcTarget;
 			perc.predAppearance = match->predAppearance;
 			perc.lastCalcAppearance = match->lastCalcAppearance;
-			if (match->pState & PI_VISIBLE) {	// check if just disappeared
+			if (match->pState & PI_VISIBLE) { // check if just disappeared
 				perc.flags |= PI_DISAPPEARED;
 	}
 			else if (worldTime() > (perc.lastSeenTime + 2.0)) {
@@ -397,7 +397,7 @@ bool PB_Perception::isNewTactilePerception(tPerceptionList &pList, PB_Percept &p
 		break;
 	}
 
-	if (match != pList.end()) {	// match found?
+	if (match != pList.end()) { // match found?
 		perc.id = match->id;
 		// copy timings:	-> don't copy update since that is used for underFire() !
 		perc.firstDetection = match->firstDetection;
@@ -461,7 +461,7 @@ bool PB_Perception::addIfVisible(edict_t *ent, int pClass) {
 
 void PB_Perception::checkDamageFor(PB_Percept &player) 
 {
-	if(player.pClass >= PI_HOSTAGE || player.pClass == PI_FRIEND) return; // only players cause damage
+	if (player.pClass >= PI_HOSTAGE || player.pClass == PI_FRIEND) return; // only players cause damage
 	tPerceptionList::iterator cdi = detections[cdet].begin();
 	while (cdi != detections[cdet].end()) {
 		if ((cdi->pClass == PI_DAMAGE) && 
@@ -480,7 +480,7 @@ void PB_Perception::checkInflictorFor(PB_Percept &dmg)
 {
 	tPerceptionList::iterator cdi = detections[cdet].begin();
 	while (cdi != detections[cdet].end()) {
-		if((cdi->pClass < PI_HOSTAGE && cdi->pClass != PI_FRIEND) && 
+		if ((cdi->pClass < PI_HOSTAGE && cdi->pClass != PI_FRIEND) && 
 			(cdi->entity == dmg.entity || (dmg.entity == 0 && cdi->pClass == PI_FOE))) {
 			cdi->pState |= PI_TACTILE;
 			cdi->pClass = PI_FOE;
@@ -606,7 +606,7 @@ void PB_Perception::collectData() {
 	tPerceptionList::iterator odi = detections[odet].begin();
 	while (odi != detections[odet].end()) {
 		if ((worldTime()-odi->lastDetection) < 5) {
-			odi->distance = ((Vector)(odi->lastPos-botEnt->v.origin)).Length();
+			odi->distance = ((Vector)(odi->lastPos - botEnt->v.origin)).Length();
 			if ((odi->pClass <= PI_HOSTAGE) && (odi->entity->v.health < 1)) {
 				odi++;continue; }	// only living persons
 			if ((odi->pClass == PI_HALO || odi->pClass == PI_WEAPONBOX) && (odi->distance < 50)) {
@@ -655,7 +655,7 @@ void PB_Perception::collectData() {
 void PB_Perception::resetPlayerClassifications() {
 	debugMsg("Resetting classifications...\n");
 	tPerceptionList::iterator di;
-	for (int list=0; list<2; list++) {
+	for (int list=0; list < 2; list++) {
 		di = detections[list].begin();
 		while (di != detections[list].end()) {
 			if (di->pClass <= PI_FOE) di->pClass = PI_PLAYER;

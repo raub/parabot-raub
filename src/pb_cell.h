@@ -1,22 +1,16 @@
-#if !defined(PB_CELL_H)
-#define PB_CELL_H
-
+#ifndef _PB_CELL_HPP_
+#define _PB_CELL_HPP_
 
 #include "pb_global.h"
 #include "pb_focus.h"
 #include "pb_kills.h"
 #include "pb_navpoint.h"
 
-
 #pragma warning(disable : 4786) // disable warnings
 
 
 #define NO_CELL_REGISTERED -1
 #define MAX_NBS 10
-
-
-class PB_Cell
-{
 
 // flags:
 #define CFL_UNDERWATER	(1<<0) // cell is underwater
@@ -30,18 +24,18 @@ class PB_Cell
 #define CG_ROOF 5
 
 
+class PB_Cell {
 public:
-
 	static Vector makePos(edict_t *pEdict) {
 		return (pEdict->v.origin + pEdict->v.view_ofs);
 	}
-
+	
 	PB_Cell() {};
 	PB_Cell(edict_t *pEdict);
 	PB_Cell(FILE *fp);
-
+	
 	bool save(FILE *fp);
-
+	
 	Vector pos() { return data.position; }
 	short getNeighbour(int i) { return data.neighbour[i]; }
 	float getWeight(int i) { return data.weight[i]; }
@@ -57,13 +51,11 @@ public:
 	short getTraffic(short nbId);
 	bool delNeighbour(short nbId);
 	short getGround() { return data.ground; }
-
+	
 	PB_Focus focus;
 	PB_Kills kills;
-
-
+	
 private:
-
 	typedef struct {
 		Vector position;
 		short neighbour[MAX_NBS]; // ids of neighbouring cells
@@ -76,11 +68,9 @@ private:
 		short ground; // -1 if world, else id of ground-entity
 		//byte group; // group membership
 	} TSaveData;
-
+	
 	TSaveData data;
 	short next; // id of next cell in linked list (for hashtable)
-
 };
 
-
-#endif
+#endif // _PB_CELL_HPP_
