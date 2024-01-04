@@ -154,7 +154,7 @@ bool PB_Cell::delNeighbour(short nbId) {
 			continue;
 		}
 		
-		for (int j=i; j<(MAX_NBS - 1); j++) {
+		for (int j = i; j<(MAX_NBS - 1); j++) {
 			data.neighbour[j] = data.neighbour[j + 1];
 			data.weight[j] = data.weight[j + 1];
 			data.traffic[j] = data.traffic[j + 1];

@@ -447,7 +447,7 @@ int PB_MapGraph::DijkstraToWish(
 		actualVertex = queue.topIndex(); // extract vertex with minimum
 		queue.pop();
 		if (score[actualVertex] >= 5) { // cut
-			targetFound=true;
+			targetFound = true;
 			targetNav = actualVertex;
 			break;
 		}
@@ -559,7 +559,7 @@ void PB_MapGraph::prepareBackwardPaths() {
 	AdjPtr adj, back;
 	bool found;
 	
-	for (int startId=0; startId < numberOfNavpoints(); startId++) {
+	for (int startId = 0; startId < numberOfNavpoints(); startId++) {
 		adj = graph[startId].second.begin();
 		while (adj != graph[startId].second.end()) {
 			if ((adj->second.deleted()) && (adj->second.hasData())) { // if path deleted
@@ -609,7 +609,7 @@ bool PB_MapGraph::load(char *mapname) {
 	
 	fread(&numPaths, sizeof(int), 1, fp);
 	
-	for (int j=0; j < numPaths; j++) {
+	for (int j = 0; j < numPaths; j++) {
 		//printf("p");
 		path.load(fp);
 		if (path.id() > nextPathId) {

@@ -73,21 +73,21 @@ void incTotalAttempts();
 #ifdef _DEBUG
 	void checkForBreakpoint(int reason);
 	void debugFile(const char *msg);
-	void debugMsg(const char *str1, const char *str2=0, const char *str3=0, const char *str4=0);
-	void debugMsg(const char *str1, int data1, int data2=NO_I_VALUE, int data3=NO_I_VALUE);
-	void debugMsg(const char *str1, float data1, float data2=NO_F_VALUE, float data3=NO_F_VALUE);
+	void debugMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
+	void debugMsg(const char *str1, int data1, int data2 = NO_I_VALUE, int data3 = NO_I_VALUE);
+	void debugMsg(const char *str1, float data1, float data2 = NO_F_VALUE, float data3 = NO_F_VALUE);
 #else
 	#define checkForBreakpoint(...)
 	#define debugMsg(...)
 	#define debugFile(...)
 #endif
 
-void infoMsg(const char *str1, const char *str2=0, const char *str3=0, const char *str4=0);
+void infoMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
 
-void errorMsg(const char *str1, const char *str2=0, const char *str3=0, const char *str4=0);
+void errorMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
 #ifdef _DEBUG
 	void debugSound(edict_t *recipient, const char *sample);
-	void debugBeam(Vector start, Vector end, int life, int color=1);
+	void debugBeam(Vector start, Vector end, int life, int color = 1);
 	void debugMarker(Vector pos, int life);
 #else
 	#define debugSound(...)

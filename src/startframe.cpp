@@ -163,7 +163,7 @@ void checkForMapChange() {
 			roundNotStarted = true;
 			return;
 		}
-		if (roundNotStarted) { // things to do 1x at roundTime=0
+		if (roundNotStarted) { // things to do 1x at roundTime = 0
 			roundNotStarted = false;
 			//observer.init();
 			//observer.registerClients();
@@ -334,7 +334,7 @@ void checkForBotCreation() {
 			bot_check_time = gpGlobals->time + 5.0; // add/kick bots with 5 sec. delay
 			
 			int numBots = 0;
-			for (int b=0; b < 32; b++) if (bots[b].is_used) numBots++;
+			for (int b = 0; b < 32; b++) if (bots[b].is_used) numBots++;
 		
 			if (numBots < pbConfig.numBots() && numberOfClients < gpGlobals->maxClients) addRandomBot();
 			else if (numBots > pbConfig.numBots()) kickRandomBot();
@@ -343,7 +343,7 @@ void checkForBotCreation() {
 		// server mode
 		if (bot_check_time < gpGlobals->time) {
 			int numBots = 0;
-			for (int b=0; b < 32; b++) {
+			for (int b = 0; b < 32; b++) {
 				if (bots[b].is_used) numBots++;
 			}
 			
@@ -614,7 +614,7 @@ void StartFrame(void) {
 			//print3dDebugInfo();
 			
 			// call BotThink for each active bot
-			for (int b=0; b < 32; b++) {
+			for (int b = 0; b < 32; b++) {
 				if (bots[b].is_used && bots[b].respawn_state == RESPAWN_IDLE) BotThink(&bots[b]);
 			}
 			
@@ -632,7 +632,7 @@ void StartFrame(void) {
 						PIA_Weapon *pw = dmp->firstWeapon();
 						if (pw) {
 							debugMsg(pw->name(), "\n");
-							while (pw=dmp->nextWeapon()) debugMsg(pw->name(), "\n");
+							while (pw = dmp->nextWeapon()) debugMsg(pw->name(), "\n");
 						}
 						break;
 					}

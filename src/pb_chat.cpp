@@ -213,7 +213,7 @@ bool PB_Chat::free() {
 	}
 	chatReplyUnknown.clear();
 	
-	for (int r=0; r < chatReplies.size(); r++) {
+	for (int r = 0; r < chatReplies.size(); r++) {
 		for (i = 0; i < chatReplies[r]->reply->size(); i++) {
 			delete ((*chatReplies[r]->reply)[i]).text;
 		}
@@ -404,7 +404,7 @@ void PB_Chat::parseMessage(edict_t *speaker, const char *msg) {
 	if (pbConfig.onChatLog()) {
 		char logfile[64];
 		sprintf(logfile, "%s/addons/parabot/log/chat.txt", mod_name);
-		FILE *fp=fopen(logfile, "a");
+		FILE *fp = fopen(logfile, "a");
 		if (!FBitSet(speaker->v.flags, FL_FAKECLIENT)) fprintf(fp, "[HUMAN]");
 		fprintf(fp, "%s", STRING(speaker->v.netname));
 		fprintf(fp, ": ");
@@ -430,7 +430,7 @@ void PB_Chat::parseMessage(edict_t *speaker, const char *msg) {
 	// replace special characters
 	int len = strlen(parseBuffer);
 	int pos, i;
-	while ((pos=strcspn(parseBuffer, ",;-'()/.!?")) < len) {
+	while ((pos = strcspn(parseBuffer, ",;-'()/.!?")) < len) {
 		parseBuffer[pos] = ' ';
 	}
 	
@@ -480,7 +480,7 @@ void PB_Chat::check() {
 				parseMessage(nextSpeaker, nextChatMessage); // send message to others
 			}
 		} else if (nextChatTime > (worldTime() + 30.0)) {
-			nextChatTime=0; // mapchange...
+			nextChatTime = 0; // mapchange...
 		}
 	}
 }

@@ -1152,7 +1152,7 @@ void pfnSetClientKeyValue(int clientIndex, const char *infobuffer, const char *k
 		valveTeamPlayMode = true;
 		
 		bool teamKnown = false;
-		for (int team=0; team < valveTeamNumber; team++) {
+		for (int team = 0; team < valveTeamNumber; team++) {
 			if (strcmp(value, valveTeamList[team]) == 0) {
 				teamKnown = true;
 				break;

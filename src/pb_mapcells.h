@@ -15,7 +15,7 @@
 class PBT_FoundCell {
 public:
 	PBT_FoundCell() {}
-	PBT_FoundCell(float d, short i) { dist=d; index=i; }
+	PBT_FoundCell(float d, short i) { dist = d; index = i; }
 	bool operator==(const PBT_FoundCell& O) const { return dist == O.dist; }
 	bool operator<(const PBT_FoundCell& O) const { return dist < O.dist; }
 	
@@ -31,11 +31,11 @@ public:
 	
 	PB_Cell& cell(int index) { return cellArray[index]; }
 	
-	int getCellId(const Vector &pos, float maxDist=CELL_SIZE);
+	int getCellId(const Vector &pos, float maxDist = CELL_SIZE);
 	int getCellId(edict_t *pEdict) { return getCellId(PB_Cell::makePos(pEdict)); }
 	
 	// returns index of newCell:
-	int addCell(PB_Cell newCell, bool initNbs, int addedFrom=NO_CELL_FOUND);
+	int addCell(PB_Cell newCell, bool initNbs, int addedFrom = NO_CELL_FOUND);
 	// returns number of found neighbours:
 	int initNeighbours(int cellIndex, int firstNb );
 	int numberOfCells() { return numCells; }

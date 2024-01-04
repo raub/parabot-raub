@@ -37,7 +37,7 @@ public:
 	bool armBestWeapon(float distance, float hitProb, int flags);
 	
 	// sets the weapon that will be armed by armBestWeapon during the next 0.5 seconds
-	void setPreferredWeapon(int wId, int mode=1);
+	void setPreferredWeapon(int wId, int mode = 1);
 
 	float getWeaponScore(int wId, float distance, float hitProb, int flags, bool checkAmmo);
 

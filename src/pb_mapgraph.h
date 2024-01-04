@@ -65,7 +65,7 @@ public:
 	// returns a navpoint to approach in roaming mode, prefers linked navpoints and the ones
 	// that are z-reachable, nextVisit-Time is required to be reached
 	// should never return zero
-	PB_Navpoint* getNearestRoamingNavpoint(edict_t *traveller, PB_Navpoint *ignore=0);
+	PB_Navpoint* getNearestRoamingNavpoint(edict_t *traveller, PB_Navpoint *ignore = 0);
 	
 	// returns a journey from start to target or false if none available in mode
 	bool getJourney(int start, int target, int mode, PB_Journey &journey);
@@ -94,10 +94,10 @@ private:
 	// called before save(), copies data structures of deleted paths to backward paths
 	void prepareBackwardPaths();
 	
-	// returns (if found=true) iterator to a path with given id
+	// returns (if found = true) iterator to a path with given id
 	AdjPtr findPath(int id, int startId, bool &found );
 	
-	// returns (if found=true) iterator to a path with given dataId
+	// returns (if found = true) iterator to a path with given dataId
 	AdjPtr findLinkedPath(int dataId, int startId, bool &found);
 	
 	// classic Dijkstra algo

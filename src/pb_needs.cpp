@@ -12,7 +12,7 @@ extern float nextAirstrikeTime;
 extern int g_hldm_mod;
 extern char ag_gamemode[8];
 
-#define MIN_HEALTH 20.0 // need=10 if health is below this value
+#define MIN_HEALTH 20.0 // need = 10 if health is below this value
 #define MAX_ARMOR_WISH 4.0	// need for armor when armorvalue == 0
 
 
@@ -135,7 +135,7 @@ float PB_Needs::wishForCombat(){
 	}
 	
 	// wish
-	float wish_c = health*armor*weapon*10 + 0.5*bot->aggression;
+	float wish_c = health * armor * weapon * 10 + 0.5 * bot->aggression;
 	if (wish_c > 10.0f) {
 		wish_c = 10.0f;
 	}
@@ -201,7 +201,7 @@ float PB_Needs::wishForSniping(bool weaponCheck){
 	
 	const float outTime = 40;// time after which camping gives 0 points
 	float x = outTime + (worldTime() - bot->lastCamp) - bot->campTime;
-	// while camping x=outTime - campTime, else x increasing
+	// while camping x = outTime - campTime, else x increasing
 	if (x > outTime) {
 		if (bot->aggression < 2.5) {
 			x = outTime + (x - outTime)/(10*bot->aggression);
@@ -412,7 +412,7 @@ void PB_Needs::hwWishList() {
 	}
 	
 	weaponWish = 0;
-	for (i=NAV_HWW_DOUBLESHOTGUN; i <= NAV_HWA_ROCKETLAUNCHER; i++) {
+	for (i = NAV_HWW_DOUBLESHOTGUN; i <= NAV_HWA_ROCKETLAUNCHER; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
@@ -431,14 +431,14 @@ void PB_Needs::dmcWishList() {
 	wish[NAV_DMCI_HEALTH_SMALL] = wish[NAV_DMCI_HEALTH_NORM] * 0.6;
 	wish[NAV_DMCI_HEALTH_LARGE] = 3 + needForHealth();
 	
-	need = (100 - bot->ent->v.armorvalue) / 40; if (need < 0) need=0;
+	need = (100 - bot->ent->v.armorvalue) / 40; if (need < 0) need = 0;
 	wish[NAV_DMCI_ARMOR1] = need;
 	
-	need = (150 - bot->ent->v.armorvalue) / 40; if (need < 0) need=0;
+	need = (150 - bot->ent->v.armorvalue) / 40; if (need < 0) need = 0;
 	wish[NAV_DMCI_ARMOR2] = need;
 	wish[NAV_DMCI_ARMOR3] = 20;
 	
-	need = (200 - bot->ent->v.armorvalue) / 40; if (need < 0) need=0;
+	need = (200 - bot->ent->v.armorvalue) / 40; if (need < 0) need = 0;
 	wish[NAV_DMCI_ARMOR_INV] = need;
 	wish[NAV_DMCI_ENVIROSUIT] = 20;
 	wish[NAV_DMCI_INVISIBILITY] = 3;
@@ -492,7 +492,7 @@ void PB_Needs::dmcWishList() {
 	}
 	
 	weaponWish = 0;
-	for (i=NAV_DMCW_QUAKEGUN; i <= NAV_DMCW_LIGHTNING; i++) {
+	for (i = NAV_DMCW_QUAKEGUN; i <= NAV_DMCW_LIGHTNING; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
@@ -636,12 +636,12 @@ void PB_Needs::gearboxWishList() {
 	}
 	
 	weaponWish = 0;
-	for (i=NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) {
+	for (i = NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
 	}
-	for (i=NAV_OFW_GRAPPLE; i <= NAV_OFA_SPORE; i++) {
+	for (i = NAV_OFW_GRAPPLE; i <= NAV_OFA_SPORE; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
@@ -687,12 +687,24 @@ void PB_Needs::hungerWishList() {
 		wish[NAV_THW_CHAINGUN] = 9;
 		wish[NAV_THW_AP9] = 9;
 	} else { // have one but want more :-)
-		if (!bot->combat.hasWeapon(VALVE_WEAPON_EGON		)) wish[NAV_W_EGON] = 5;
-		if (!bot->combat.hasWeapon(VALVE_WEAPON_GAUSS		)) wish[NAV_W_GAUSS] = 5;
-		if (!bot->combat.hasWeapon(VALVE_WEAPON_MP5			)) wish[NAV_W_MP5] = 4;
-		if (!bot->combat.hasWeapon(VALVE_WEAPON_SHOTGUN		)) wish[NAV_W_SHOTGUN] = 3;
-		if (!bot->combat.hasWeapon(VALVE_WEAPON_CHAINGUN)) wish[NAV_THW_CHAINGUN] = 5;
-		if (!bot->combat.hasWeapon(HUNGER_WEAPON_AP9)) wish[NAV_THW_AP9] = 4;
+		if (!bot->combat.hasWeapon(VALVE_WEAPON_EGON)) {
+			wish[NAV_W_EGON] = 5;
+		}
+		if (!bot->combat.hasWeapon(VALVE_WEAPON_GAUSS)) {
+			wish[NAV_W_GAUSS] = 5;
+		}
+		if (!bot->combat.hasWeapon(VALVE_WEAPON_MP5)) {
+			wish[NAV_W_MP5] = 4;
+		}
+		if (!bot->combat.hasWeapon(VALVE_WEAPON_SHOTGUN)) {
+			wish[NAV_W_SHOTGUN] = 3;
+		}
+		if (!bot->combat.hasWeapon(VALVE_WEAPON_CHAINGUN)) {
+			wish[NAV_THW_CHAINGUN] = 5;
+		}
+		if (!bot->combat.hasWeapon(HUNGER_WEAPON_AP9)) {
+			wish[NAV_THW_AP9] = 4;
+		}
 	}
 	
 	// rest of armatory...
@@ -741,11 +753,11 @@ void PB_Needs::hungerWishList() {
 	wish[NAV_THA_AP9] = 0.4;
 	
 	// copy identical ids
-	wish[NAV_A_ARGRENADES]	= wish[NAV_A_MP5GRENADES];
-	wish[NAV_A_9MMCLIP]		= wish[NAV_A_MP5CLIP];
-	wish[NAV_A_9MMAR]		= wish[NAV_A_MP5CLIP];
-	wish[NAV_A_GAUSSCLIP]	= wish[NAV_THA_FLAME];
-	wish[NAV_THA_EINAR1]	= wish[NAV_THA_SNIPER];
+	wish[NAV_A_ARGRENADES] = wish[NAV_A_MP5GRENADES];
+	wish[NAV_A_9MMCLIP] = wish[NAV_A_MP5CLIP];
+	wish[NAV_A_9MMAR] = wish[NAV_A_MP5CLIP];
+	wish[NAV_A_GAUSSCLIP] = wish[NAV_THA_FLAME];
+	wish[NAV_THA_EINAR1] = wish[NAV_THA_SNIPER];
 	
 	maxWish = 0;
 	for (i = 0; i < MAX_NAV_TYPES; i++) {
@@ -755,12 +767,12 @@ void PB_Needs::hungerWishList() {
 	}
 	
 	weaponWish = 0;
-	for (i=NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) {
+	for (i = NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
 	}
-	for (i=NAV_THW_AP9; i <= NAV_THA_TNT; i++) {
+	for (i = NAV_THW_AP9; i <= NAV_THA_TNT; i++) {
 		if (mapGraph.itemAvailable(i)) {
 			weaponWish += wish[i];
 		}
@@ -799,12 +811,13 @@ void PB_Needs::agWishList() {
 	if (bot->senses.numEnemies > 0) {
 		wish[NAV_F_HEALTHCHARGER] = 0;
 	}
-	wish[NAV_I_BATTERY]	 = needForArmor();
+	
+	wish[NAV_I_BATTERY] = needForArmor();
 	wish[NAV_F_RECHARGE] = needForArmor();
 	if (bot->senses.numEnemies > 0) {
 		wish[NAV_F_RECHARGE] = 0;
 	}
-
+	
 	wish[NAV_S_CAMPING] = wishForSniping() - 0.5;
 	wish[NAV_F_TANKCONTROLS] = wishForSniping(false) - 0.5;
 	
@@ -904,38 +917,52 @@ void PB_Needs::agWishList() {
 			while((pent = UTIL_FindEntityByClassname(pent, "carried_flag_team2")) != NULL) {
 				if (pent->edict()->v.owner == bot->ent) {
 					wish[NAV_AGI_FLAG_TEAM1] = 20;
-				}
-				else if (bot->aggression < 6)
-				{
+				} else if (bot->aggression < 6) {
 					wish[NAV_AGI_FLAG_TEAM2] = 2;
 					wish[NAV_AGI_FLAG_TEAM1] = 20;
-	}
-				else
-				{
+				} else {
 					wish[NAV_AGI_FLAG_TEAM2] = 20;
 					wish[NAV_AGI_FLAG_TEAM1] = 2;
+				}
+			}
+		}
 	}
-	}
-	}
-	}
-
+	
 	maxWish = 0;
-	for (i = 0; i < MAX_NAV_TYPES; i++) 
-		if (mapGraph.itemAvailable(i) && (wish[i]>maxWish))
+	for (i = 0; i < MAX_NAV_TYPES; i++) {
+		if (mapGraph.itemAvailable(i) && (wish[i]>maxWish)) {
 			maxWish = wish[i];
+		}
+	}
+	
 	weaponWish = 0;
-	for (i=NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) 
-		if (mapGraph.itemAvailable(i)) weaponWish += wish[i];
+	for (i = NAV_W_CROSSBOW; i <= NAV_A_GLOCKCLIP; i++) {
+		if (mapGraph.itemAvailable(i)) {
+			weaponWish += wish[i];
+		}
+	}
 }
 
 void PB_Needs::getWishList() {
 	switch (mod_id) {
-		case AG_DLL:		agWishList();break;
-		case HUNGER_DLL:	hungerWishList();break;
-		case VALVE_DLL:		valveWishList();break;
-		case HOLYWARS_DLL:	hwWishList();break;
-		case DMC_DLL:		dmcWishList();break;
-		case GEARBOX_DLL:	gearboxWishList();break;
+		case AG_DLL:
+			agWishList();
+			break;
+		case HUNGER_DLL:
+			hungerWishList();
+			break;
+		case VALVE_DLL:
+			valveWishList();
+			break;
+		case HOLYWARS_DLL:
+			hwWishList();
+			break;
+		case DMC_DLL:
+			dmcWishList();
+			break;
+		case GEARBOX_DLL:
+			gearboxWishList();
+			break;
 	}
 }
 

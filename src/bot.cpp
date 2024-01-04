@@ -84,7 +84,7 @@ void BotCreate(int fixedPersNr) {
 	// search free slot for entity
 	int numBots = 0;
 	int slot = 32;
-	for (int i=31; i >= 0; i--) {
+	for (int i = 31; i >= 0; i--) {
 		if (bots[i].is_used) numBots++;
 		else slot = i;
 	}
@@ -110,7 +110,7 @@ void BotCreate(int fixedPersNr) {
 		} while (pbConfig.personality(persNr).inUse && (numBots < maxPers) && (count < 1000));
 		
 		/*if (count >= 1000) {
-			FILE *dfp=fopen("parabot/crashlog.txt", "a"); 
+			FILE *dfp = fopen("parabot/crashlog.txt", "a"); 
 			fprintf(dfp, "Could not get free character in BotCreate:\n"); 
 			fprintf(dfp, "maxPers = %i, numBots = %i\n\n", maxPers, numBots);
 			fclose(dfp);

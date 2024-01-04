@@ -8,7 +8,6 @@
 
 extern bot_t bots[32];
 extern int mod_id;
-extern bot_weapon_t weapon_defs[MAX_WEAPONS];
 extern PB_Configuration pbConfig; // from configfiles.cpp
 extern bool g_meta_init;
 
@@ -194,7 +193,7 @@ int PB_WeaponHandling::getBestWeapon(float distance, float hitProb, int flags) {
 	float score, bestScore = -10;
 	int bestWeapon = defaultWeapon;
 	
-	for (int wId=minModWeapon; wId < maxModWeapon; wId++) {
+	for (int wId = minModWeapon; wId < maxModWeapon; wId++) {
 		if (available(wId)) {
 			weapon.setCurrentWeapon(wId);
 			score = weapon.getScore(distance, hitProb, flags, true);

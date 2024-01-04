@@ -10,7 +10,7 @@ extern bot_weapon_t weapon_defs[MAX_WEAPONS];
 extern int g_hldm_mod;
 
 //  WEAPON LISTS (all orders must match pb_weapon.h!)
-// highAimProb:  norm=0.5 fast=0.4 expl=0.3 closeCombat=0.2 autoAim=0.1
+// highAimProb:  norm = 0.5 fast = 0.4 expl = 0.3 closeCombat = 0.2 autoAim = 0.1
 
 // weapon volumes (from SDK)
 #define WV_NONE 0.0
@@ -1340,7 +1340,7 @@ bool PB_Weapon::attackValveHandgrenade(Vector &target) {
 	bool grenadeThrown = false;
 	if (!grenadePrepared) {
 		//debugMsg("Arming HG!\n");
-		grenadePrepared=true;
+		grenadePrepared = true;
 		grenadeLaunchTime = worldTime() + 2.0;
 		grenadeTarget = target;
 		grenadeWId = VALVE_WEAPON_HANDGRENADE;
@@ -1367,7 +1367,7 @@ bool PB_Weapon::attackValveSatchel(Vector &target) {
 		//debugMsg("Throwing satchel!\n");
 		botAction->add(BOT_FIRE_PRIM);
 		if (strcmp(STRING(botEnt->v.viewmodel), "models/v_satchel_radio.mdl") == 0) {
-			grenadePrepared=true;
+			grenadePrepared = true;
 			grenadeLaunchTime = worldTime() + 1.5;
 			grenadeWId = VALVE_WEAPON_SATCHEL;
 		}

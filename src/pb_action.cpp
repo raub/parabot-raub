@@ -373,7 +373,7 @@ void PB_Action::perform() {
 		action |= IN_DUCK;
 		if (FBitSet(ent->v.flags, FL_ONGROUND) || ent->v.origin.z<(jumpPos - 100)) {
 			action &= ~IN_DUCK;
-			inJump=false;
+			inJump = false;
 		}
 	}
 	// check for long duck

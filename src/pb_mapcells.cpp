@@ -45,7 +45,7 @@ int PB_MapCells::updateVisibility(int maxUpdates) {
 
 
 int PB_MapCells::lastVisUpdate() {
-	int c1=0, c2;
+	int c1 = 0, c2;
 	vis.needTrace(c1, c2);
 	return c1;
 }
@@ -91,7 +91,7 @@ int PB_MapCells::getCellId(const Vector &pos, float maxDist) {
 	float dist, closestDist = maxDist; // max dist that found WP can have to pos
 	int closestId = NO_CELL_FOUND; // is returned when no cell is found
 	short cellId;
-	int xStride=0, yStride=0;
+	int xStride = 0, yStride = 0;
 	float xbDist, ybDist; // distance to next bucket in x- and y- direction
 	
 	numCellsFound = 0; // no cells found yet
@@ -152,7 +152,7 @@ int PB_MapCells::getCellId(const Vector &pos, float maxDist) {
 	// if not, sort all found cells
 	std::sort(cellFound, cellFound + numCellsFound);
 	
-	for (int testCell=1; testCell < numCellsFound; testCell++) {
+	for (int testCell = 1; testCell < numCellsFound; testCell++) {
 		int testId = cellFound[testCell].index;
 		if (
 			LOSExists(pos, cellArray[testId].pos()) &&
@@ -184,12 +184,12 @@ int PB_MapCells::addCell(PB_Cell newCell, bool initNbs, int addedFrom) {
 			cellId = cellArray[cellId].nextCell();
 		}
 		/*if (dbgCnt == 1000) {
-			FILE *dfp=fopen("parabot/crashlog.txt", "a"); 
+			FILE *dfp = fopen("parabot/crashlog.txt", "a"); 
 			fprintf(dfp, ">1000 recursions in addCell()!\n"); 
 			fclose(dfp);
 	}*/
 		cellArray[cellId].setNextCell(numCells);
-		if (cellId == numCells) errorMsg("CellId=numCells!\n");
+		if (cellId == numCells) errorMsg("CellId = numCells!\n");
 	}
 	
 	vis.addCell();
@@ -260,7 +260,7 @@ int PB_MapCells::initNeighbours(int cellIndex, int firstNb) {
 
 	for (int i = 0; i < numCellsFound; i++) {
 		int nbId = cellFound[i].index;
-		if (nbId != cellIndex && LOSExists(pos, nbPos=cellArray[nbId].pos())) {
+		if (nbId != cellIndex && LOSExists(pos, nbPos = cellArray[nbId].pos())) {
 			Vector dif = nbPos - pos;
 			float weightEst = dif.Length() / serverMaxSpeed();
 			if (dif.z <= 45) { // neighbour z-reachable from cell
@@ -304,7 +304,7 @@ int PB_MapCells::initNeighbours(int cellIndex, int firstNb) {
 		currentCell = queue.getFirst();\
 		if (goalReached) goto TargetReached;\
 		if (failed) goto TargetFailed;\
-		for (int n=0; n < 10; n++) {													\
+		for (int n = 0; n < 10; n++) {													\
 			short nb = cellArray[currentCell].getNeighbour(n);\
 			short nbg = cellArray[nb].getGround();\
 			if (nb == NO_CELL_REGISTERED) break;\

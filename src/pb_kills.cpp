@@ -32,7 +32,7 @@ bool PB_Kills::load(FILE *fp) {
 
 
 bool PB_Kills::save(FILE *fp) {
-/*	FILE *f=fopen("killstats.txt", "a");
+/*	FILE *f = fopen("killstats.txt", "a");
 	fprintf(f, "%i %i %i %i\n", numKillsInSector[0], numKillsInSector[1],numKillsInSector[2],numKillsInSector[3]);
 	fclose(f);*/
 	fwrite(&numKillsInSector[0], sizeof(short), NUM_SECTORS, fp);

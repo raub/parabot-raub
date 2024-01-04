@@ -270,7 +270,7 @@ bool PB_Configuration::initPersonalities(const char *personalityPath) {
 	
 	maxPers = nr;
 	fclose(	file);
-	for (nr=0; nr < MAX_PERS; nr++) {
+	for (nr = 0; nr < MAX_PERS; nr++) {
 		character[nr].inUse = false;
 	}
 	
@@ -310,10 +310,10 @@ bool PB_Configuration::createConfiguration(const char *configFile) {
 	fprintf(file, "# \"NumBots\" specifies the number of bots that should play the game when \"ServerMode\" is off.\n");
 	fprintf(file, "# When \"ServerMode\" is on this number has no effect.\n\n");
 	fprintf(file, "NumBots = 6\n\n\n");
-	fprintf(file, "# PeaceMode = On/Off (Default=Off)\n");
+	fprintf(file, "# PeaceMode = On/Off (Default = Off)\n");
 	fprintf(file, "# If enabled bots won't shoot at you (nor at each other) while they are not attacked\n\n");
 	fprintf(file, "PeaceMode = Off\n\n\n");
-	fprintf(file, "# RestrictedWeapons = On/Off (Default=Off)\n");
+	fprintf(file, "# RestrictedWeapons = On/Off (Default = Off)\n");
 	fprintf(file, "# If enabled bots can't use the more powerful weapons (MP5, crossbow, shotgun, rpg, gauss\n");
 	fprintf(file, "# and egon). No restrictions for you.\n\n");
 	fprintf(file, "RestrictedWeapons = Off\n\n\n");
@@ -329,12 +329,12 @@ bool PB_Configuration::createConfiguration(const char *configFile) {
 	fprintf(file, "#-------------------------------------------------------------------------------------------\n");
 	fprintf(file, "# CHAT CONFIGURATION\n");
 	fprintf(file, "#-------------------------------------------------------------------------------------------\n\n\n");
-	fprintf(file, "# BotChat = On/Off (Default=On)\n");
+	fprintf(file, "# BotChat = On/Off (Default = On)\n");
 	fprintf(file, "# If enabled bots will chat as much as their communication-value permits.\n\n");
 	fprintf(file, "BotChat = On\n\n\n");
 	fprintf(file, "# ChatFile determines the language the bots use for chatting (Default=\"ChatEnglish.txt\")\n\n");
 	fprintf(file, "ChatFile = \"ChatEnglish.txt\"\n\n\n");
-	fprintf(file, "# AlwaysRespond = On/Off (Default=On)\n");
+	fprintf(file, "# AlwaysRespond = On/Off (Default = On)\n");
 	fprintf(file, "# If enabled bots will always respond to things you say, never mind their comm-value.\n\n");
 	fprintf(file, "AlwaysRespond = On\n\n");
 	fprintf(file, "#-------------------------------------------------------------------------------------------");

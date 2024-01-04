@@ -56,7 +56,7 @@ protected:
 	const char* checkMessageForWeapon(const char *msg, const char *wpnName, edict_t *wpnOwner);
 	const char* getName(edict_t *player);
 	edict_t* getRandomResponder(edict_t *excluding, bool forceReply);
-	void suggestMessage(edict_t *speaker, PB_ChatMessage *msg, edict_t *objective=0, const char *realText=0);
+	void suggestMessage(edict_t *speaker, PB_ChatMessage *msg, edict_t *objective = 0, const char *realText = 0);
 	
 	std::vector<ReplyList*> chatReplies;
 	ChatList chatGotKilled, chatKilledPlayer, chatGotWeapon, chatJoin, chatReplyUnknown;

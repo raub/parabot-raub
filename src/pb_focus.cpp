@@ -18,7 +18,7 @@ void PB_Focus::addDir(Vector dir) {
 	numCellsInSector[sector]++;
 	
 	// calc new focusValues for ALL sectors:
-	for (sector=0; sector < NUM_SECTORS; sector++) {
+	for (sector = 0; sector < NUM_SECTORS; sector++) {
 		int sumOtherSectors = 0;
 		for (int i = 0; i < NUM_SECTORS; i++) {
 			if (i != sector) {

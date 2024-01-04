@@ -319,7 +319,7 @@ void ClientPutInServer(edict_t *pEntity) {
 	while ((index < 32) && (clients[index] != NULL)) index++;
 	if (index < 32) clients[index] = pEntity;
 	/*else {
-		FILE *dfp=fopen("parabot/crashlog.txt", "a"); 
+		FILE *dfp = fopen("parabot/crashlog.txt", "a"); 
 		fprintf(dfp, "32 clients in ClientPutInServer()!\n"); 
 		fclose(dfp);
 	}*/

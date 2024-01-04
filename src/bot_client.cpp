@@ -22,11 +22,11 @@ void BotClient_TFC_VGUI(void *p, int bot_index) {
 	if ((*reinterpret_cast<int*>(p)) == 2) { // is it a team select menu?
 		bots[bot_index].start_action = MSG_TFC_TEAM_SELECT;
 		bots[bot_index].menuSelectTime = worldTime() + 0.5;
-		debugMsg("Action=TEAM_SELECT\n");
+		debugMsg("Action = TEAM_SELECT\n");
 	} else if ((*reinterpret_cast<int*>(p)) == 3) { // is is a class selection menu?
 		bots[bot_index].start_action = MSG_TFC_CLASS_SELECT;
 		bots[bot_index].menuSelectTime = worldTime() + 0.5;
-		debugMsg("Action=CLASS_SELECT\n");
+		debugMsg("Action = CLASS_SELECT\n");
 	}
 }
 
@@ -89,14 +89,13 @@ void BotClient_Valve_WeaponList(void *p, int bot_index) {
 	
 	int *asIntPtr = reinterpret_cast<int*>(p);
 	
-	state = state > 7 ? 0 : (state + 1);
-	
 	if (state == 0) {
 		strcpy(bot_weapon.szClassname, reinterpret_cast<char*>(p));
 	} else if (state == 1) {
 		bot_weapon.iAmmo1 = *asIntPtr; // ammo index 1
-		if (bot_weapon.iAmmo1 < 0)
+		if (bot_weapon.iAmmo1 < 0) {
 			bot_weapon.iAmmo1 = 0;
+		}
 	} else if (state == 2) {
 		bot_weapon.iAmmo1Max = *asIntPtr; // max ammo1
 	} else if (state == 3) {
@@ -134,6 +133,8 @@ void BotClient_Valve_WeaponList(void *p, int bot_index) {
 		debugFile(tdb);
 		*/
 	}
+	
+	state = state > 7 ? 0 : (state + 1);
 }
 
 
@@ -339,10 +340,10 @@ void HumanClient_CurrentWeapon(void *p, int clientIndex) {
 				iId = 0;
 				if (siId > 0 && siId <= 128)
 					while (siId!=1) {  siId>>=1;  iId++;  }	// get real ID
-	}
+			}
 			clientWeapon[clientIndex] = iId;
 			//debugMsg("Armed weapon %i\n", iId);
-	}
+		}
 		state = 0;
 	}
 }
@@ -355,6 +356,9 @@ void BotClient_Valve_AmmoX(void *p, int bot_index) {
 	static int index;
 	static int amount;
 	int ammo_index;
+	
+	printf("BotClient_Valve_AmmoX %d\n", state);
+	fflush(stdout);
 	
 	if (state == 0) {
 		state++;

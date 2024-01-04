@@ -131,7 +131,7 @@ void importCS_Specifics() {
 //	importNav(NAV_CSI_HOSTAGE_RESCUE);
 //	importNav(NAV_CSI_MAP_PARAMETERS);
 	importNav(NAV_CSI_VIP_START); // VIP-spawnpoint
-	importNav(NAV_INFO_PLAYER_START); // CT-spawnpoint (T-spawnpoint=PLAYER_DM)
+	importNav(NAV_INFO_PLAYER_START); // CT-spawnpoint (T-spawnpoint = PLAYER_DM)
 }
 
 

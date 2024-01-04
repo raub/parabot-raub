@@ -80,7 +80,7 @@ void CParabot::initAfterRespawn() {
 	actualNavpoint = getNearestNavpoint(ent);
 	
 	if (!actualNavpoint) {
-		debugMsg("CParabot::initAfterRespawn() : navpoint=0!\n");
+		debugMsg("CParabot::initAfterRespawn() : navpoint = 0!\n");
 	} else if (!actualNavpoint->reached(ent)) {
 		actualNavpoint = 0;
 		debugMsg("Not respawned at navpoint!\n");

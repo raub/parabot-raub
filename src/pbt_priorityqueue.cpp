@@ -39,7 +39,7 @@ short PBT_PriorityQueue::getFirst() {
 				freePos[numFree++] = (short)l;
 				break;
 			}
-			hPos=l;
+			hPos = l;
 		} else {
 			heap[hPos] = heap[r];
 			if (heap[hPos] == EMPTY_KEY) {
@@ -50,7 +50,7 @@ short PBT_PriorityQueue::getFirst() {
 				freePos[numFree++] = (short)r;
 				break;
 			}
-			hPos=r;
+			hPos = r;
 	}
 	} while (0 == 0);
 	

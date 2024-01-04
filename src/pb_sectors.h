@@ -1,21 +1,13 @@
-#if !defined(PB_SECTORS_H)
-#define PB_SECTORS_H
-
+#ifndef _PB_SECTORS_HPP_
+#define _PB_SECTORS_HPP_
 
 #include "pb_global.h"
 
-
-
-class PB_Sectors
-{
-
 #define NUM_SECTORS 4
 
-
+class PB_Sectors {
 protected:
-
 	int getSector(Vector dir);
-
 };
 
-#endif
+#endif // _PB_SECTORS_HPP_

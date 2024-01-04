@@ -20,7 +20,7 @@ public:
 	float getValue (short index) { return value[index]; }
 	
 	short getFirst();
-	void addOrUpdate(short index, float newWeight, float newValue=0.0);
+	void addOrUpdate(short index, float newWeight, float newValue = 0.0);
 	
 private:
 	short heap[MAX_QUEUE_ELEMENTS]; // heap with node indices
