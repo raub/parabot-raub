@@ -9,7 +9,6 @@
 #include "pb_global.h"
 #include "pb_observer.h"
 #include "sounds.h"
-#include "pb_chat.h"
 #include "pb_configuration.h"
 #include "parabot.h"
 //#include "hl_game.h"
@@ -24,14 +23,12 @@ extern bool g_meta_init;
 
 extern bot_t bots[32];
 extern edict_t *clients[32];
-extern int welcome_index; // client to welcome
 extern float bot_check_time; // for checking if new bots should be created
 extern DLL_FUNCTIONS other_gFunctionTable;
 extern bool g_GameRules;
 //extern int min_bots;
 extern bool pb_pause;
 extern PB_Configuration pbConfig;
-extern PB_Chat chat;
 extern int numberOfClients;
 
 extern int debug_engine;
@@ -57,13 +54,6 @@ extern int camPlayerModel, camPlayerWeapon;
 extern int clientWeapon[32];
 extern edict_t *camPlayerLaser;
 
-float welcome_time = 0.0;
-#ifdef _DEBUG
-	char welcome_msg[] = "You are playing a debug version of Parabot 0.92.1\n";
-#else
-	char welcome_msg[] = "Welcome to Parabot 0.92.1\n";
-#endif
-
 extern PB_MapGraph mapGraph; // mapgraph for waypoints
 extern PB_MapCells map;
 extern int botNr;
@@ -75,6 +65,10 @@ extern int need_init;
 
 extern bool headToBunker;
 extern float airStrikeTime;
+
+extern int activeBot;
+extern edict_t *playerEnt;
+
 
 void UpdateClientData(const struct edict_s *ent, int sendweapons, struct clientdata_s *cd);
 // implemented in client.cpp
@@ -248,33 +242,6 @@ void UTIL_HudMessage(CBaseEntity *pEntity, const hudtextparms_t &textparms, cons
 }
 
 int gmsgHudText = 0;
-
-void sendWelcomeToNewClients() {
-	if (welcome_index == -1) {
-		return;
-	}
-	
-	if (welcome_time == 0) {
-		// are they out of observer mode yet?
-		if (isAlive(clients[welcome_index])) {
-			welcome_time = worldTime() + 5.0; // welcome in 5 seconds
-		}
-		return;
-	}
-	
-	if (worldTime() > welcome_time) {
-		if (worldTime() > 30.0) // if game has already started
-			chat.parseMessage(clients[welcome_index], " Hi "); // make bots chat
-		if (!pbConfig.onTouringMode()) {
-			if (gmsgHudText == 0)	gmsgHudText = REG_USER_MSG("HudText", -1);
-			MESSAGE_BEGIN(MSG_ONE, gmsgHudText, NULL, clients[welcome_index]);
-			WRITE_STRING(welcome_msg);
-			MESSAGE_END();
-		}
-		welcome_time = 0;
-		welcome_index = -1;
-	}
-}
 
 
 // are we currently respawning bots and is it time to spawn one yet?
@@ -478,7 +445,7 @@ void checkForAirStrike() {
 		if (bot == 0 || (worldTime() - bot->parabot->lastRespawn) < 1.0) {
 			continue;
 		}
-#ifdef _DEBUG
+#ifdef DEBUG
 		const char *name = STRING(pPlayer->pev->netname);
 		debugMsg(name, " was save at airstrike!\n");
 #endif
@@ -502,7 +469,6 @@ void checkForAirStrike() {
 }
 
 
-extern int activeBot;
 void pb2dMsg(int x, int y, const char *msg);
 void pb3dMsg(Vector pos, const char *msg);
 
@@ -590,9 +556,6 @@ PB_Navpoint* getNearestNavpoint(edict_t *pEdict) {
 	return cashedNavpoint[i];
 }
 
-
-extern edict_t *playerEnt;
-
 //HL_Game game(HL_Game::DM);
 
 
@@ -623,7 +586,7 @@ void StartFrame(void) {
 			updateBotCam();
 			if (worldTime() > observerUpdate) {
 				observer.registerClients();
-				observerUpdate = worldTime() + 3.0;//0.5;
+				observerUpdate = worldTime() + 3.0; //0.5;
 				/*
 				// PIA Test
 				for (int pi = 0; pi < game.world()->numberOfPlayers(); pi++) {
@@ -642,12 +605,8 @@ void StartFrame(void) {
 			observer.observeAll();
 			updateVisTable();
 			checkForAirStrike();
-			sendWelcomeToNewClients();
 			checkForBotRespawn();
 			checkForBotCreation();
-			if (!pb_pause) {
-				chat.check();
-			}
 			glMarker.drawMarkers();
 		}
 	}

@@ -70,7 +70,7 @@ PB_Path* getPath(int pathId);
 int getTotalAttempts();
 void incTotalAttempts();
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	void checkForBreakpoint(int reason);
 	void debugFile(const char *msg);
 	void debugMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
@@ -85,7 +85,7 @@ void incTotalAttempts();
 void infoMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
 
 void errorMsg(const char *str1, const char *str2 = 0, const char *str3 = 0, const char *str4 = 0);
-#ifdef _DEBUG
+#ifdef DEBUG
 	void debugSound(edict_t *recipient, const char *sample);
 	void debugBeam(Vector start, Vector end, int life, int color = 1);
 	void debugMarker(Vector pos, int life);

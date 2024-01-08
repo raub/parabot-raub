@@ -266,7 +266,7 @@ public:
 		int lastAttempt; // last attempt of passing (value of mapGraph::passCount)
 		int successful; // certainty factor = succesful passes / attempts
 		float lostHealth; // sum of all health lost on this pass
-		int enemyEncounters;// number of enemy encounters on this path
+		int enemyEncounters; // number of enemy encounters on this path
 	} TSaveData;
 	
 	TSaveData data;

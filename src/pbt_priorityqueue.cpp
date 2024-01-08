@@ -34,7 +34,7 @@ short PBT_PriorityQueue::getFirst() {
 				freePos[numFree++] = (short)hPos;
 				break;
 			}
-			else if (l >= ((MAX_QUEUE_ELEMENTS - 1)/2)) {
+			else if (l >= ((MAX_QUEUE_ELEMENTS - 1) / 2)) {
 				heap[l] = EMPTY_KEY;
 				freePos[numFree++] = (short)l;
 				break;
@@ -45,7 +45,7 @@ short PBT_PriorityQueue::getFirst() {
 			if (heap[hPos] == EMPTY_KEY) {
 				freePos[numFree++] = (short)hPos;
 				break;
-			} else if (r >= ((MAX_QUEUE_ELEMENTS - 1)/2)) {
+			} else if (r >= ((MAX_QUEUE_ELEMENTS - 1) / 2)) {
 				heap[r] = EMPTY_KEY;
 				freePos[numFree++] = (short)r;
 				break;
@@ -69,7 +69,7 @@ void PBT_PriorityQueue::addOrUpdate(short index, float newWeight, float newValue
 		if (numFree > 0) hPos = freePos[--numFree];
 		else {
 			hPos = numElements;
-			if (hPos < ((MAX_QUEUE_ELEMENTS - 1)/2)) {
+			if (hPos < ((MAX_QUEUE_ELEMENTS - 1) / 2)) {
 				// set empty keys:
 				int l = hPos + hPos + 1;
 				int r = l + 1;
@@ -84,7 +84,7 @@ void PBT_PriorityQueue::addOrUpdate(short index, float newWeight, float newValue
 	if (newWeight < weight[index]) {
 		// update weight
 		short pre;
-		while ((hPos > 0) && (newWeight < weight[heap[(pre=(hPos - 1)/2)]])) {
+		while ((hPos > 0) && (newWeight < weight[heap[(pre=(hPos - 1) / 2)]])) {
 			// swap indices
 			heap[hPos] = heap[pre];
 			heapPos[heap[pre]] = hPos;

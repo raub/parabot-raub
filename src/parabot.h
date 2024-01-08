@@ -70,7 +70,6 @@ public:
 	
 	// character variables
 	float aggression;
-	int chatRate;
 	
 	// state variables
 	int botState; // actual state (Wandering, In_Combat, ...)
@@ -99,8 +98,7 @@ public:
 	PB_Action action;
 	CParabot(edict_t *botEnt, int botSlot);
 	~CParabot();
-	void setAggression(int agr) { aggression = ((float)agr)/2; }
-	void setCommunication(int comm) { chatRate = comm; }
+	void setAggression(int agr) { aggression = ((float)agr) / 2; }
 	void initAfterRespawn();
 	// initializes bot after respawn
 	void botThink();

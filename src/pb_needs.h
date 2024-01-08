@@ -32,7 +32,7 @@ protected:
 	void agWishList();
 	void getWishList();
 	
-	float wish[MAX_NAV_TYPES];// wish-values for different items
+	float wish[MAX_NAV_TYPES]; // wish-values for different items
 	float maxWish; // max. wish-value
 	float weaponWish; // added wishes of all available weapons and ammo
 	float wishUpdate; // worldTime wishes are calculated again

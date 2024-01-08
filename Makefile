@@ -8,7 +8,8 @@ INCLUDES := /Isrc /Isrc/vendored
 SRC := $(wildcard src/*.cpp) $(wildcard src/vendored/*.cpp)
 
 # ------- Debug
-CFLAGS := /Zi /DDEBUG /D_DEBUG /MDd
+# NOTE: /D_DEBUG /MDd won't work on systems with no VS2019
+CFLAGS := /std:c++17 /EHsc /Zi /DDEBUG /MD /DJSON_NOEXCEPTION
 LDFLAGS := /DEBUG:FULL
 OUT_DIR_LIB := lib-x32
 OUT_DIR_OBJ := build
@@ -25,7 +26,7 @@ debug: $(OBJ)
 	link /MACHINE:X86 $(LDFLAGS) /OUT:$(OUT_DIR_LIB)/$(LIBNAME) /DLL $(OBJ)
 
 # ------- Release
-release: CFLAGS := /O2 /Oy /GL /GF /Gm- /EHa-s-c- /MD /GS /Gy /GR- /Gd /DNDEBUG
+release: CFLAGS := /std:c++17 /O2 /Oy /GL /GF /Gm- /EHsc /MD /GS /Gy /GR- /Gd /DNDEBUG /DJSON_NOEXCEPTION
 release: LDFLAGS := /DEBUG:NONE /LTCG /OPT:NOREF
 release: OUT_DIR_LIB := lib-x32/release
 OUT_DIR_OBJ_REL := build/release

@@ -12,6 +12,7 @@ int activeBot; // bot that's thinking
 extern int botNr; // bot that's getting debugged
 extern int botHalt; // if set to >0, breaks at checkForBreakpoint()
 extern char mod_name[32];
+extern int wpBeamTexture;
 int gmsgParabot2dMsg = 0;
 int gmsgParabot3dMsg = 0;
 bool dbgFile = true;
@@ -100,7 +101,7 @@ void incTotalAttempts() {
 	mapGraph.incPasses();
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void checkForBreakpoint(int reason) {
 	if ((botNr == activeBot) && (botHalt == reason)) {
 		debugMsg("Breakpoint reached\n");
@@ -110,7 +111,7 @@ void checkForBreakpoint(int reason) {
 #endif
 
 void pb2dMsg(int x, int y, const char *msg) {
-/*#ifdef _DEBUG
+/*#ifdef DEBUG
 	if (gmsgParabot2dMsg == 0)
 		gmsgParabot2dMsg = REG_USER_MSG("Pb2dMsg", -1);
 	
@@ -131,7 +132,7 @@ void pb2dMsg(int x, int y, const char *msg) {
 
 
 void pb3dMsg(Vector pos, const char *msg) {
-/*#ifdef _DEBUG
+/*#ifdef DEBUG
 	if (gmsgParabot3dMsg == 0)
 		gmsgParabot3dMsg = REG_USER_MSG("Pb3dMsg", -1);
 	
@@ -152,8 +153,7 @@ void pb3dMsg(Vector pos, const char *msg) {
 }
 
 
-extern int wpBeamTexture;
-#ifdef _DEBUG
+#ifdef DEBUG
 void debugBeam(Vector start, Vector end, int life, int color) {
 	if (botNr!=activeBot) {
 		return;
@@ -299,7 +299,7 @@ void infoMsg(const char *str1, const char *str2, const char *str3, const char *s
 	}
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void debugMsg(const char *str1, int data1, int data2, int data3) {
 	if (botNr != activeBot) {
 		return;

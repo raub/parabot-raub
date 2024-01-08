@@ -10,6 +10,7 @@ extern bot_t bots[32];
 extern int mod_id;
 extern PB_Configuration pbConfig; // from configfiles.cpp
 extern bool g_meta_init;
+extern int debug_engine;
 
 
 PB_WeaponHandling::PB_WeaponHandling() {
@@ -210,7 +211,6 @@ int PB_WeaponHandling::getBestWeapon(float distance, float hitProb, int flags) {
 	return bestWeapon;
 }
 
-extern int debug_engine;
 void CmdStart(const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed);
 void CmdEnd (const edict_t *player);
 

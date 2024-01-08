@@ -135,7 +135,7 @@ CBaseEntity* getActiveItem(edict_t *player) {
 		weaponClass = (CBaseEntity**)(playerClass + 1172);
 		break;
 	case GEARBOX_DLL:
-		weaponClass = (CBaseEntity**)(playerClass + 1404);//1556);
+		weaponClass = (CBaseEntity**)(playerClass + 1404); // 1556);
 		break;
 	}
 	/* if (*weaponClass) {

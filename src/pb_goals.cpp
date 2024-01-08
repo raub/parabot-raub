@@ -10,10 +10,10 @@ extern PB_Observer observer;
 extern int botNr;
 extern edict_t *camPlayer;
 extern bool haloOnBase;
+extern float sineTable[256];
 
 void startBotCam(edict_t *pEntity);
 
-extern float sineTable[256];
 
 #define DEFAULT_LOOKAROUND_ANGLE 140
 float lookAroundAngle = DEFAULT_LOOKAROUND_ANGLE;

@@ -1,7 +1,6 @@
 #include "sounds.h"
 #include "bot.h"
 #include "pb_weapon.h"
-#include "pb_chat.h"
 #include "pb_mapgraph.h"
 
 
@@ -39,7 +38,6 @@ extern int mod_id;
 extern int clientWeapon[32];
 extern PB_MapGraph mapGraph; // mapgraph for waypoints
 extern bool fatalParabotError;
-extern PB_Chat chat;
 
 PB_Navpoint* getNearestNavpoint(edict_t *pEdict);
 
@@ -472,19 +470,6 @@ void Sounds::parseSound(edict_t *ent, const char *sample, float vol) {
 			if (!nearest) {
 				return; // listen server before map is loaded
 			}
-			const char *wpnName = nearest->classname();
-			if (mod_id == VALVE_DLL || mod_id == AG_DLL || mod_id == HUNGER_DLL || mod_id == GEARBOX_DLL) {
-				if (
-					strcmp(wpnName, "weapon_rpg") == 0 ||
-					strcmp(wpnName, "weapon_gauss") == 0 ||
-					strcmp(wpnName, "weapon_egon") == 0 ||
-					strcmp(wpnName, "weapon_crossbow") == 0
-				) {
-					chat.registerGotWeapon(ent, wpnName);
-				}
-			} else { // Holy Wars
-				chat.registerGotWeapon(ent, wpnName);
-			}
 		} else if (strcmp(sample, "items/9mmclip1.wav") == 0) { // ammo pickup
 			clientIndex = UTIL_GetNearestPlayerIndex(ent->v.origin) - 1;
 			//ent = INDEXENT(clientIndex + 1);
@@ -582,14 +567,6 @@ void Sounds::parseSound(edict_t *ent, const char *sample, float vol) {
 			itemTrackableDist[clientIndex] = AMMO_TRACK_DIST;
 			timeItemSound[clientIndex] = worldTime() + 0.3;
 			//debugMsg(STRING(ent->v.netname), " picked up gun or ammo: ", wpnName, "\n");
-			if (
-				strcmp(wpnName, "weapon_lightning") == 0 ||
-				strcmp(wpnName, "weapon_rocketlauncher") == 0 ||
-				strcmp(wpnName, "weapon_grenadelauncher") == 0 ||
-				strcmp(wpnName, "weapon_supernailgun") == 0
-			) {
-				chat.registerGotWeapon(ent, wpnName);
-			}
 		} else if (strcmp(sample, "plats/freightmove2.wav") == 0) { // lift usage
 			Vector pos = 0.5 * (ent->v.absmin + ent->v.absmax);  
 			pos.z = ent->v.absmax.z;

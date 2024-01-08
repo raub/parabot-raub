@@ -36,7 +36,7 @@ public:
 	// returns the accurcy for beforehand passed target
 	Vector getMoveDir();
 	Vector getViewAngle() { return viewAngle; }
-	float getFrameTime() { return (currentMSec/1000); }
+	float getFrameTime() { return (currentMSec / 1000); }
 	int getAimSkill() { return aimSkill; }
 	float estimateHitProb();
 	void setWeaponCone (float cone) { weaponCone = cone; }

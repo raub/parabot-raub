@@ -10,6 +10,8 @@
 #define MAX_PLAT_WAIT 2.0 // maximal time to wait if platform is not moving
 
 extern CMarker glMarker;
+extern bool pb_pause;
+
 int journeyMode = JOURNEY_FAST;
 
 // sets global journey mode
@@ -469,8 +471,6 @@ void PB_Path::reportTargetReached(edict_t *traveller, float worldTime) {
 }
 
 
-extern bool pb_pause;
-
 // confirms path as failed, internally set new success-variables
 void PB_Path::reportTargetFailed() {
 	if (data.attempts == 0) {
@@ -514,7 +514,7 @@ Vector PB_Path::getViewPos(edict_t *traveller, int &prior) {
 		if (lastReachedWaypoint->action()==BOT_USE) {
 			assert(traveller != 0);
 			Vector t = traveller->v.origin;
-			Vector p = startNav().pos();//lastReachedWaypoint->pos();
+			Vector p = startNav().pos(); //lastReachedWaypoint->pos();
 			prior = 2; // UNDONE: ButtonUse uses AimDir, not ViewDir!!!
 			return p;
 		}

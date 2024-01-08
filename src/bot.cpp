@@ -7,7 +7,6 @@
 #include "bot_func.h"
 #include "bot_weapons.h"
 #include "pb_goals.h"
-#include "pb_chat.h"
 #include "pb_configuration.h"
 
 extern bool g_meta_init;
@@ -15,7 +14,6 @@ extern HINSTANCE h_Library;
 extern int mod_id;
 extern float roundStartTime;
 extern PB_Configuration pbConfig;
-extern PB_Chat chat;
 //extern int maxPers;
 //extern PB_Personality personality[MAX_PERS]; // stores different bot personalities
 //extern bool personalityUsed[MAX_PERS]; // true if bot exists using this personality
@@ -127,7 +125,7 @@ void BotCreate(int fixedPersNr) {
 		infoMsg("Max. Players reached. Can't create bot!\n");
 		return;
 	}
-#ifdef _DEBUG
+#ifdef DEBUG
 	char dbgBuffer[256];
 	sprintf(dbgBuffer, "%.f: BotCreate() fixedPersNr = %i, persNr = %i, botname = %s\n", worldTime(), fixedPersNr, persNr, botName);
 	debugFile(dbgBuffer);
@@ -214,7 +212,6 @@ void BotCreate(int fixedPersNr) {
 	pBot->parabot->action.setAimSkill(pbConfig.personality(persNr).aimSkill);
 	pBot->parabot->setAggression(pbConfig.personality(persNr).aggression);
 	pBot->parabot->senses.setSensitivity(pbConfig.personality(persNr).sensitivity);
-	pBot->parabot->setCommunication(pbConfig.personality(persNr).communication);
 	
 	pBot->personality = persNr;
 
@@ -326,31 +323,36 @@ void BotStartGame(bot_t *pBot) {
 	assert(pBot != 0);
 	edict_t *pEdict = pBot->pEdict;
 	
-	chat.registerJoin(pEdict);
-	
 	if (mod_id == TFC_DLL) {
 		// handle Team Fortress Classic stuff here...
 		if (pBot->start_action == MSG_TFC_TEAM_SELECT) {
-			if (pBot->menuSelectTime > worldTime()) return;
-
+			if (pBot->menuSelectTime > worldTime()) {
+				return;
+			}
+			
 			pBot->start_action = MSG_TFC_IDLE; // switch back to idle
-
-			if ((pBot->bot_team != 1) && (pBot->bot_team != 2) && (pBot->bot_team != 5))
+			
+			if ((pBot->bot_team != 1) && (pBot->bot_team != 2) && (pBot->bot_team != 5)) {
 				pBot->bot_team = -1;
-
-			if (pBot->bot_team == -1) pBot->bot_team = RANDOM_LONG(1, 2);
-
+			}
+			
+			if (pBot->bot_team == -1) {
+				pBot->bot_team = RANDOM_LONG(1, 2);
+			}
+			
 			// select the team the bot wishes to join...
 			if (pBot->bot_team == 1)		strcpy(c_team, "1");
 			else if (pBot->bot_team == 2) strcpy(c_team, "2");
 			else strcpy(c_team, "5");
-
+			
 			FakeClientCommand(pEdict, "jointeam", c_team, NULL);
 			return;
 		}
-
+		
 		if (pBot->start_action == MSG_TFC_CLASS_SELECT) {
-			if (pBot->menuSelectTime > worldTime()) return;
+			if (pBot->menuSelectTime > worldTime()) {
+				return;
+			}
 			
 			pBot->start_action = MSG_TFC_IDLE; // switch back to idle
 			/* if (pBot->not_started == 0) {
@@ -361,12 +363,12 @@ void BotStartGame(bot_t *pBot) {
 			if ((pBot->bot_class < 0) || (pBot->bot_class > 10)) {
 				pBot->bot_class = -1;
 			}
-
+			
 			if (pBot->bot_class == -1) {
 				pBot->bot_class = RANDOM_LONG(1, 10);
 			}
 			pBot->bot_class = 3;
-
+			
 			// select the class the bot wishes to use...
 			if (pBot->bot_class == 0) strcpy(c_class, "civilian");
 			else if (pBot->bot_class == 1) strcpy(c_class, "scout");
@@ -392,17 +394,23 @@ void BotStartGame(bot_t *pBot) {
 		// handle Counter-Strike stuff here...
 		if (pBot->start_action == MSG_CS_TEAM_SELECT) {
 			pBot->start_action = MSG_CS_IDLE; // switch back to idle
-
+			
 			if ((pBot->bot_team != 1) && (pBot->bot_team != 2) && (pBot->bot_team != 5))
 				pBot->bot_team = -1;
-
-			if (pBot->bot_team == -1) pBot->bot_team = RANDOM_LONG(1, 2);
-
+			
+			if (pBot->bot_team == -1) {
+				pBot->bot_team = RANDOM_LONG(1, 2);
+			}
+			
 			// select the team the bot wishes to join...
-			if (pBot->bot_team == 1)		strcpy(c_team, "1");
-			else if (pBot->bot_team == 2) strcpy(c_team, "2");
-			else strcpy(c_team, "5");
-
+			if (pBot->bot_team == 1) {
+				strcpy(c_team, "1");
+			} else if (pBot->bot_team == 2) {
+				strcpy(c_team, "2");
+			} else {
+				strcpy(c_team, "5");
+			}
+			
 			FakeClientCommand(pEdict, "menuselect", c_team, NULL);
 			return;
 		}

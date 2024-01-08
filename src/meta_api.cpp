@@ -45,6 +45,9 @@ extern "C" DLLEXPORT int Meta_Query (char *ifvers, plugin_info_t **pPlugInfo, mu
 	gpMetaUtilFuncs = pMetaUtilFuncs;
 	*pPlugInfo = &Plugin_info;
 	
+	printf("\n\nMeta_Query %d\n", DEBUG);
+	fflush(stdout);
+	
 	return TRUE; // tell metamod this plugin looks safe
 }
 

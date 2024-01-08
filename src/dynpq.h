@@ -82,14 +82,14 @@ void dynamic_priority_queue<key_type>::changeKeyAt(index_type at, key_type k) {
 
 template <class key_type>
 void dynamic_priority_queue<key_type>::goUp(index_type idx) {
-	index_type Predecessor = (idx - 1)/2;
+	index_type Predecessor = (idx - 1) / 2;
 	key_type* temp = c[idx];
 	
 	while(Predecessor != idx && comp(c[Predecessor], temp)) {
 		c[idx] = c[Predecessor];
 		Indices[c[idx]-first] = idx;
 		idx = Predecessor;
-		Predecessor = (idx - 1)/2;
+		Predecessor = (idx - 1) / 2;
 	}
 	
 	c[idx] = temp;

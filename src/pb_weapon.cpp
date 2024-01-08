@@ -363,20 +363,27 @@ float PB_Weapon::valveWeaponScore(float distance, float hitProb, int flags, bool
 			break;
 		}
 		
-		score = 7 - (7*distance/1600);
+		score = 7 - (7*distance / 1600);
 		if (score < 0.2) {
 			score = 0.2;
 		}
 		
 		if (checkAmmo) {
-			if (ammo1() == 0) score = 0;
-			else if (ammo1() <= 10) score /= 2;
+			if (ammo1() == 0) {
+				score = 0;
+			} else if (ammo1() <= 10) {
+				score /= 2;
+			}
 		}
+		
 		if (flags & WF_SINGLE_SHOT_KILL) {
 			notSuitable = true;
-			if ((score/10) > score2) bestMode[currentWeapon] = 1;
+			if ((score / 10) > score2) {
+				bestMode[currentWeapon] = 1;
+			}
+		} else if (score > score2) {
+			bestMode[currentWeapon] = 1;
 		}
-		else if (score > score2) bestMode[currentWeapon] = 1;
 		
 		break;
 	
@@ -405,16 +412,21 @@ float PB_Weapon::valveWeaponScore(float distance, float hitProb, int flags, bool
 			break;
 		}
 		
-		score = 8 - (8*distance/1600);
+		score = 8 - (8 * distance / 1600);
 		if (score < 0.2) {
 			score = 0.2;
 		}
 
 		if (checkAmmo) {
-			if (ammo1() == 0) score = 0;
-			else if (ammo1() <= 4) score /= 2;
+			if (ammo1() == 0) {
+				score = 0;
+			} else if (ammo1() <= 4) {
+				score /= 2;
+			}
 		}
-		if (hitProb < 0.5) score *= (hitProb + 0.5); // punish slow reload
+		if (hitProb < 0.5) {
+			score *= (hitProb + 0.5); // punish slow reload
+		}
 		
 		if (hitProb > 0.5 && distance < 200 && ammo1()>1) {
 			bestMode[currentWeapon] = 2; // use double mode when possible
@@ -438,9 +450,13 @@ float PB_Weapon::valveWeaponScore(float distance, float hitProb, int flags, bool
 			if (score < 1.5) score = 1.5; // don't use glock!
 		} else {
 			bestMode[currentWeapon] = 2;
-			score = 8 - 8*(distance - 400)/1600; 
-			if (flags & WF_ENEMY_ABOVE) score -= 1;
-			if (score < 1) score = 1;
+			score = 8 - 8 * (distance - 400) / 1600;
+			if (flags & WF_ENEMY_ABOVE) {
+				score -= 1;
+			}
+			if (score < 1) {
+				score = 1;
+			}
 		}
 		break;
 	
@@ -472,7 +488,7 @@ float PB_Weapon::valveWeaponScore(float distance, float hitProb, int flags, bool
 			score = (distance - 150) / 12.5;
 			if (score < 0.5) score = 0.5;
 		} else {
-			score = 8 - 8*(distance - 250)/1600;
+			score = 8 - 8 * (distance - 250) / 1600;
 			if (score < 4) score = 4; // not that bad...
 		}
 		
@@ -491,7 +507,9 @@ float PB_Weapon::valveWeaponScore(float distance, float hitProb, int flags, bool
 	case VALVE_WEAPON_HANDGRENADE:
 		if (flags & WF_UNDERWATER) break;
 		// explosion at 450
-		if (300 <= distance && distance <= 600) score = 1;
+		if (300 <= distance && distance <= 600) {
+			score = 1;
+		}
 		break;
 	
 	case VALVE_WEAPON_TRIPMINE:
@@ -559,7 +577,7 @@ float PB_Weapon::hwWeaponScore(float distance, float hitProb, int flags, bool ch
 	case HW_WEAPON_DOUBLESHOTGUN:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 8 - (8*distance/1600);
+		score = 8 - (8 * distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo && ammo1() == 0) score = 0;
@@ -572,7 +590,7 @@ float PB_Weapon::hwWeaponScore(float distance, float hitProb, int flags, bool ch
 	case HW_WEAPON_MACHINEGUN:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 7 - (7*distance/1600);
+		score = 7 - (7*distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -590,7 +608,7 @@ float PB_Weapon::hwWeaponScore(float distance, float hitProb, int flags, bool ch
 			score = (distance - 250) / 18.75;
 			if (score < 1.5) score = 1.5; // don't use jackhammer!
 		} else {
-			score = 8 - 8*(distance - 400)/1600; 
+			score = 8 - 8 * (distance - 400) / 1600; 
 			if (score < 1) score = 1;
 		}
 		if (flags & WF_SINGLE_SHOT_KILL) notSuitable = true;
@@ -649,7 +667,7 @@ float PB_Weapon::dmcWeaponScore(float distance, float hitProb, int flags, bool c
 	case DMC_WEAPON_QUAKEGUN:
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 3 - (3*distance/1800);
+		score = 3 - (3*distance / 1800);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo && ammo1() == 0) score = 0;
@@ -659,7 +677,7 @@ float PB_Weapon::dmcWeaponScore(float distance, float hitProb, int flags, bool c
 	case DMC_WEAPON_SUPERSHOTGUN:
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 6 - (6*(distance - 100)/200);
+		score = 6 - (6*(distance - 100) / 200);
 		if (score > 6) score = 6;
 		else if (score < 0.1) score = 0.1;
 		
@@ -670,7 +688,7 @@ float PB_Weapon::dmcWeaponScore(float distance, float hitProb, int flags, bool c
 	case DMC_WEAPON_NAILGUN:
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 4 - (4*distance/1600);
+		score = 4 - (4*distance / 1600);
 		if (hitProb < 0.3) score += 1; // fast-fire bonus
 		if (score < 0.2) score = 0.2;
 		
@@ -684,7 +702,7 @@ float PB_Weapon::dmcWeaponScore(float distance, float hitProb, int flags, bool c
 	case DMC_WEAPON_SUPERNAILGUN:
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 6 - (6*distance/1600);
+		score = 6 - (6*distance / 1600);
 		if (hitProb < 0.3) score += 1; // fast-fire bonus
 		if (score < 0.2) score = 0.2;
 		
@@ -732,7 +750,7 @@ float PB_Weapon::dmcWeaponScore(float distance, float hitProb, int flags, bool c
 				if (score < 2.5) score = 2.5; // don't switch weapon!
 			}
 		} else {
-			score = 8 - 8*(distance - 250)/1350; 
+			score = 8 - 8 * (distance - 250) / 1350; 
 			if (flags & WF_ENEMY_ABOVE) score -= 2;
 			if (score < 1) score = 1;
 		}
@@ -853,7 +871,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 		}
 		if (flags & WF_NEED_GRENADE) break;
 				
-		score = 7 - (7*distance/1600);
+		score = 7 - (7*distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -862,7 +880,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 		}
 		if (flags & WF_SINGLE_SHOT_KILL) {
 			notSuitable = true;
-			if ((score/10) > score2) bestMode[currentWeapon] = 1;
+			if ((score / 10) > score2) bestMode[currentWeapon] = 1;
 		} else if (score > score2) bestMode[currentWeapon] = 1;
 		break;
 	
@@ -886,7 +904,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 	case VALVE_WEAPON_SHOTGUN:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 8 - (8*distance/1600);
+		score = 8 - (8 * distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -913,7 +931,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 			if (score < 1.5) score = 1.5; // don't use glock!
 		} else {
 			bestMode[currentWeapon] = 2;
-			score = 8 - 8*(distance - 400)/1600; 
+			score = 8 - 8 * (distance - 400) / 1600; 
 			if (flags & WF_ENEMY_ABOVE) score -= 1;
 			if (score < 1) score = 1;
 		}
@@ -941,7 +959,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 			score = (distance - 150) / 12.5;
 			if (score < 0.5) score = 0.5;
 		} else {
-			score = 8 - 8*(distance - 250)/1600;
+			score = 8 - 8 * (distance - 250) / 1600;
 			if (score < 4) score = 4; // not that bad...
 		}
 		
@@ -1006,7 +1024,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 	case GEARBOX_WEAPON_M249:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 8 - (8*distance/3200);
+		score = 8 - (8 * distance/3200);
 		if (score < 0.3) score = 0.3;
 		
 		if (checkAmmo) {
@@ -1022,7 +1040,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 	case GEARBOX_WEAPON_SHOCKRIFLE:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 7 - 7*(distance - 250)/1600;
+		score = 7 - 7*(distance - 250) / 1600;
 		if (score < 3) score = 3; // not that bad...
 		
 		if (flags & WF_SINGLE_SHOT_KILL) notSuitable = true;
@@ -1035,7 +1053,7 @@ float PB_Weapon::gearboxWeaponScore(float distance, float hitProb, int flags, bo
 			score = (distance - 150) / 16.67;
 			if (score < 2.5) score = 2.5; // don't switch weapon!
 		} else {
-			score = 6 - 6*(distance - 250)/1350; 
+			score = 6 - 6*(distance - 250) / 1350; 
 			if (flags & WF_ENEMY_ABOVE) score -= 2;
 			if (score < 1) score = 1;
 		}
@@ -1134,7 +1152,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 		}
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 7 - (7*distance/1600);
+		score = 7 - (7*distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -1143,7 +1161,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 		}
 		if (flags & WF_SINGLE_SHOT_KILL) {
 			notSuitable = true;
-			if ((score/10) > score2) bestMode[currentWeapon] = 1;
+			if ((score / 10) > score2) bestMode[currentWeapon] = 1;
 		} else if (score > score2) {
 			bestMode[currentWeapon] = 1;
 		}
@@ -1170,7 +1188,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 	case VALVE_WEAPON_EGON:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 6 - (6*distance/1200);
+		score = 6 - (6*distance / 1200);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -1183,7 +1201,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 	case VALVE_WEAPON_SHOTGUN:
 		if (flags & (WF_UNDERWATER | WF_NEED_GRENADE)) break;
 		
-		score = 8 - (8*distance/1600);
+		score = 8 - (8 * distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -1210,7 +1228,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 			if (score < 1.5) score = 1.5; // don't use glock!
 		} else {
 			bestMode[currentWeapon] = 2;
-			score = 8 - 8*(distance - 400)/1600; 
+			score = 8 - 8 * (distance - 400) / 1600; 
 			if (flags & WF_ENEMY_ABOVE) score -= 1;
 			if (score < 1) score = 1;
 		}
@@ -1269,7 +1287,7 @@ float PB_Weapon::hungerWeaponScore(float distance, float hitProb, int flags, boo
 	case HUNGER_WEAPON_AP9:
 		if (flags & WF_NEED_GRENADE) break;
 		
-		score = 7 - (7*distance/1600);
+		score = 7 - (7*distance / 1600);
 		if (score < 0.2) score = 0.2;
 		
 		if (checkAmmo) {
@@ -1414,7 +1432,7 @@ bool PB_Weapon::attack(Vector target, float accuracy, Vector relVel) {
 				}
 			}
 			else if (currentWeapon == VALVE_WEAPON_HANDGRENADE) {
-				fired = attackValveHandgrenade(target);// pull trigger before aiming perfectly
+				fired = attackValveHandgrenade(target); // pull trigger before aiming perfectly
 			}
 			else if (currentWeapon == VALVE_WEAPON_SATCHEL && grenadePrepared) {
 				fired = attackValveSatchel(target); // no need for aiming when satchel thrown

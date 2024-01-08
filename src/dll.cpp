@@ -6,17 +6,14 @@
 #include "bot_func.h"
 #include "pb_global.h"
 #include "parabot.h"
-#include "pb_chat.h"
 #include "pb_mapcells.h"
 #include "pb_configuration.h"
 
 
 extern int debug_engine;
 extern bool speechSynthesis;
-//extern ChatList chatGotKilled, chatKilledPlayer, chatGotWeapon, chatReplyUnknown;
 extern bot_t bots[32];
 extern PB_Configuration pbConfig;
-extern PB_Chat chat;
 extern GETENTITYAPI other_GetEntityAPI;
 extern GETNEWDLLFUNCTIONS other_GetNewDLLFunctions; 
 static char g_argv[256];
@@ -36,7 +33,6 @@ int fake_arg_count;
 float bot_check_time = 10.0; // will be set to correct value when client connects
 int min_bots = -1;
 bool g_GameRules = FALSE;
-int welcome_index = -1;
 int wpSpriteTexture, wpBeamTexture, wpSprite2Texture;
 int g_hldm_mod = HLDM;
 bool gearbox_ctf = false;
@@ -58,14 +54,13 @@ void DSpeace();
 void GameDLLInit(void) {
 	if (mod_id == VALVE_DLL) {
 		// from jk_botti
-		if (CVAR_GET_POINTER("bm_ver"))
+		if (CVAR_GET_POINTER("bm_ver")) {
 			g_hldm_mod = BMOD;
-		else if (CVAR_GET_POINTER("mp_giveweapons") && CVAR_GET_POINTER("mp_giveammo"))
+		} else if (CVAR_GET_POINTER("mp_giveweapons") && CVAR_GET_POINTER("mp_giveammo")) {
 			g_hldm_mod = SEVS;
+		}
 	}
 	(*g_engfuncs.pfnAddServerCommand)("addbot", DSaddbot);
-	(*g_engfuncs.pfnAddServerCommand)("hidewelcome", DSsimulate);
-	(*g_engfuncs.pfnAddServerCommand)("chatlog", DSlogChat);
 	(*g_engfuncs.pfnAddServerCommand)("restrictedweapons", DSrestrictedWeapons);
 	(*g_engfuncs.pfnAddServerCommand)("peacemode", DSpeace);
 
@@ -85,7 +80,7 @@ void GameDLLInit(void) {
 int DispatchSpawn(edict_t *pent) {
 	if (gpGlobals->deathmatch) {
 		char *pClassname = (char *)STRING(pent->v.classname);
-#ifdef _DEBUG
+#ifdef DEBUG
 		if (debug_engine) {
 			fp = UTIL_OpenDebugLog();
 			fprintf(fp, "%f: DispatchSpawn: %s\n",worldTime(), pClassname);
@@ -96,20 +91,7 @@ int DispatchSpawn(edict_t *pent) {
 #endif
 		if (strcmp(pClassname, "worldspawn") == 0) {
 			// do level initialization stuff here...
-/*
-			if (speechSynthesis) {
-				// precache samples
-				int i;
-				for (i = 0; i < chatGotKilled.size(); i++) 
-					PRECACHE_SOUND(chatGotKilled[i].text);
-				for (i = 0; i < chatKilledPlayer.size(); i++) 
-					PRECACHE_SOUND(chatKilledPlayer[i].text);
-				for (i = 0; i < chatGotWeapon.size(); i++) 
-					PRECACHE_SOUND(chatGotWeapon[i].text);
-				for (i = 0; i < chatReplyUnknown.size(); i++) 
-					PRECACHE_SOUND(chatReplyUnknown[i].text);
-			}
-*/
+			
 			gearbox_ctf = false;
 			
 			PRECACHE_SOUND("weapons/xbow_hit1.wav"); // waypoint add
@@ -204,13 +186,13 @@ void ResetGlobalState(void) {
 
 BOOL ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[128]) {
 	bool connected;
-#ifdef _DEBUG
+#ifdef DEBUG
 	char buffer[256];
 	sprintf(buffer, "%.f: ClientConnect: %s (%s)", worldTime(), STRING(pEntity->v.netname), pszName);
 	debugFile(buffer);
 #endif
 	if (gpGlobals->deathmatch) {
-#ifdef _DEBUG
+#ifdef DEBUG
 		if (debug_engine) {
 			fp = UTIL_OpenDebugLog();
 			fprintf(fp, "ClientConnect: pent=%p name=%s\n", pEntity, pszName);
@@ -245,12 +227,12 @@ BOOL ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress
 
 void ClientDisconnect(edict_t *pEntity) {
 	int i, index = -1;
-#ifdef _DEBUG
+#ifdef DEBUG
 	char buffer[256];
 	sprintf(buffer, "%.f: ClientDisconnect: %s ", worldTime(), STRING(pEntity->v.netname));
 #endif
 	if (gpGlobals->deathmatch) {
-#ifdef _DEBUG
+#ifdef DEBUG
 		if (debug_engine) {
 			fp = UTIL_OpenDebugLog();
 			fprintf(fp, "ClientDisconnect: %p\n",pEntity);
@@ -271,7 +253,7 @@ void ClientDisconnect(edict_t *pEntity) {
 		}
 		
 		if (index != -1) { // bot is disconnecting
-#ifdef _DEBUG
+#ifdef DEBUG
 			debugMsg("BOT DISCONNECT.\n");
 			strcat(buffer, "...freeing bot");
 #endif
@@ -281,7 +263,7 @@ void ClientDisconnect(edict_t *pEntity) {
 			delete (bots[index].parabot);bots[index].parabot = 0;
 	}
 	}
-#ifdef _DEBUG
+#ifdef DEBUG
 	debugFile(buffer);
 #endif
 	numberOfClients--;
@@ -297,7 +279,7 @@ void ClientDisconnect(edict_t *pEntity) {
 }
 
 void ClientKill(edict_t *pEntity) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) {
 		fp = UTIL_OpenDebugLog();
 		fprintf(fp, "ClientKill: %p\n",pEntity);
@@ -308,7 +290,7 @@ void ClientKill(edict_t *pEntity) {
 }
 
 void ClientPutInServer(edict_t *pEntity) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) {
 		fp = UTIL_OpenDebugLog();
 		fprintf(fp, "ClientPutInServer: %p\n",pEntity);
@@ -316,18 +298,16 @@ void ClientPutInServer(edict_t *pEntity) {
 	}
 #endif
 	int index = 0;
-	while ((index < 32) && (clients[index] != NULL)) index++;
-	if (index < 32) clients[index] = pEntity;
-	/*else {
+	while ((index < 32) && (clients[index] != NULL)) {
+		index++;
+	}
+	if (index < 32) {
+		clients[index] = pEntity;
+	} /* else {
 		FILE *dfp = fopen("parabot/crashlog.txt", "a"); 
 		fprintf(dfp, "32 clients in ClientPutInServer()!\n"); 
 		fclose(dfp);
-	}*/
-	// check if this is NOT a bot joining the server...
-	if (UTIL_GetBotIndex(pEntity) == -1) {
-		// next welcome message to this client:
-		if (welcome_index == -1) welcome_index = index;
-	}
+	} */
 	
 	EHANDLE np;
 	np.Set(pEntity);
@@ -341,7 +321,7 @@ void ClientPutInServer(edict_t *pEntity) {
 }
 
 void ClientUserInfoChanged(edict_t *pEntity, char *infobuffer) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) {
 		fp = UTIL_OpenDebugLog();
 		fprintf(fp, "ClientUserInfoChanged: pEntity=%p infobuffer=%s\n", pEntity, infobuffer);
@@ -357,7 +337,7 @@ void ServerActivate(edict_t *pEdictList, int edictCount, int clientMax) {
 }
 
 void ServerDeactivate(void) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp, "ServerDeactivate\n"); fclose(fp); }
 #endif
 	if (!g_meta_init)
@@ -395,7 +375,7 @@ const char *GetGameDescription(void) {
 
 
 void PlayerCustomization(edict_t *pEntity, customization_t *pCust) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) {
 		fp = UTIL_OpenDebugLog(); fprintf(fp, "PlayerCustomization: %p\n",pEntity); fclose(fp);
 	}
@@ -420,7 +400,7 @@ void SpectatorThink(edict_t *pEntity) {
 
 
 void Sys_Error(const char *error_string) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) {
 		fp = UTIL_OpenDebugLog(); fprintf(fp, "Sys_Error: %s\n", error_string); fclose(fp);
 	}
@@ -473,7 +453,7 @@ int GetWeaponData(struct edict_s *player, struct weapon_data_s *info) {
 
 
 void CmdStart(const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	/*if (debug_engine) { 
 		fp = UTIL_OpenDebugLog(); 
 		fprintf(fp, "CmdStart: ed=%p, lms=%i, msec=%i, bts=%i, imp=%i, wps=%i\n",
@@ -499,7 +479,7 @@ void CmdStart(const edict_t *player, const struct usercmd_s *cmd, unsigned int r
 
 
 void CmdEnd (const edict_t *player) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	/*if (debug_engine) { 
 		fp = UTIL_OpenDebugLog(); 
 		fprintf(fp, "CmdEnd: ed=%p\n", player); 
@@ -527,7 +507,7 @@ void CreateInstancedBaselines(void) {
 
 
 int InconsistentFile(const edict_t *player, const char *filename, char *disconnect_message) {
-#ifdef _DEBUG
+#ifdef DEBUG
 	if (debug_engine) { fp = UTIL_OpenDebugLog(); fprintf(fp, "InconsistentFile: %p filename=%s\n",player,filename); fclose(fp); }
 #endif
 	return (*other_gFunctionTable.pfnInconsistentFile)(player, filename, disconnect_message);

@@ -4,13 +4,13 @@
 #include "bot_client.h"
 #include "bot_weapons.h"
 #include "parabot.h"
-#include "pb_chat.h"
 
 
 extern int mod_id;
 extern bot_t bots[32];
-
 extern int clientWeapon[32];
+extern int activeBot;
+extern bool pb_pause;
 
 bot_weapon_t weapon_defs[MAX_WEAPONS]; // array of weapon definitions
 
@@ -348,17 +348,12 @@ void HumanClient_CurrentWeapon(void *p, int clientIndex) {
 	}
 }
 
-extern int activeBot;
-
 // This message is sent whenever ammo ammounts are adjusted (up or down).
 void BotClient_Valve_AmmoX(void *p, int bot_index) {
 	static int state = 0; // current state machine state
 	static int index;
 	static int amount;
 	int ammo_index;
-	
-	printf("BotClient_Valve_AmmoX %d\n", state);
-	fflush(stdout);
 	
 	if (state == 0) {
 		state++;
@@ -534,7 +529,6 @@ void Client_Valve_DeathMsg(void *p, int noMatter) {
 			bot_t *botK = UTIL_GetBotPointer(killer);
 			if (botK) botK->parabot->registerKill(victim, (char*)p);
 		}
-		//suggestChatKill(INDEXENT(victim_index), INDEXENT(killer_index), (char*)p);
 	}
 }
 
@@ -606,8 +600,6 @@ void BotClient_Gearbox_Battery(void *p, int bot_index) {
 void BotClient_Hunger_Battery(void *p, int bot_index) {
 	BotClient_Valve_Battery(p, bot_index);
 }
-
-extern bool pb_pause;
 
 
 // This message gets sent when the bots are getting damaged.

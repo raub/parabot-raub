@@ -1,3 +1,5 @@
+#include <ctime>
+
 #include "extdll.h"
 #include "enginecallback.h"
 #include "dllapi.h"
@@ -7,14 +9,12 @@
 #include "engine.h"
 #include "pb_global.h"
 #include "pb_configuration.h"
-#include "pb_chat.h"
 
 extern int mod_id;
+extern bool g_meta_init;
 PB_Configuration pbConfig;
-PB_Chat chat;
 HINSTANCE h_Library = NULL;
 char mod_name[32];
-extern bool g_meta_init;
 enginefuncs_t g_engfuncs;
 globalvars_t *gpGlobals;
 GETENTITYAPI other_GetEntityAPI;
@@ -26,22 +26,59 @@ float sineTable[256]; // sine table for e.g. look-arounds
 void initSineTable() {
 	for (int i = 0; i < 256; i++) {
 		float f = (float) i;
-		f *= 2*3.1415927/256;
+		f *= 2*3.1415927 / 256;
 		sineTable[i] = sin(f);
 	}
 }
 
 #ifdef _WIN32
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
+
+void initPath() {
+	// char path[MAX_PATH];
+	// char pathFile[MAX_PATH];
+	// HMODULE hm = NULL;
+	
+	// if (GetModuleHandleEx(
+	// 	GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+	// 	(LPCSTR) &DllMain,
+	// 	&hm
+	// ) == 0) {
+	// 	int ret = GetLastError();
+	// 	printf("GetModuleHandle failed, error = %d\n", ret);
+	// 	// Return or however you want to handle an error.
+	// }
+	
+	// if (GetModuleFileName(hm, path, sizeof(path)) == 0) {
+	// 	int ret = GetLastError();
+	// 	printf("GetModuleFileName failed, error = %d\n", ret);
+	// 	// Return or however you want to handle an error.
+	// }
+	// // The path variable should now contain the full filepath for this DLL.
+	
+	// std::time_t t = std::time(0); // t is an integer type
+	// sprintf(pathFile, "%s/log/%lld.txt", path, t);
+	// freopen(pathFile, "w", stdout);
+	// char pathFile[MAX_PATH];
+	// sprintf(pathFile, "%s/log/%lld.txt", path, t);
+	freopen("stdout.txt", "w", stdout);
+}
+
+
+
 // Required DLL entry point
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+	printf("\n\nDllMain %d\n", DEBUG);
+	fflush(stdout);
+	
 	if (fdwReason == DLL_PROCESS_ATTACH) {
 		// nop
+		initPath();
 	} else if (fdwReason == DLL_PROCESS_DETACH) {
 		if (!g_meta_init) {
 			if (h_Library)
 				FreeLibrary(h_Library);
 		}
-		chat.free();
 	}
 	return TRUE;
 }
@@ -93,18 +130,12 @@ extern "C" DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t* pengfuncsFromEng
 	strcat(filePath, mod_name);
 	strcat(filePath, "/");
 	pbConfig.initConfiguration(filePath);
-	pbConfig.initPersonalities(filePath);
 	
 	pos = strlen(mod_name);
 	filePath[pos] = '\0';
 	strcat(filePath, "/addons/parabot/log");
 	CreateDirectory(filePath, NULL);
 	
-	// always load chatfile, might be enabled ingame:
-	filePath[pos] = '\0';
-	strcat(filePath, "/addons/parabot/config/lang/");
-	strcat(filePath, pbConfig.chatFile());
-	chat.load(filePath);
 	initSineTable();
 	
 	if (!g_meta_init) {

@@ -13,10 +13,8 @@
 
 extern PB_MapGraph mapGraph; // mapgraph for waypoints
 extern PB_MapCells map;
-
 extern int mod_id;
 extern int clientWeapon[32];
-int playerNr = 0;
 extern Vector playerPos;
 extern float roundStartTime;
 extern float globalFrameTime; // set by the bots in action.msec()
@@ -24,6 +22,10 @@ extern Sounds playerSounds;
 extern bool visualizeCellConnections;
 extern bot_t bots[32];
 extern int g_hldm_mod;
+extern CMarker glMarker;
+
+
+int playerNr = 0;
 
 PB_Navpoint* getNearestNavpoint(edict_t *pEdict);
 
@@ -245,8 +247,6 @@ int PB_Observer::checkGround(int oId, edict_t **plat) {
 	
 	return flags;
 }
-
-extern CMarker glMarker;
 
 
 // determines if player oId should be observed or not and returns the result

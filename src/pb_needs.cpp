@@ -199,7 +199,7 @@ float PB_Needs::wishForSniping(bool weaponCheck){
 	// wish
 	float wish_s = health*weapon*5 + (5 - bot->aggression);
 	
-	const float outTime = 40;// time after which camping gives 0 points
+	const float outTime = 40; // time after which camping gives 0 points
 	float x = outTime + (worldTime() - bot->lastCamp) - bot->campTime;
 	// while camping x = outTime - campTime, else x increasing
 	if (x > outTime) {

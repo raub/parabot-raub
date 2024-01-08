@@ -3,7 +3,6 @@
 #include "parabot.h"
 #include "pb_observer.h"
 #include "bot.h"
-#include "pb_chat.h"
 #include "pb_mapcells.h"
 
 
@@ -17,10 +16,7 @@ extern int botTarget; // target nav id to approach (-1 = nothing)
 extern int mod_id;
 extern bool pb_pause;
 extern int clientWeapon[32];
-extern PB_Chat chat;
 
-//extern ChatList chatGotKilled, chatKilledPlayer, chatGotWeapon;
-//extern bool botChat; // from configfiles.cpp
 PB_Navpoint* getNearestNavpoint(edict_t *pEdict);
 
 
@@ -34,7 +30,6 @@ CParabot::CParabot(edict_t *botEnt, int botSlot) {
 	slot = botSlot;
 	actualPath = 0;
 	aggression = 2.5;
-	chatRate = 5;
 	lastThink = 0;
 }
 
@@ -217,7 +212,7 @@ void CParabot::registerDamage(int amount, Vector origin, int type) {
 	if (pPlayer && strlen(STRING(pPlayer->pev->netname))>0) found = true;
 */
 	if (found) {
-#ifdef _DEBUG
+#ifdef DEBUG
 		char *botName = (char *)STRING(ent->v.netname);
 		char *inflictorName = (char *)STRING(pPlayer->pev->netname);
 		debugMsg(botName, " hurt by ", inflictorName);debugMsg("\n");
@@ -239,14 +234,12 @@ void CParabot::registerDeath(edict_t *killer, const char *wpnName) {
 		if (botCell >= 0 && killerCell >= 0 && map.lineOfSight(botCell, killerCell)) {
 			map.cell(botCell).kills.addDir(killer->v.origin - botPos());
 		}
-		chat.registerGotKilled(ent, killer, wpnName);
 	}
 }
 
 
 // bot has killed opponent
 void CParabot::registerKill(edict_t *victim, const char *wpnName) {
-	chat.registerKilledPlayer(victim, ent, wpnName);
 	// check if bot was camping and should camp longer:
 	if (actualNavpoint && actualNavpoint->type()==NAV_S_CAMPING) {
 		campTime = 0;
@@ -641,7 +634,7 @@ void CParabot::followActualPath() {
 			actualPath->reportWaypointReached(); // confirm waypoint
 			Vector oldWP = waypoint.pos(ent);
 			waypoint = actualPath->getNextWaypoint(); // get next one
-#ifdef _DEBUG
+#ifdef DEBUG
 			debugBeam(waypoint.pos(ent), oldWP, 50, 1);
 			float wpd = (waypoint.pos(ent) - oldWP).Length();
 			//debugMsg("Reached new WP after %.f\n", wpd);

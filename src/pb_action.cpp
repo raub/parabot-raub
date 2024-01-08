@@ -522,10 +522,10 @@ float PB_Action::msec() {
 	
 	float opt = (worldTime()-msecStart) * 1000; // optimal msec value since start of 1 sec period
 	currentMSec = opt - msecCount; // value ve have to add to reach optimum
-	globalFrameTime = currentMSec/1000; // duration of last frame in sec
+	globalFrameTime = currentMSec / 1000; // duration of last frame in sec
 	msecCount = opt;
 	if (msecCount > 1000) { // do we have to start a new 1 sec period?
-		msecStart += msecCount/1000;
+		msecStart += msecCount / 1000;
 		msecCount = 0;
 	}
 	

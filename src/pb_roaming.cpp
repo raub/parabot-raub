@@ -206,7 +206,7 @@ void PB_Roaming::checkFront (float sideOfs, Vector tAngle, checkWayRes *res) {
 		planeAngle = UTIL_VecToAngles (tr.vecPlaneNormal);
 		if (planeAngle.x < 40) {
 			if (planeAngle.x == 0) {
-				vFrom.z -= H_NEED_JUMP/2;
+				vFrom.z -= H_NEED_JUMP / 2;
 				UTIL_TraceLine (vFrom, vFrom + vDir, dont_ignore_monsters, ENT(pev), &trStairs);
 				if ((1.001*trStairs.flFraction)<tr.flFraction) {
 					//if (debugTrace) debugMsg("Climbing stairs...\n");

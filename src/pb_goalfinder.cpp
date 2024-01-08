@@ -1,5 +1,4 @@
 #include "pb_goalfinder.h"
-//#include "pb_goals.h"
 #include "parabot.h"
 
 
@@ -83,7 +82,10 @@ void PB_GoalFinder::analyze(PB_Perception &senses) {
 				if (weight > bestWeight[type]) {
 					bestGoalFunction[type] = gli->second.goal;
 					responsiblePercept[type] = &(*pli);
-					assert(responsiblePercept[type]->pClass > 0 && responsiblePercept[type]->pClass <= MAX_PERCEPTION);
+					assert(
+						responsiblePercept[type]->pClass > 0 &&
+						responsiblePercept[type]->pClass <= MAX_PERCEPTION
+					);
 					bestWeight[type] = weight;
 				}
 				
